@@ -16,11 +16,16 @@ import {
   Hash,
   Pencil,
   History,
-  ArrowRightLeft
+  ArrowRightLeft,
+  CreditCard,
+  CheckCircle2,
+  ShieldCheck,
+  Zap
 } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { API_BASE } from '../../config';
 import BackgroundEffect from '../../components/BackgroundEffect';
 
@@ -31,27 +36,51 @@ const StudentOverview = () => {
   const [roommates, setRoommates] = useState([]);
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const sid = user.student_id || user.id;
+      const [roomRes, roommatesRes, activitiesRes] = await Promise.all([
+        axios.get(`${API_BASE}/student_room.php?id=${sid}`),
+        axios.get(`${API_BASE}/get_roommates.php?student_id=${sid}`),
+        axios.get(`${API_BASE}/get_student_logs.php?id=${sid}`)
+      ]);
+      setRoom(roomRes.data);
+      setRoommates(Array.isArray(roommatesRes.data) ? roommatesRes.data : []);
+      setActivities(Array.isArray(activitiesRes.data) ? activitiesRes.data : []);
+    } catch (err) {
+      console.error("Dashboard sync failure:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const sid = user.student_id || user.id;
-        const [roomRes, roommatesRes, activitiesRes] = await Promise.all([
-          axios.get(`${API_BASE}/student_room.php?id=${sid}`),
-          axios.get(`${API_BASE}/get_roommates.php?student_id=${sid}`),
-          axios.get(`${API_BASE}/get_student_logs.php?id=${sid}`)
-        ]);
-        setRoom(roomRes.data);
-        setRoommates(Array.isArray(roommatesRes.data) ? roommatesRes.data : []);
-        setActivities(Array.isArray(activitiesRes.data) ? activitiesRes.data : []);
-      } catch (err) {
-        console.error("Dashboard sync failure:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, [user.id, user.student_id]);
+
+  const handlePayment = async () => {
+    const loadingToast = toast.loading("Processing transaction...");
+    try {
+      const res = await axios.post(`${API_BASE}/process_payment.php`, {
+        student_id: user.student_id || user.id,
+        room_id: room.approved_room_id,
+        payment_method: 'DEMO_SECURE_PORTAL'
+      });
+      toast.dismiss(loadingToast);
+      if (res.data.status === 'Success') {
+        toast.success("Payment Received! Room Allocated.");
+        setShowPaymentModal(false);
+        fetchData();
+      } else {
+        toast.error(res.data.error || "Payment failed");
+      }
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error("Gateway connection error");
+    }
+  };
 
   const slideUp = { hidden: { y: 20, opacity: 0 }, show: { y: 0, opacity: 1, transition: { duration: 0.6 } } };
 
@@ -80,18 +109,47 @@ const StudentOverview = () => {
 
           <div className="flex flex-wrap justify-center gap-10 pt-4">
              <HeroStat label="My Status" value={user?.account_status === 'ACTIVE' ? 'Active' : 'Pending'} color="text-emerald-500" />
-             <HeroStat label="Room Status" value={room && room.room_number ? 'Occupied' : 'No Room'} color="text-blue-500" />
+             <HeroStat label="Room Status" value={room?.room_number ? 'Occupied' : room?.approved_room_id ? 'Approved' : 'No Room'} color="text-blue-500" />
              <HeroStat label="System" value="Stable" color="text-teal-500" />
           </div>
         </motion.div>
       </section>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        
+        {/* PAYMENT PENDING NOTICE */}
+        {room?.approved_room_id && room?.payment_status === 'PENDING' && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mb-12 bg-amber-500/10 border border-amber-500/20 rounded-[3rem] p-8 md:p-12 relative overflow-hidden shadow-2xl"
+          >
+            <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard size={150} className="text-amber-500" /></div>
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
+               <div className="w-20 h-20 bg-amber-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Zap size={40} /></div>
+               <div className="space-y-3 flex-1">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">Action Required</p>
+                  <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Payment Pending.</h3>
+                  <p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed uppercase tracking-widest">
+                    Your request for Room {room.approved_room_number} has been approved. Please complete the payment of KES {room.approved_room_price} to finalize allocation.
+                  </p>
+               </div>
+               <button 
+                 onClick={() => setShowPaymentModal(true)}
+                 className="px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3"
+               >
+                 <CreditCard size={16} />
+                 Pay & Check-In
+               </button>
+            </div>
+          </motion.div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* 2. IDENTITY CARD (Left - 5 Cols) */}
           <motion.div variants={slideUp} initial="hidden" animate="show" className="lg:col-span-5">
-            <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden h-full">
+            <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-[40px] rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden h-full">
               <div className="p-8 sm:p-10 space-y-10">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
@@ -124,7 +182,7 @@ const StudentOverview = () => {
 
           {/* 3. RESIDENCE STATUS (Right - 7 Cols) */}
           <motion.div variants={slideUp} initial="hidden" animate="show" className="lg:col-span-7 space-y-8">
-            <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden group">
+            <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-[40px] rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden group">
               <div className="p-8 sm:p-10 relative">
                 <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                   <Building2 size={150} className="text-blue-500" />
@@ -142,7 +200,7 @@ const StudentOverview = () => {
                       </div>
                     ) : (
                       <div className="px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-full text-[9px] font-black uppercase tracking-widest">
-                        No Room Set
+                        {room?.approved_room_id ? 'Approval Pending Payment' : 'No Room Set'}
                       </div>
                     )}
                   </div>
@@ -163,6 +221,7 @@ const StudentOverview = () => {
                           <div className="flex items-center justify-center md:justify-start gap-6 pt-4 flex-wrap">
                              <StatPill label="Beds" val={room.capacity} />
                              <StatPill label="Stayers" val={room.current_occupancy} />
+                             <StatPill label="Rate" val={`KES ${room.price}`} />
                              
                              <button 
                                 onClick={() => navigate('/student/book')}
@@ -180,12 +239,14 @@ const StudentOverview = () => {
                           <BedDouble size={32} className="text-slate-300" />
                        </div>
                        <div className="space-y-2">
-                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">You haven't booked a room yet.</p>
+                          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
+                            {room?.approved_room_id ? `Room ${room.approved_room_number} approved! Proceed to payment.` : "You haven't booked a room yet."}
+                          </p>
                           <button 
                             onClick={() => navigate('/student/book')}
                             className="text-blue-500 font-black text-xs uppercase tracking-[0.3em] hover:tracking-[0.4em] transition-all flex items-center justify-center gap-2 mx-auto pt-2"
                           >
-                            Find a Room Now <ArrowUpRight size={16} />
+                            {room?.approved_room_id ? "View Other Rooms" : "Find a Room Now"} <ArrowUpRight size={16} />
                           </button>
                        </div>
                     </div>
@@ -195,7 +256,7 @@ const StudentOverview = () => {
             </div>
 
             {/* Roommates Section */}
-            <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl p-8 sm:p-10">
+            <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-[40px] rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl p-8 sm:p-10">
               <div className="flex items-center justify-between mb-8">
                 <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">My Roommates.</h4>
                 <Users size={20} className="text-slate-400" />
@@ -232,7 +293,7 @@ const StudentOverview = () => {
 
         {/* 4. ACTIVITY LOG */}
         <motion.div variants={slideUp} initial="hidden" animate="show" className="mt-8">
-          <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden">
+          <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-[40px] rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden">
             <div className="p-8 sm:p-10 space-y-8">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
@@ -257,6 +318,56 @@ const StudentOverview = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* --- PAYMENT MODAL --- */}
+      <AnimatePresence>
+        {showPaymentModal && (
+          <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-950/60 backdrop-blur-md">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[3rem] border border-white/10 shadow-2xl overflow-hidden"
+            >
+              <div className="p-10 space-y-10">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 bg-emerald-500/10 rounded-[2rem] flex items-center justify-center text-emerald-500 mx-auto">
+                    <ShieldCheck size={40} />
+                  </div>
+                  <h3 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">Checkout.</h3>
+                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Secure Payment Portal</p>
+                </div>
+
+                <div className="space-y-4 bg-slate-50 dark:bg-white/5 p-8 rounded-[2rem] border border-slate-100 dark:border-white/5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Allocated Unit</span>
+                    <span className="font-black text-slate-900 dark:text-white uppercase">Room {room.approved_room_number}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Due</span>
+                    <span className="text-2xl font-black text-blue-500 tracking-tighter">KES {room.approved_room_price}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <button 
+                    onClick={handlePayment}
+                    className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-6 rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                  >
+                    Complete Payment
+                  </button>
+                  <button 
+                    onClick={() => setShowPaymentModal(false)}
+                    className="w-full py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >
+                    Cancel Transaction
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <footer className="pt-10 text-center opacity-30 px-4">
         <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-500">Official Student Portal • Hostel Management • Group 15</p>

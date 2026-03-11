@@ -12,7 +12,7 @@ import { API_BASE } from '../../config';
 const RoomManagement = () => {
   const { user } = useOutletContext() || {};
   const [rooms, setRooms] = useState([]);
-  const [newRoom, setNewRoom] = useState({ block: '', room_number: '', capacity: 3 });
+  const [newRoom, setNewRoom] = useState({ block: '', room_number: '', capacity: 3, price: '' });
   const [selectedRoom, setSelectedRoom] = useState(null); 
   const [occupants, setOccupants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,7 +43,7 @@ const RoomManagement = () => {
       if (res.data.status === 'Success') { 
         toast.success("Infrastructure Updated!"); 
         fetchRooms(); 
-        setNewRoom({ block: '', room_number: '', capacity: 3 }); 
+        setNewRoom({ block: '', room_number: '', capacity: 3, price: '' }); 
       } else { 
         toast.error(res.data.error || "Failed to add room"); 
       }
@@ -199,6 +199,15 @@ const RoomManagement = () => {
                     onChange={e => setNewRoom({...newRoom, capacity: e.target.value})} 
                   />
                 </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Monthly Price (RS.)</label>
+                  <input 
+                    type="number" placeholder="e.g. 5000" required 
+                    className="w-full p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-slate-900 dark:text-white rounded-2xl outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all font-bold text-sm"
+                    value={newRoom.price} 
+                    onChange={e => setNewRoom({...newRoom, price: e.target.value})} 
+                  />
+                </div>
                 <button className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-5 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-900/10">
                   <ShieldCheck size={18} /> Initialize Room
                 </button>
@@ -271,7 +280,10 @@ const RoomTile = ({ room, onView, onDelete }) => {
     <div className="bg-white dark:bg-slate-900/50 p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-2xl hover:scale-105 hover:border-slate-400 dark:hover:border-slate-600 transition-all group relative overflow-hidden">
       <div className="relative z-10">
         <div className="flex justify-between items-start mb-6">
-          <h4 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter leading-none group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">{room.room_number}</h4>
+          <div className="flex flex-col">
+            <h4 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter leading-none group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">{room.room_number}</h4>
+            <span className="text-[10px] font-bold text-teal-600 dark:text-teal-400 mt-1">RS. {room.price}</span>
+          </div>
           <button onClick={onDelete} className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 transition-colors">
             <Trash2 size={18} />
           </button>

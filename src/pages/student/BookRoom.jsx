@@ -227,7 +227,7 @@ const BookRoom = () => {
           <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
              <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Building2 size={40} /></div>
              <div className="space-y-3 flex-1">
-                <p className="text-[10px] font-black uppercase tracking-widest text-blue-500 font-black">Official Suggestion</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Official Suggestion</p>
                 <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">New Room Available.</h3>
                 <div className="mt-4 bg-white/40 dark:bg-slate-950/40 p-6 rounded-3xl border border-blue-500/10 backdrop-blur-md">
                    <p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed uppercase tracking-widest">
@@ -334,7 +334,10 @@ const BookRoom = () => {
                             <BedDouble size={32} />
                           </div>
                           <div className="flex flex-col items-end gap-2">
-                            <span className="bg-teal-500/10 text-teal-600 dark:text-teal-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-teal-500/20">
+                            <span className="bg-blue-500/10 text-blue-600 dark:text-blue-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-500/20 shadow-sm">
+                              KES {r.price}
+                            </span>
+                            <span className="bg-teal-500/10 text-teal-600 dark:text-teal-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-teal-500/20 shadow-sm">
                               {r.capacity - r.current_occupancy} Free Slots
                             </span>
                           </div>
@@ -431,8 +434,9 @@ const BookRoom = () => {
                       <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500">Room Request</p>
                       <h3 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">Move<br />Room.</h3>
                    </div>
-                   <div className="p-4 bg-blue-600/10 rounded-2xl text-blue-600 font-black text-2xl tracking-tighter">
-                      R-{selectedRoomForApply.room_number}
+                   <div className="p-4 bg-blue-600/10 rounded-2xl text-blue-600 font-black text-2xl tracking-tighter flex flex-col items-end">
+                      <span>R-{selectedRoomForApply.room_number}</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 mt-1">KES {selectedRoomForApply.price}</span>
                    </div>
                 </div>
 
