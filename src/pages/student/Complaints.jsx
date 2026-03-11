@@ -24,7 +24,8 @@ import {
   ShieldCheck,
   RefreshCcw,
   Archive,
-  FileText
+  FileText,
+  Calendar
 } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { API_BASE } from '../../config';
@@ -159,6 +160,18 @@ const Complaints = () => {
     }
   };
 
+  const formatDateTime = (dateStr) => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    return date.toLocaleString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div className="space-y-12 pb-20 max-w-7xl mx-auto px-4 sm:px-6">
       <BackgroundEffect />
@@ -276,7 +289,7 @@ const Complaints = () => {
                       <h4 className="font-black text-slate-900 dark:text-white text-2xl tracking-tighter leading-tight uppercase">{c.title}</h4>
                       <div className="flex items-center gap-4 text-slate-400">
                         <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5"><Layers size={12} /> {c.category}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5"><Clock size={12} /> {new Date(c.created_at).toLocaleDateString('en-GB')}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5" title="Submission Time"><Calendar size={12} /> {formatDateTime(c.created_at)}</span>
                       </div>
                     </div>
                     <PriorityIndicator level={c.priority} />
@@ -284,6 +297,31 @@ const Complaints = () => {
 
                   <div className="bg-slate-50 dark:bg-white/5 p-6 rounded-3xl border border-slate-100 dark:border-white/5 mb-8">
                     <p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed">"{c.description}"</p>
+                  </div>
+
+                  {/* PROGRESS TRACKER */}
+                  <div className="mb-8 space-y-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Progress Tracker</p>
+                    <div className="grid gap-3">
+                      {c.in_progress_at && (
+                        <div className="flex items-center gap-4 p-4 bg-blue-500/5 rounded-2xl border border-blue-500/10">
+                          <RefreshCcw size={14} className="text-blue-500" />
+                          <div>
+                            <p className="text-[9px] font-black uppercase text-blue-600 tracking-wider">Started Handling</p>
+                            <p className="text-[10px] font-bold text-slate-500">{formatDateTime(c.in_progress_at)}</p>
+                          </div>
+                        </div>
+                      )}
+                      {c.resolved_at && (
+                        <div className="flex items-center gap-4 p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
+                          <CheckCircle2 size={14} className="text-emerald-500" />
+                          <div>
+                            <p className="text-[9px] font-black uppercase text-emerald-600 tracking-wider">Resolved On</p>
+                            <p className="text-[10px] font-bold text-slate-500">{formatDateTime(c.resolved_at)}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {c.resolution_note && (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, Check, X, Lightbulb, Users, UserCheck, 
   UserMinus, Building2, SortAsc, Filter, Trash2,
@@ -123,124 +123,133 @@ const Students = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="space-y-8 animate-slide-up relative">
-      
-      {/* 1. PULSE ANALYTICS */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <PulseStat icon={Users} label="Resident Population" value={stats.total} color="blue" />
-        <PulseStat icon={UserCheck} label="Room Assignment" value={`${stats.occupancyPercent}%`} subValue={`${stats.allocated} Active`} color="teal" progress={stats.occupancyPercent} />
-        <PulseStat icon={Building2} label="Pending Requests" value={stats.pending} subValue="Needs Action" color="orange" />
-        <PulseStat icon={GraduationCap} label="Faculties" value={stats.depts.length} subValue="Departments" color="red" />
-      </div>
-
-      {/* 2. ADVANCED TOOLBAR */}
-      <div className="flex flex-col xl:flex-row gap-6 items-stretch xl:items-center">
-        <div className="relative flex-1 group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={20}/>
-          <input 
-            placeholder="Search by name or registration ID..." 
-            className="w-full pl-12 pr-6 py-4 bg-white dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-800 outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all text-slate-900 dark:text-white"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+    <>
+      <div className="space-y-8 animate-slide-up relative">
         
-        <div className="flex flex-wrap gap-3">
-          <FilterMenu icon={SortAsc} value={sortBy} onChange={setSortBy}>
-            <option value="name">Sort: A-Z Name</option>
-            <option value="reg_no">Sort: University ID</option>
-            <option value="department">Sort: Faculty</option>
-          </FilterMenu>
-          
-          <FilterMenu icon={Filter} value={filterStatus} onChange={setFilterStatus}>
-            <option value="ALL">Status: All Residents</option>
-            <option value="ALLOCATED">Status: Assigned Rooms</option>
-            <option value="PENDING">Status: Pending Requests</option>
-            <option value="NONE">Status: No Allocation</option>
-          </FilterMenu>
-
-          <FilterMenu icon={GraduationCap} value={filterDept} onChange={setFilterDept}>
-            <option value="ALL">Faculty: All Depts</option>
-            {stats.depts.map(d => <option key={d} value={d}>{d}</option>)}
-          </FilterMenu>
-        </div>
-      </div>
-
-      {/* 3. RESIDENT DIRECTORY */}
-      <div className="space-y-4">
-        <div className="hidden lg:grid grid-cols-12 px-8 text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-2">
-          <div className="col-span-5">Scholar Identity</div>
-          <div className="col-span-3 text-center">Accommodation Status</div>
-          <div className="col-span-4 text-right">Operational Actions</div>
+        {/* 1. PULSE ANALYTICS */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <PulseStat icon={Users} label="Resident Population" value={stats.total} color="blue" />
+          <PulseStat icon={UserCheck} label="Room Assignment" value={`${stats.occupancyPercent}%`} subValue={`${stats.allocated} Active`} color="teal" progress={stats.occupancyPercent} />
+          <PulseStat icon={Building2} label="Pending Requests" value={stats.pending} subValue="Needs Action" color="orange" />
+          <PulseStat icon={GraduationCap} label="Faculties" value={stats.depts.length} subValue="Departments" color="red" />
         </div>
 
-        <div className="space-y-4">
-          {processedStudents.length > 0 ? processedStudents.map(s => (
-            <ResidentCard 
-              key={s.student_id} 
-              student={s} 
-              availableRooms={availableRooms}
-              handleRoomAction={handleRoomAction}
-              onRejectRequest={() => setRejectingStudent(s)}
-              userRole={user?.role} 
+        {/* 2. ADVANCED TOOLBAR */}
+        <div className="flex flex-col xl:flex-row gap-6 items-stretch xl:items-center">
+          <div className="relative flex-1 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={20}/>
+            <input 
+              placeholder="Search by name or registration ID..." 
+              className="w-full pl-12 pr-6 py-4 bg-white dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-800 outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all text-slate-900 dark:text-white"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
-          )) : (
-            <div className="py-24 bg-white dark:bg-slate-900/30 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 text-center">
-              <Activity size={48} strokeWidth={1} className="mx-auto mb-4 text-slate-300 dark:text-slate-700" />
-              <p className="text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest text-sm">No scholars found matching your criteria</p>
-            </div>
-          )}
-        </div>
-      </div>
+          </div>
+          
+          <div className="flex flex-wrap gap-3">
+            <FilterMenu icon={SortAsc} value={sortBy} onChange={setSortBy}>
+              <option value="name">Sort: A-Z Name</option>
+              <option value="reg_no">Sort: University ID</option>
+              <option value="department">Sort: Faculty</option>
+            </FilterMenu>
+            
+            <FilterMenu icon={Filter} value={filterStatus} onChange={setFilterStatus}>
+              <option value="ALL">Status: All Residents</option>
+              <option value="ALLOCATED">Status: Assigned Rooms</option>
+              <option value="PENDING">Status: Pending Requests</option>
+              <option value="NONE">Status: No Allocation</option>
+            </FilterMenu>
 
-      {/* 4. REJECTION NOTE MODAL */}
-      {rejectingStudent && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] border border-white/10 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-            <div className="p-8 space-y-8">
-              <div className="flex justify-between items-start">
-                <div className="space-y-1">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-red-500">Decline Application</p>
-                  <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Reject Request.</h3>
-                </div>
-                <button onClick={() => setRejectingStudent(null)} className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
-                  <X size={24} />
-                </button>
-              </div>
-
-              <div className="p-5 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5">
-                <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Target Scholar: <span className="text-slate-900 dark:text-white uppercase tracking-tight ml-1">{rejectingStudent.name}</span></p>
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Warden's Description (Reason for Rejection)</label>
-                <textarea 
-                  value={rejectionNote}
-                  onChange={(e) => setRejectionNote(e.target.value)}
-                  placeholder="e.g. This wing is reserved for medical students only..."
-                  className="w-full min-h-[150px] p-5 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-slate-900 dark:text-white rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-medium text-sm"
-                />
-              </div>
-
-              <div className="flex gap-4 pt-2">
-                <button 
-                  onClick={() => setRejectingStudent(null)}
-                  className="flex-1 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={() => handleRoomAction('reject_request', rejectingStudent.student_id, null, null, rejectionNote)}
-                  className="flex-[2] bg-red-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-red-600/20 hover:bg-red-700 transition-all active:scale-95 flex items-center justify-center gap-2"
-                >
-                  <XCircle size={16} /> Confirm Rejection
-                </button>
-              </div>
-            </div>
+            <FilterMenu icon={GraduationCap} value={filterDept} onChange={setFilterDept}>
+              <option value="ALL">Faculty: All Depts</option>
+              {stats.depts.map(d => <option key={d} value={d}>{d}</option>)}
+            </FilterMenu>
           </div>
         </div>
-      )}
-    </div>
+
+        {/* 3. RESIDENT DIRECTORY */}
+        <div className="space-y-4">
+          <div className="hidden lg:grid grid-cols-12 px-8 text-[10px] font-bold text-slate-400 dark:text-slate-600 uppercase tracking-[0.2em] mb-2">
+            <div className="col-span-5">Scholar Identity</div>
+            <div className="col-span-3 text-center">Accommodation Status</div>
+            <div className="col-span-4 text-right">Operational Actions</div>
+          </div>
+
+          <div className="space-y-4">
+            {processedStudents.length > 0 ? processedStudents.map(s => (
+              <ResidentCard 
+                key={s.student_id} 
+                student={s} 
+                availableRooms={availableRooms}
+                handleRoomAction={handleRoomAction}
+                onRejectRequest={() => setRejectingStudent(s)}
+                userRole={user?.role} 
+              />
+            )) : (
+              <div className="py-24 bg-white dark:bg-slate-900/30 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 text-center">
+                <Activity size={48} strokeWidth={1} className="mx-auto mb-4 text-slate-300 dark:text-slate-700" />
+                <p className="text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest text-sm">No scholars found matching your criteria</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* --- REJECTION note MODAL - Moved outside animated wrapper to prevent clipping --- */}
+      <AnimatePresence>
+        {rejectingStudent && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-slate-950/60 backdrop-blur-md">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] border border-white/10 shadow-2xl overflow-hidden"
+            >
+              <div className="p-8 space-y-8">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-red-500">Decline Application</p>
+                    <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Reject Request.</h3>
+                  </div>
+                  <button onClick={() => setRejectingStudent(null)} className="p-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <div className="p-5 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-100 dark:border-white/5">
+                  <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Target Scholar: <span className="text-slate-900 dark:text-white uppercase tracking-tight ml-1">{rejectingStudent.name}</span></p>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Warden's Description (Reason for Rejection)</label>
+                  <textarea 
+                    value={rejectionNote}
+                    onChange={(e) => setRejectionNote(e.target.value)}
+                    placeholder="e.g. This wing is reserved for medical students only..."
+                    className="w-full min-h-[150px] p-5 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-slate-900 dark:text-white rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-medium text-sm shadow-inner"
+                  />
+                </div>
+
+                <div className="flex gap-4 pt-2">
+                  <button 
+                    onClick={() => setRejectingStudent(null)}
+                    className="flex-1 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => handleRoomAction('reject_request', rejectingStudent.student_id, null, null, rejectionNote)}
+                    className="flex-[2] bg-red-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-red-600/20 hover:bg-red-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+                  >
+                    <XCircle size={16} /> Confirm Rejection
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

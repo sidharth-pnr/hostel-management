@@ -1,9 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, UserPlus, Users, ClipboardList, LayoutGrid, LogOut, Building2, Shield } from 'lucide-react';
 import ThemeToggle from '../ThemeToggle';
 
 export const AdminSidebar = ({ user, isDark, setIsDark }) => {
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const controlNavbar = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY < 50) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', controlNavbar);
+    return () => window.removeEventListener('scroll', controlNavbar);
+  }, [lastScrollY]);
+
   const NavItem = ({ to, icon: Icon, label }) => (
     <NavLink
       to={to}
@@ -28,7 +50,9 @@ export const AdminSidebar = ({ user, isDark, setIsDark }) => {
   };
 
   return (
-    <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800 rounded-full flex items-center justify-between px-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+    <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-7xl h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200/60 dark:border-slate-800 rounded-full flex items-center justify-between px-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 ${
+      isVisible ? 'translate-y-0 opacity-100' : '-translate-y-24 opacity-0'
+    }`}>
       {/* Brand */}
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-slate-900 shadow-lg flex-shrink-0">
