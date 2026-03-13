@@ -136,7 +136,7 @@ const StudentOverview = () => {
                     <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">Action Required</p>
                     <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Payment Pending.</h3>
                     <p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed uppercase tracking-widest">
-                      Your request for Room {room.approved_room_number} has been approved. Please complete the payment of KES {room.approved_room_price} to finalize allocation.
+                      Your request for Room {room.approved_room_number} has been approved. Please complete the payment of CASH {room.approved_room_price} to finalize allocation.
                     </p>
                  </div>
                  <button 
@@ -226,7 +226,7 @@ const StudentOverview = () => {
                             <div className="flex items-center justify-center md:justify-start gap-6 pt-4 flex-wrap">
                                <StatPill label="Beds" val={room.capacity} />
                                <StatPill label="Stayers" val={room.current_occupancy} />
-                               <StatPill label="Rate" val={`KES ${room.price}`} />
+                               <StatPill label="Rate" val={`CASH ${room.price}`} />
                                
                                <button 
                                   onClick={() => navigate('/student/book')}
@@ -355,7 +355,7 @@ const StudentOverview = () => {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Total Due</span>
-                    <span className="text-xl font-black text-blue-500 tracking-tighter">KES {room.approved_room_price}</span>
+                    <span className="text-xl font-black text-blue-500 tracking-tighter">CASH {room.approved_room_price}</span>
                   </div>
                 </div>
 

@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { 
   PlusCircle, Trash2, Home, Users, MapPin, 
   Eye, X, Building2, UserCheck, UserMinus, Activity,
-  ShieldCheck, Info
+  ShieldCheck, Info, Search, Filter, ArrowUpDown
 } from 'lucide-react';
 import { useOutletContext } from 'react-router-dom';
 import { API_BASE } from '../../config';
@@ -16,6 +16,11 @@ const RoomManagement = () => {
   const [selectedRoom, setSelectedRoom] = useState(null); 
   const [occupants, setOccupants] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Search, Filter & Sort State
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('All'); // All, Available, Full
+  const [sortBy, setSortBy] = useState('room_number'); // room_number, price, occupancy
   
   const fetchRooms = async () => {
     try {
@@ -80,7 +85,7 @@ const RoomManagement = () => {
       .then(res => setOccupants(Array.isArray(res.data) ? res.data : []));
   };
 
-  // --- ANALYTICS & GROUPING ---
+  // --- ANALYTICS, FILTERING & SORTING ---
   const stats = useMemo(() => {
     const total = rooms.length;
     const capacity = rooms.reduce((acc, r) => acc + parseInt(r.capacity || 0), 0);
@@ -88,14 +93,43 @@ const RoomManagement = () => {
     return { total, capacity, occupied, available: capacity - occupied };
   }, [rooms]);
 
+  const filteredAndSortedRooms = useMemo(() => {
+    let result = [...rooms];
+
+    // 1. Search
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(r => 
+        r.room_number.toString().toLowerCase().includes(term) || 
+        r.block.toLowerCase().includes(term)
+      );
+    }
+
+    // 2. Filter Status
+    if (filterStatus === 'Available') {
+      result = result.filter(r => parseInt(r.current_occupancy) < parseInt(r.capacity));
+    } else if (filterStatus === 'Full') {
+      result = result.filter(r => parseInt(r.current_occupancy) >= parseInt(r.capacity));
+    }
+
+    // 3. Sorting
+    result.sort((a, b) => {
+      if (sortBy === 'price') return parseFloat(a.price) - parseFloat(b.price);
+      if (sortBy === 'occupancy') return parseInt(b.current_occupancy) - parseInt(a.current_occupancy);
+      return a.room_number.localeCompare(b.room_number, undefined, {numeric: true});
+    });
+
+    return result;
+  }, [rooms, searchTerm, filterStatus, sortBy]);
+
   const roomsByBlock = useMemo(() => {
     const map = {};
-    rooms.forEach(r => {
+    filteredAndSortedRooms.forEach(r => {
       if (!map[r.block]) map[r.block] = [];
       map[r.block].push(r);
     });
     return map;
-  }, [rooms]);
+  }, [filteredAndSortedRooms]);
 
   if (loading) return <LoadingScreen />;
 
@@ -115,6 +149,48 @@ const RoomManagement = () => {
         </div>
         <div className="animate-slide-up" style={{ animationDelay: '0.4s' }}>
           <PulseStat icon={UserMinus} label="Beds Available" value={stats.available} subValue="Current Vacancy" color="red" />
+        </div>
+      </div>
+
+      {/* SEARCH, SORT & FILTER BAR */}
+      <div className="bg-white dark:bg-slate-900/50 backdrop-blur-md p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-6 animate-slide-up shadow-sm" style={{ animationDelay: '0.45s' }}>
+        <div className="flex-1 min-w-[280px] relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={18} />
+          <input 
+            type="text" 
+            placeholder="Search by Room or Block..." 
+            className="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-slate-900 dark:text-white rounded-2xl outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all font-bold text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl">
+            <Filter size={16} className="text-slate-400" />
+            <select 
+              className="bg-transparent border-none outline-none text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white cursor-pointer appearance-none"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="All" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Units</option>
+              <option value="Available" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Available</option>
+              <option value="Full" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Full Capacity</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl">
+            <ArrowUpDown size={16} className="text-slate-400" />
+            <select 
+              className="bg-transparent border-none outline-none text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white cursor-pointer appearance-none"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="room_number" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sort: Room</option>
+              <option value="price" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sort: Price</option>
+              <option value="occupancy" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sort: Occupancy</option>
+            </select>
+          </div>
         </div>
       </div>
 

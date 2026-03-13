@@ -148,21 +148,21 @@ const Students = () => {
           
           <div className="flex flex-wrap gap-3">
             <FilterMenu icon={SortAsc} value={sortBy} onChange={setSortBy}>
-              <option value="name">Sort: A-Z Name</option>
-              <option value="reg_no">Sort: University ID</option>
-              <option value="department">Sort: Faculty</option>
+              <option value="name" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sort: A-Z Name</option>
+              <option value="reg_no" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sort: University ID</option>
+              <option value="department" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sort: Faculty</option>
             </FilterMenu>
             
             <FilterMenu icon={Filter} value={filterStatus} onChange={setFilterStatus}>
-              <option value="ALL">Status: All Residents</option>
-              <option value="ALLOCATED">Status: Assigned Rooms</option>
-              <option value="PENDING">Status: Pending Requests</option>
-              <option value="NONE">Status: No Allocation</option>
+              <option value="ALL" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Status: All Residents</option>
+              <option value="ALLOCATED" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Status: Assigned Rooms</option>
+              <option value="PENDING" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Status: Pending Requests</option>
+              <option value="NONE" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Status: No Allocation</option>
             </FilterMenu>
 
             <FilterMenu icon={GraduationCap} value={filterDept} onChange={setFilterDept}>
-              <option value="ALL">Faculty: All Depts</option>
-              {stats.depts.map(d => <option key={d} value={d}>{d}</option>)}
+              <option value="ALL" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Faculty: All Depts</option>
+              {stats.depts.map(d => <option key={d} value={d} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{d}</option>)}
             </FilterMenu>
           </div>
         </div>

@@ -349,7 +349,7 @@ const BookRoom = () => {
                             </div>
                             <div className="flex flex-col items-end gap-2">
                               <span className="bg-blue-500/10 text-blue-600 dark:text-blue-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-500/20 shadow-sm">
-                                KES {r.price}
+                                CASH {r.price}
                               </span>
                               <span className="bg-teal-500/10 text-teal-600 dark:text-teal-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-teal-500/20 shadow-sm">
                                 {r.capacity - r.current_occupancy} Free Slots
@@ -450,7 +450,7 @@ const BookRoom = () => {
                    </div>
                    <div className="p-4 bg-blue-600/10 rounded-2xl text-blue-600 font-black text-2xl tracking-tighter flex flex-col items-end">
                       <span>R-{selectedRoomForApply.room_number}</span>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 mt-1">KES {selectedRoomForApply.price}</span>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 mt-1">CASH {selectedRoomForApply.price}</span>
                    </div>
                 </div>
 

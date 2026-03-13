@@ -70,7 +70,7 @@ export const AdminSidebar = ({ user, isDark, setIsDark }) => {
         <NavItem to="/admin/approvals" icon={UserPlus} label="New Students" />
         <NavItem to="/admin/students" icon={Users} label="Residents" />
         <NavItem to="/admin/complaints" icon={ClipboardList} label="Complaints" />
-        <NavItem to="/admin/rooms" icon={LayoutGrid} label="Map" />
+        <NavItem to="/admin/rooms" icon={LayoutGrid} label="Rooms" />
         {user?.role === 'SUPER' && (
           <NavItem to="/admin/admins" icon={Shield} label="Admin Access" />
         )}

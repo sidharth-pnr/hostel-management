@@ -7,13 +7,13 @@ const AdminLayout = ({ user, isDark, setIsDark }) => {
 
   const getPageTitle = () => {
     const path = location.pathname;
-    if (path === '/admin') return 'Dashboard Overview';
+    if (path === '/admin') return 'Dashboard';
     const segment = path.split('/').pop();
     // Special cases for better naming
-    if (segment === 'approvals') return 'New Scholar Approvals';
+    if (segment === 'approvals') return 'New Student Approvals';
     if (segment === 'students') return 'Resident Directory';
-    if (segment === 'complaints') return 'Grievance Management';
-    if (segment === 'rooms') return 'Infrastructure Map';
+    if (segment === 'complaints') return 'Complaints Management';
+    if (segment === 'rooms') return 'Room Infrastructure';
     return segment.charAt(0).toUpperCase() + segment.slice(1);
   };
 

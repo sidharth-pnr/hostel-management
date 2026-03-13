@@ -25,7 +25,10 @@ import {
   RefreshCcw,
   Archive,
   FileText,
-  Calendar
+  Calendar,
+  Image as ImageIcon,
+  X,
+  Maximize2
 } from 'lucide-react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { API_BASE } from '../../config';
@@ -38,6 +41,11 @@ const Complaints = () => {
   const [selectedCategory, setSelectedCategory] = useState('Other');
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState('ALL'); // ALL, ACTIVE, RESOLVED, CLOSED
+  const [previewImage, setPreviewImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  
+  // Lightbox State
+  const [lightboxImage, setLightboxImage] = useState(null);
 
   const categories = [
     { id: 'Electrical', icon: <Zap size={20} />, label: 'Electrical', color: 'amber' },
@@ -79,26 +87,41 @@ const Complaints = () => {
     return complaints;
   }, [complaints, filter]);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => setPreviewImage(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleComplaint = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const payload = {
-      action: 'new',
-      student_id: user.id,
-      title: formData.get('title'),
-      description: formData.get('description'),
-      priority: formData.get('priority'),
-      category: selectedCategory
-    };
+    const data = new FormData();
+    data.append('student_id', user.id);
+    data.append('title', formData.get('title'));
+    data.append('description', formData.get('description'));
+    data.append('priority', formData.get('priority'));
+    data.append('category', selectedCategory);
+    if (selectedFile) {
+      data.append('image', selectedFile);
+    }
 
     const loadingToast = toast.loading("Sending your complaint...");
     try {
-      const res = await axios.post(`${API_BASE}/complaints.php`, payload);
+      const res = await axios.post(`${API_BASE}/complaints.php`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       toast.dismiss(loadingToast);
       if (res.data.status === 'success') {
         toast.success("Complaint submitted successfully.");
         e.target.reset();
         setSelectedCategory('Other');
+        setPreviewImage(null);
+        setSelectedFile(null);
         fetchData();
       } else {
         toast.error(res.data.error || "Failed to send");
@@ -229,16 +252,41 @@ const Complaints = () => {
                 <div className="space-y-3">
                   <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">How Urgent?</label>
                   <select name="priority" required className="w-full p-5 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-sm cursor-pointer shadow-sm">
-                    <option value="Low">Low (Not urgent)</option>
-                    <option value="Medium">Medium (Normal)</option>
-                    <option value="High">High (Urgent)</option>
-                    <option value="Urgent">Critical (Immediate fix needed)</option>
+                    <option value="Low" className="dark:bg-slate-900">Low (Not urgent)</option>
+                    <option value="Medium" className="dark:bg-slate-900">Medium (Normal)</option>
+                    <option value="High" className="dark:bg-slate-900">High (Urgent)</option>
+                    <option value="Urgent" className="dark:bg-slate-900">Critical (Immediate fix needed)</option>
                   </select>
                 </div>
 
                 <div className="md:col-span-2 space-y-3">
                   <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">Problem Details</label>
                   <textarea name="description" placeholder="Provide more details about the problem here..." required rows="4" className="w-full p-6 bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 text-slate-900 dark:text-white rounded-3xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-sm resize-none shadow-sm"></textarea>
+                </div>
+
+                <div className="md:col-span-2 space-y-4">
+                  <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">Attach Image (Optional)</label>
+                  <div className="flex items-center gap-6">
+                    <label className="cursor-pointer group">
+                      <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 dark:bg-white/5 border border-dashed border-slate-200 dark:border-white/10 rounded-2xl group-hover:border-blue-500/50 transition-all">
+                        <ImageIcon size={20} className="text-slate-400 group-hover:text-blue-500" />
+                        <span className="text-xs font-bold text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white">Choose Photo</span>
+                      </div>
+                      <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+                    </label>
+                    
+                    {previewImage && (
+                      <div className="relative w-24 h-24 rounded-2xl overflow-hidden border-2 border-blue-500/20 shadow-xl">
+                        <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
+                        <button 
+                          type="button" onClick={() => { setPreviewImage(null); setSelectedFile(null); }}
+                          className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="md:col-span-2 flex justify-end gap-6 pt-4">
@@ -279,87 +327,122 @@ const Complaints = () => {
                 key={c.complaint_id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                 className="group"
               >
-                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl p-8 rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-xl flex flex-col hover:border-blue-500/30 transition-all duration-500">
-                  <div className="flex justify-between items-start mb-8">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <span className="text-[9px] font-black bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-3 py-1 rounded-full uppercase tracking-widest">ID: #TK-{c.complaint_id}</span>
-                        <StatusBadge status={c.status} />
+                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl rounded-[3.5rem] border border-slate-200 dark:border-white/10 shadow-xl flex flex-col hover:border-blue-500/30 transition-all duration-500 overflow-hidden">
+                  <div className="p-8">
+                    <div className="flex justify-between items-start mb-8">
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-[9px] font-black bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-3 py-1 rounded-full uppercase tracking-widest">ID: #TK-{c.complaint_id}</span>
+                          <StatusBadge status={c.status} />
+                        </div>
+                        <h4 className="font-black text-slate-900 dark:text-white text-2xl tracking-tighter leading-tight uppercase">{c.title}</h4>
+                        <div className="flex items-center gap-4 text-slate-400">
+                          <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5"><Layers size={12} /> {c.category}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5" title="Submission Time"><Calendar size={12} /> {formatDateTime(c.created_at)}</span>
+                        </div>
                       </div>
-                      <h4 className="font-black text-slate-900 dark:text-white text-2xl tracking-tighter leading-tight uppercase">{c.title}</h4>
-                      <div className="flex items-center gap-4 text-slate-400">
-                        <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5"><Layers size={12} /> {c.category}</span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5" title="Submission Time"><Calendar size={12} /> {formatDateTime(c.created_at)}</span>
+                      <PriorityIndicator level={c.priority} />
+                    </div>
+
+                    <div className="bg-slate-50 dark:bg-white/5 p-6 rounded-3xl border border-slate-100 dark:border-white/5 mb-8">
+                      <p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed">"{c.description}"</p>
+                    </div>
+
+                    {/* PROGRESS TRACKER */}
+                    <div className="mb-8 space-y-4">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Progress Tracker</p>
+                      <div className="grid gap-3">
+                        {c.in_progress_at && (
+                          <div className="flex items-center gap-4 p-4 bg-blue-500/5 rounded-2xl border border-blue-500/10">
+                            <RefreshCcw size={14} className="text-blue-500" />
+                            <div>
+                              <p className="text-[9px] font-black uppercase text-blue-600 tracking-wider">Started Handling</p>
+                              <p className="text-[10px] font-bold text-slate-500">{formatDateTime(c.in_progress_at)}</p>
+                            </div>
+                          </div>
+                        )}
+                        {c.resolved_at && (
+                          <div className="flex items-center gap-4 p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
+                            <CheckCircle2 size={14} className="text-emerald-500" />
+                            <div>
+                              <p className="text-[9px] font-black uppercase text-emerald-600 tracking-wider">Resolved On</p>
+                              <p className="text-[10px] font-bold text-slate-500">{formatDateTime(c.resolved_at)}</p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <PriorityIndicator level={c.priority} />
-                  </div>
 
-                  <div className="bg-slate-50 dark:bg-white/5 p-6 rounded-3xl border border-slate-100 dark:border-white/5 mb-8">
-                    <p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed">"{c.description}"</p>
-                  </div>
+                    {c.resolution_note && (
+                      <div className="mb-8 p-6 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-3xl border border-emerald-500/20">
+                        <p className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em] mb-3">Warden's Reply</p>
+                        <p className="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-relaxed font-mono">
+                          <span className="text-emerald-500 mr-2">&gt;</span>{c.resolution_note}
+                        </p>
+                      </div>
+                    )}
 
-                  {/* PROGRESS TRACKER */}
-                  <div className="mb-8 space-y-4">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Progress Tracker</p>
-                    <div className="grid gap-3">
-                      {c.in_progress_at && (
-                        <div className="flex items-center gap-4 p-4 bg-blue-500/5 rounded-2xl border border-blue-500/10">
-                          <RefreshCcw size={14} className="text-blue-500" />
-                          <div>
-                            <p className="text-[9px] font-black uppercase text-blue-600 tracking-wider">Started Handling</p>
-                            <p className="text-[10px] font-bold text-slate-500">{formatDateTime(c.in_progress_at)}</p>
-                          </div>
-                        </div>
-                      )}
-                      {c.resolved_at && (
-                        <div className="flex items-center gap-4 p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
-                          <CheckCircle2 size={14} className="text-emerald-500" />
-                          <div>
-                            <p className="text-[9px] font-black uppercase text-emerald-600 tracking-wider">Resolved On</p>
-                            <p className="text-[10px] font-bold text-slate-500">{formatDateTime(c.resolved_at)}</p>
-                          </div>
-                        </div>
-                      )}
+                    <div className="pt-8 border-t border-slate-100 dark:border-white/5 flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex flex-col">
+                         <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1">Support</span>
+                         <span className="text-[10px] font-black uppercase text-blue-500 tracking-wider">Hostel Management</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => deleteComplaint(c.complaint_id)} className="p-4 text-slate-300 dark:text-slate-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all"><Trash2 size={18} /></button>
+                        
+                        {c.status === 'RESOLVED' && (
+                          <>
+                            <button 
+                              onClick={() => reopenComplaint(c.complaint_id)}
+                              className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-500/20 transition-all flex items-center gap-2"
+                            >
+                              <RefreshCcw size={14} /> Reopen
+                            </button>
+                            <button 
+                              onClick={() => closeComplaint(c.complaint_id)}
+                              className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all flex items-center gap-2"
+                            >
+                              <CheckCircle size={14} /> Close
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {c.resolution_note && (
-                    <div className="mb-8 p-6 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-3xl border border-emerald-500/20">
-                      <p className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-[0.2em] mb-3">Warden's Reply</p>
-                      <p className="text-sm font-black text-slate-900 dark:text-white tracking-tight leading-relaxed font-mono">
-                        <span className="text-emerald-500 mr-2">&gt;</span>{c.resolution_note}
-                      </p>
+                  {/* EVIDENCE HEADER/STRIP (BOTTOM) */}
+                  {(c.issue_image_url || c.resolution_image_url) && (
+                    <div className="bg-slate-50 dark:bg-white/5 border-t border-slate-100 dark:border-white/5 grid grid-cols-2">
+                      {c.issue_image_url ? (
+                        <div className="relative group/img aspect-video border-r border-slate-100 dark:border-white/5 overflow-hidden">
+                          <img src={c.issue_image_url} alt="Issue" className="w-full h-full object-cover transition-all duration-500" />
+                          <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                            <button onClick={() => setLightboxImage(c.issue_image_url)} className="p-3 bg-white text-slate-900 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Maximize2 size={20} /></button>
+                          </div>
+                          <div className="absolute top-3 left-3 px-2 py-1 bg-white/90 dark:bg-slate-900/90 rounded-md shadow-sm">
+                            <p className="text-[8px] font-black uppercase text-slate-500 tracking-tighter">Reported Evidence</p>
+                          </div>
+                        </div>
+                      ) : <div className="aspect-video flex items-center justify-center text-[8px] font-black uppercase text-slate-300 border-r border-slate-100 dark:border-white/5">No Image Provided</div>}
+
+                      {c.resolution_image_url ? (
+                        <div className="relative group/img aspect-video overflow-hidden">
+                          <img src={c.resolution_image_url} alt="Resolution" className="w-full h-full object-cover transition-all duration-500" />
+                          <div className="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                            <button onClick={() => setLightboxImage(c.resolution_image_url)} className="p-3 bg-white text-emerald-600 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Maximize2 size={20} /></button>
+                          </div>
+                          <div className="absolute top-3 left-3 px-2 py-1 bg-emerald-500/90 text-white rounded-md shadow-sm">
+                            <p className="text-[8px] font-black uppercase tracking-tighter">Resolution Proof</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="aspect-video flex flex-col items-center justify-center text-[8px] font-black uppercase text-slate-300">
+                          {c.status === 'PENDING' || c.status === 'IN_PROGRESS' ? 'Awaiting Fix' : 'No Proof Uploaded'}
+                        </div>
+                      )}
                     </div>
                   )}
-
-                  <div className="pt-8 border-t border-slate-100 dark:border-white/5 flex flex-wrap items-center justify-between gap-4 mt-auto">
-                    <div className="flex flex-col">
-                       <span className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-1">Support</span>
-                       <span className="text-[10px] font-black uppercase text-blue-500 tracking-wider">Hostel Management</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => deleteComplaint(c.complaint_id)} className="p-4 text-slate-300 dark:text-slate-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all"><Trash2 size={18} /></button>
-                      
-                      {c.status === 'RESOLVED' && (
-                        <>
-                          <button 
-                            onClick={() => reopenComplaint(c.complaint_id)}
-                            className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-500/20 transition-all flex items-center gap-2"
-                          >
-                            <RefreshCcw size={14} /> Reopen
-                          </button>
-                          <button 
-                            onClick={() => closeComplaint(c.complaint_id)}
-                            className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all flex items-center gap-2"
-                          >
-                            <CheckCircle size={14} /> Close
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </div>
                 </div>
               </motion.div>
             )) : (
@@ -372,6 +455,25 @@ const Complaints = () => {
           </AnimatePresence>
         </div>
       </section>
+
+      {/* --- LIGHTBOX MODAL --- */}
+      <AnimatePresence>
+        {lightboxImage && (
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4 sm:p-10"
+            onClick={() => setLightboxImage(null)}
+          >
+            <button className="absolute top-8 right-8 p-4 text-white hover:bg-white/10 rounded-full transition-all"><X size={32} /></button>
+            <motion.img 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              src={lightboxImage} alt="Full Evidence" 
+              className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
