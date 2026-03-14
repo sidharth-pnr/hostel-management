@@ -20,20 +20,16 @@ import {
   HelpCircle
 } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
-import BackgroundEffect from '../components/BackgroundEffect';
 
 const Landing = ({ isDark, setIsDark }) => {
   const [activeManual, setActiveManual] = useState('student');
 
   return (
-    <div className="min-h-screen bg-transparent transition-colors duration-500 selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-slate-950">
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-slate-950">
       
-      {/* Dynamic Global Cinematic Background */}
-      <BackgroundEffect />
-
       {/* 1. GLASS NAVIGATION BAR */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-white/10 px-6 py-3 rounded-2xl shadow-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-between bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 px-6 py-3 rounded-2xl shadow-sm">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-900 dark:bg-white rounded-xl flex items-center justify-center text-white dark:text-slate-900 shadow-lg animate-float">
               <Building2 size={22} />
@@ -63,15 +59,24 @@ const Landing = ({ isDark, setIsDark }) => {
       {/* 2. HERO SECTION */}
       <section className="relative min-h-[90vh] flex items-center justify-center pt-32 pb-24 px-6 overflow-hidden">
         
+        {/* Mesh Gradient Aura behind text */}
+        <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
+          <div className="relative w-full max-w-lg aspect-square">
+            <div className="absolute top-0 left-0 w-64 h-64 bg-teal-400/30 dark:bg-teal-500/20 rounded-full blur-[100px] animate-mesh-orbit" />
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-slate-400/30 dark:bg-slate-500/20 rounded-full blur-[100px] animate-mesh-orbit animation-delay-4000" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-400/30 dark:bg-blue-500/20 rounded-full blur-[100px] animate-mesh-orbit animation-delay-2000" />
+          </div>
+        </div>
+        
         <div className="max-w-5xl mx-auto text-center relative">
           {/* Glassmorphism Backdrop for Text Group */}
-          <div className="relative z-10 py-10 px-4">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/30 dark:bg-slate-800/30 backdrop-blur-md rounded-full mb-10 animate-fade-in border border-slate-200/50 dark:border-white/5">
+          <div className="relative z-10 backdrop-blur-[2px] py-10 px-4 rounded-[3rem]">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/50 dark:bg-slate-800/50 backdrop-blur-md rounded-full mb-10 animate-fade-in border border-slate-200/50 dark:border-slate-700/50">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
               </span>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-sans">Hostel Room Allocation and Complaint Management System</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-sans">Official Residential Management System</span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-serif font-black text-slate-900 dark:text-white tracking-tight leading-[1.1] animate-slide-up">
@@ -92,7 +97,7 @@ const Landing = ({ isDark, setIsDark }) => {
               </Link>
               <Link 
                 to="/login" 
-                className="w-full sm:w-auto px-10 py-5 bg-white/20 dark:bg-slate-900/20 backdrop-blur-md text-slate-900 dark:text-white border border-slate-200/50 dark:border-white/5 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-white/30 dark:hover:bg-slate-800 transition-all shadow-sm"
+                className="w-full sm:w-auto px-10 py-5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm"
               >
                 Resident Sign In
               </Link>
@@ -101,12 +106,12 @@ const Landing = ({ isDark, setIsDark }) => {
         </div>
       </section>
 
-      {/* 3. SYSTEM DETAILED DESCRIPTION */}
-      <section id="about" className="py-24 px-6 border-t border-slate-100 dark:border-white/5 bg-transparent">
+      {/* 3. SYSTEM DETAILED DESCRIPTION (New) */}
+      <section id="about" className="py-24 px-6 border-t border-slate-100 dark:border-slate-900">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="relative group">
-              <div className="absolute -inset-4 bg-gradient-to-tr from-slate-100/50 to-slate-200/50 dark:from-slate-800/20 dark:to-slate-900/20 rounded-[3rem] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
+              <div className="absolute -inset-4 bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800/50 dark:to-slate-900/50 rounded-[3rem] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
               <img 
                 src="https://www.cetkr.ac.in/images/hostel-3.jpg" 
                 alt="Modern Dormitory" 
@@ -129,12 +134,12 @@ const Landing = ({ isDark, setIsDark }) => {
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-6 bg-white/20 dark:bg-white/5 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-white/5">
+                  <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
                     <CheckCircle2 className="text-teal-500 mb-3" size={24} />
                     <h4 className="font-bold text-slate-900 dark:text-white mb-1">Room Automation</h4>
                     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Auto-matching based on preference and block availability.</p>
                   </div>
-                  <div className="p-6 bg-white/20 dark:bg-white/5 backdrop-blur-sm rounded-2xl border border-slate-100 dark:border-white/5">
+                  <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
                     <CheckCircle2 className="text-teal-500 mb-3" size={24} />
                     <h4 className="font-bold text-slate-900 dark:text-white mb-1">Ticket Lifecycle</h4>
                     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Track your complaint from 'Pending' to 'Resolved' in real-time.</p>
@@ -147,7 +152,7 @@ const Landing = ({ isDark, setIsDark }) => {
       </section>
 
       {/* 4. THE SCHOLAR'S PATH */}
-      <section id="process" className="py-32 bg-transparent">
+      <section id="process" className="py-32 bg-slate-50 dark:bg-slate-900/30">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="mb-20">
             <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-4">The Scholar's Path</h2>
@@ -183,10 +188,10 @@ const Landing = ({ isDark, setIsDark }) => {
         </div>
       </section>
 
-      {/* 5. REGISTRATION DEEP-DIVE */}
-      <section className="py-24 px-6 bg-transparent">
+      {/* 5. REGISTRATION DEEP-DIVE (New) */}
+      <section className="py-24 px-6 bg-white dark:bg-slate-950">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-slate-900 dark:bg-slate-900/80 backdrop-blur-md text-white rounded-[3rem] p-12 md:p-16 relative overflow-hidden shadow-2xl border border-white/5">
+          <div className="bg-slate-900 text-white rounded-[3rem] p-12 md:p-16 relative overflow-hidden shadow-2xl">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/10 rounded-full -ml-32 -mb-32 blur-3xl" />
             
@@ -238,8 +243,8 @@ const Landing = ({ isDark, setIsDark }) => {
         </div>
       </section>
 
-      {/* 6. HOW-TO-USE GUIDE */}
-      <section id="how-to" className="py-24 px-6 bg-transparent">
+      {/* 6. HOW-TO-USE GUIDE (New) */}
+      <section id="how-to" className="py-24 px-6 bg-slate-50 dark:bg-slate-900/30">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
             <div className="space-y-4">
@@ -247,7 +252,7 @@ const Landing = ({ isDark, setIsDark }) => {
               <p className="text-slate-400 uppercase font-black tracking-[0.3em] text-[10px]">A step-by-step operational guide</p>
             </div>
             
-            <div className="flex bg-white/20 dark:bg-slate-900/40 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200/50 dark:border-white/5">
+            <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
               <button 
                 onClick={() => setActiveManual('student')}
                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeManual === 'student' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
@@ -281,10 +286,10 @@ const Landing = ({ isDark, setIsDark }) => {
         </div>
       </section>
 
-      {/* 7. CONTACT US */}
-      <section id="contact" className="py-32 px-6 bg-transparent">
+      {/* 7. CONTACT US (New) */}
+      <section id="contact" className="py-32 px-6 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white/10 dark:bg-slate-900/30 backdrop-blur-md rounded-[3.5rem] border border-slate-200/50 dark:border-white/5 p-8 md:p-20 relative overflow-hidden">
+          <div className="bg-slate-50 dark:bg-slate-900/50 rounded-[3.5rem] border border-slate-100 dark:border-slate-800 p-8 md:p-20 relative overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10">
               <div className="space-y-8">
                 <div className="space-y-4">
@@ -299,7 +304,7 @@ const Landing = ({ isDark, setIsDark }) => {
                 </div>
               </div>
 
-              <div className="bg-white/40 dark:bg-slate-900/60 backdrop-blur-md p-10 rounded-[2.5rem] border border-slate-100 dark:border-white/10 shadow-xl">
+              <div className="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl">
                 <HelpCircle className="text-slate-900 dark:text-white mb-6" size={32} />
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 font-serif">Frequently Asked?</h3>
                 <div className="space-y-4">
@@ -313,7 +318,7 @@ const Landing = ({ isDark, setIsDark }) => {
       </section>
 
       {/* 8. FOOTER */}
-      <footer className="py-12 px-6 border-t border-slate-100 dark:border-white/5 bg-transparent text-center">
+      <footer className="py-12 px-6 border-t border-slate-100 dark:border-slate-900 text-center">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center gap-3 mb-6 grayscale opacity-30 animate-pulse-soft">
             <Building2 size={20} />
@@ -332,7 +337,7 @@ const Landing = ({ isDark, setIsDark }) => {
 // --- HELPER COMPONENTS ---
 
 const ProcessStep = ({ number, icon: Icon, title, desc }) => (
-  <div className="relative p-10 bg-white/20 dark:bg-white/5 backdrop-blur-md rounded-[3rem] border border-slate-200/50 dark:border-white/10 shadow-sm group hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+  <div className="relative p-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm group hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
     <div className="absolute top-6 right-8 text-4xl font-black text-slate-100 dark:text-slate-800 transition-colors group-hover:text-slate-200 dark:group-hover:text-slate-700">{number}</div>
     <div className="w-14 h-14 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl flex items-center justify-center mb-8 shadow-lg group-hover:rotate-12 transition-transform">
       <Icon size={24} />
@@ -343,8 +348,8 @@ const ProcessStep = ({ number, icon: Icon, title, desc }) => (
 );
 
 const ManualCard = ({ icon: Icon, title, desc }) => (
-  <div className="p-10 bg-white/20 dark:bg-white/5 backdrop-blur-md rounded-[2.5rem] border border-slate-100 dark:border-white/10 shadow-sm hover:shadow-xl transition-all group">
-    <div className="w-12 h-12 bg-slate-50/50 dark:bg-slate-800/50 text-slate-900 dark:text-white rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+  <div className="p-10 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group">
+    <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
       <Icon size={24} />
     </div>
     <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-wider text-sm mb-3">{title}</h4>
