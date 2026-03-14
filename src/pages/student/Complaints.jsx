@@ -112,9 +112,7 @@ const Complaints = () => {
 
     const loadingToast = toast.loading("Sending your complaint...");
     try {
-      const res = await axios.post(`${API_BASE}/complaints.php`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await axios.post(`${API_BASE}/complaints.php`, data);
       toast.dismiss(loadingToast);
       if (res.data.status === 'success') {
         toast.success("Complaint submitted successfully.");

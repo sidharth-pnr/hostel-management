@@ -7,11 +7,13 @@ import {
   Maximize2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { API_BASE, COLORS } from '../../config';
 
-const Complaints = ({ user }) => {
+const Complaints = () => {
+  const { user } = useOutletContext() || {};
   const [complaints, setComplaints] = useState([]);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('ALL'); // ALL, PENDING, IN_PROGRESS, RESOLVED, CLOSED
@@ -47,11 +49,10 @@ const Complaints = ({ user }) => {
         data.append('complaint_id', id);
         data.append('note', note || '');
         data.append('admin_name', user?.name || 'Warden');
+        data.append('role', 'admin'); // Identify as admin for backend security
         if (resImage) data.append('res_image', resImage);
         
-        res = await axios.post(`${API_BASE}/complaints.php`, data, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
+        res = await axios.post(`${API_BASE}/complaints.php`, data);
       } else {
         let status = action;
         if (action === 'in_progress') status = 'IN_PROGRESS';
