@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Building2, 
   ChevronRight, 
@@ -20,97 +21,180 @@ import {
   HelpCircle
 } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
+import BackgroundEffect from '../components/BackgroundEffect';
 
 const Landing = ({ isDark, setIsDark }) => {
   const [activeManual, setActiveManual] = useState('student');
 
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { duration: 0.8 } }
+  };
+
+  const slideUp = {
+    hidden: { y: 40, opacity: 0 },
+    show: { y: 0, opacity: 1, transition: { duration: 0.8, ease: "easeOut" } }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-slate-950">
+    <div className="min-h-screen transition-colors duration-500 selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-slate-950 overflow-x-hidden relative">
+      <BackgroundEffect />
       
       {/* 1. GLASS NAVIGATION BAR */}
-      <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-4">
+      <motion.nav 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="fixed top-0 left-0 right-0 z-50 px-6 py-4"
+      >
         <div className="max-w-7xl mx-auto flex items-center justify-between bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 px-6 py-3 rounded-2xl shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-slate-900 dark:bg-white rounded-xl flex items-center justify-center text-white dark:text-slate-900 shadow-lg animate-float">
+            <motion.div 
+              whileHover={{ rotate: 10, scale: 1.1 }}
+              className="w-10 h-10 bg-slate-900 dark:bg-white rounded-xl flex items-center justify-center text-white dark:text-slate-900 shadow-lg"
+            >
               <Building2 size={22} />
-            </div>
+            </motion.div>
             <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white uppercase">Campus <span className="text-slate-500 font-medium">Housing</span></span>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
-            <a href="#about" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">About System</a>
-            <a href="#process" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">Registration</a>
-            <a href="#how-to" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">Guide</a>
-            <a href="#contact" className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">Contact</a>
+            {['about', 'process', 'how-to', 'contact'].map((item) => (
+              <motion.a 
+                key={item}
+                href={`#${item}`} 
+                whileHover={{ y: -2 }}
+                className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+              >
+                {item.replace('-', ' ')} System
+              </motion.a>
+            ))}
           </div>
 
           <div className="flex items-center gap-4">
             <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
-            <Link 
-              to="/login" 
-              className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-2.5 rounded-xl font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-xl shadow-slate-900/10 dark:shadow-none"
-            >
-              Access Portal
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      {/* 2. HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center justify-center pt-32 pb-24 px-6 overflow-hidden">
-        
-        {/* Mesh Gradient Aura behind text */}
-        <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
-          <div className="relative w-full max-w-lg aspect-square">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-teal-400/30 dark:bg-teal-500/20 rounded-full blur-[100px] animate-mesh-orbit" />
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-slate-400/30 dark:bg-slate-500/20 rounded-full blur-[100px] animate-mesh-orbit animation-delay-4000" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-400/30 dark:bg-blue-500/20 rounded-full blur-[100px] animate-mesh-orbit animation-delay-2000" />
-          </div>
-        </div>
-        
-        <div className="max-w-5xl mx-auto text-center relative">
-          {/* Glassmorphism Backdrop for Text Group */}
-          <div className="relative z-10 backdrop-blur-[2px] py-10 px-4 rounded-[3rem]">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/50 dark:bg-slate-800/50 backdrop-blur-md rounded-full mb-10 animate-fade-in border border-slate-200/50 dark:border-slate-700/50">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
-              </span>
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-sans">Official Residential Management System</span>
-            </div>
-
-            <h1 className="text-5xl md:text-7xl font-serif font-black text-slate-900 dark:text-white tracking-tight leading-[1.1] animate-slide-up">
-              Your Academic Journey, <br />
-              <span className="text-slate-400 dark:text-slate-500 italic">Supported by a Better Home.</span>
-            </h1>
-
-            <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed mt-10 animate-slide-up [animation-delay:200ms]">
-              Experience a seamless digital ecosystem for hostel room allocation and rapid grievance resolution at CE Trikaripur.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12 animate-slide-up [animation-delay:400ms]">
-              <Link 
-                to="/register" 
-                className="w-full sm:w-auto px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-slate-900/20"
-              >
-                Apply for Admission <ArrowRight size={18} />
-              </Link>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link 
                 to="/login" 
-                className="w-full sm:w-auto px-10 py-5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm"
+                className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-2.5 rounded-xl font-bold text-sm shadow-xl shadow-slate-900/10 dark:shadow-none block"
               >
-                Resident Sign In
+                Access Portal
               </Link>
-            </div>
+            </motion.div>
           </div>
         </div>
+      </motion.nav>
+
+      {/* 2. HERO SECTION */}
+      <section className="relative min-h-screen flex items-center justify-center pt-32 pb-24 px-6 overflow-hidden">
+        <div className="max-w-5xl mx-auto text-center relative">
+          <motion.div 
+            initial="hidden"
+            animate="show"
+            variants={staggerContainer}
+            className="relative z-10"
+          >
+            {/* Main Wrapper - Persistent floating removed as requested */}
+            <div className="backdrop-blur-[2px] py-10 px-4 rounded-[3rem]">
+              <motion.div 
+                variants={slideUp}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100/50 dark:bg-slate-800/50 backdrop-blur-md rounded-full mb-10 border border-slate-200/50 dark:border-slate-700/50"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-sans">Official Residential Management System</span>
+              </motion.div>
+
+              <motion.h1 
+                variants={slideUp}
+                className="text-5xl md:text-7xl font-serif font-black text-slate-900 dark:text-white tracking-tight leading-[1.1]"
+              >
+                Your Academic Journey, <br />
+                <motion.span 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8, duration: 1 }}
+                  className="text-slate-400 dark:text-slate-500 italic"
+                >
+                  Supported by a Better Home.
+                </motion.span>
+              </motion.h1>
+
+              <motion.p 
+                variants={slideUp}
+                className="max-w-2xl mx-auto text-lg md:text-xl text-slate-500 dark:text-slate-400 font-medium leading-relaxed mt-10"
+              >
+                Experience a seamless digital ecosystem for hostel room allocation and rapid grievance resolution at CE Trikaripur.
+              </motion.p>
+
+              <motion.div 
+                variants={slideUp}
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-12"
+              >
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link 
+                    to="/register" 
+                    className="w-full sm:w-auto px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 shadow-2xl shadow-slate-900/20"
+                  >
+                    Apply for Admission <ArrowRight size={18} />
+                  </Link>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link 
+                    to="/login" 
+                    className="w-full sm:w-auto px-10 py-5 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm"
+                  >
+                    Resident Sign In
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Decorative Scroll Indicator - Moved lower and added more padding */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 1 }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
+        >
+          <span className="text-[8px] font-black uppercase tracking-[0.4em] text-slate-400">Discover More</span>
+          <motion.div 
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-px h-10 bg-gradient-to-b from-slate-400 to-transparent"
+          />
+        </motion.div>
       </section>
 
-      {/* 3. SYSTEM DETAILED DESCRIPTION (New) */}
-      <section id="about" className="py-24 px-6 border-t border-slate-100 dark:border-slate-900">
+      {/* 3. SYSTEM DETAILED DESCRIPTION */}
+      <motion.section 
+        id="about" 
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeIn}
+        className="py-24 px-6 border-t border-slate-100 dark:border-slate-900"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="relative group">
+            <motion.div 
+              variants={slideUp}
+              className="relative group"
+            >
               <div className="absolute -inset-4 bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800/50 dark:to-slate-900/50 rounded-[3rem] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
               <img 
                 src="https://www.cetkr.ac.in/images/hostel-3.jpg" 
@@ -120,46 +204,56 @@ const Landing = ({ isDark, setIsDark }) => {
               <div className="absolute bottom-8 left-8 right-8 p-6 backdrop-blur-md bg-white/10 border border-white/20 rounded-3xl text-white">
                 <p className="text-sm font-bold opacity-90 italic">"Technology at the service of comfort. Our goal is to make campus living as easy as possible."</p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="space-y-8 animate-slide-up">
-              <div className="space-y-4">
+            <div className="space-y-8">
+              <motion.div variants={slideUp} className="space-y-4">
                 <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">Digital Living, <br/>Simplified & Transparent.</h2>
-                <div className="h-1.5 w-20 bg-slate-900 dark:bg-white rounded-full" />
-              </div>
+                <motion.div 
+                  initial={{ width: 0 }}
+                  whileInView={{ width: 80 }}
+                  transition={{ duration: 1, delay: 0.5 }}
+                  className="h-1.5 bg-slate-900 dark:bg-white rounded-full" 
+                />
+              </motion.div>
               
               <div className="space-y-6">
-                <p className="text-slate-500 dark:text-slate-400 text-lg leading-relaxed">
+                <motion.p variants={slideUp} className="text-slate-500 dark:text-slate-400 text-lg leading-relaxed">
                   Campus Housing is more than just a booking portal. It's a comprehensive management system designed to eliminate the friction of traditional hostel administration. 
-                </p>
+                </motion.p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <CheckCircle2 className="text-teal-500 mb-3" size={24} />
-                    <h4 className="font-bold text-slate-900 dark:text-white mb-1">Room Automation</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Auto-matching based on preference and block availability.</p>
-                  </div>
-                  <div className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
-                    <CheckCircle2 className="text-teal-500 mb-3" size={24} />
-                    <h4 className="font-bold text-slate-900 dark:text-white mb-1">Ticket Lifecycle</h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Track your complaint from 'Pending' to 'Resolved' in real-time.</p>
-                  </div>
-                </div>
+                <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FeatureMiniCard 
+                    title="Room Automation" 
+                    desc="Auto-matching based on preference and block availability."
+                  />
+                  <FeatureMiniCard 
+                    title="Ticket Lifecycle" 
+                    desc="Track your complaint from 'Pending' to 'Resolved' in real-time."
+                  />
+                </motion.div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 4. THE SCHOLAR'S PATH */}
-      <section id="process" className="py-32 bg-slate-50 dark:bg-slate-900/30">
+      <motion.section 
+        id="process" 
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        variants={fadeIn}
+        className="py-32 bg-slate-50 dark:bg-slate-900/30"
+      >
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="mb-20">
+          <motion.div variants={slideUp} className="mb-20">
             <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-4">The Scholar's Path</h2>
             <p className="text-slate-400 uppercase font-black tracking-[0.3em] text-[10px]">Your 4-Step Journey to Accommodation</p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <ProcessStep 
               number="01" 
               icon={GraduationCap} 
@@ -184,75 +278,74 @@ const Landing = ({ isDark, setIsDark }) => {
               title="Concierge Care" 
               desc="Our maintenance team is one click away via the ticketing system." 
             />
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* 5. REGISTRATION DEEP-DIVE (New) */}
-      <section className="py-24 px-6 bg-white dark:bg-slate-950">
+      {/* 5. REGISTRATION DEEP-DIVE */}
+      <motion.section 
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        variants={fadeIn}
+        className="py-24 px-6 bg-white dark:bg-slate-950"
+      >
         <div className="max-w-4xl mx-auto">
-          <div className="bg-slate-900 text-white rounded-[3rem] p-12 md:p-16 relative overflow-hidden shadow-2xl">
+          <motion.div 
+            variants={slideUp}
+            className="bg-slate-900 text-white rounded-[3rem] p-12 md:p-16 relative overflow-hidden shadow-2xl"
+          >
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/10 rounded-full -ml-32 -mb-32 blur-3xl" />
             
             <div className="relative z-10 space-y-10">
               <div className="text-center">
-                <UserPlus className="mx-auto mb-6 text-teal-400" size={48} />
+                <motion.div 
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity }}
+                >
+                  <UserPlus className="mx-auto mb-6 text-teal-400" size={48} />
+                </motion.div>
                 <h2 className="text-3xl font-black tracking-tight mb-4">What you'll need to register</h2>
                 <p className="text-slate-400 text-sm uppercase font-black tracking-widest">Preparation Guide</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center flex-shrink-0 font-bold">1</div>
-                  <div>
-                    <h4 className="font-bold mb-1">University ID</h4>
-                    <p className="text-slate-400 text-xs leading-relaxed">Your official registration number provided by CE Trikaripur.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center flex-shrink-0 font-bold">2</div>
-                  <div>
-                    <h4 className="font-bold mb-1">Valid Email</h4>
-                    <p className="text-slate-400 text-xs leading-relaxed">Required for account security and important notifications.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center flex-shrink-0 font-bold">3</div>
-                  <div>
-                    <h4 className="font-bold mb-1">Academic Year</h4>
-                    <p className="text-slate-400 text-xs leading-relaxed">Your current semester and year of study for block priority.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center flex-shrink-0 font-bold">4</div>
-                  <div>
-                    <h4 className="font-bold mb-1">Department Info</h4>
-                    <p className="text-slate-400 text-xs leading-relaxed">Helps us organize residents by faculty for community events.</p>
-                  </div>
-                </div>
-              </div>
+              <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <PrepItem num="1" title="University ID" desc="Your official registration number provided by CE Trikaripur." />
+                <PrepItem num="2" title="Valid Email" desc="Required for account security and important notifications." />
+                <PrepItem num="3" title="Academic Year" desc="Your current semester and year of study for block priority." />
+                <PrepItem num="4" title="Department Info" desc="Helps us organize residents by faculty for community events." />
+              </motion.div>
 
               <div className="pt-6 flex justify-center">
-                <Link to="/register" className="group flex items-center gap-3 bg-white text-slate-900 px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-all">
-                  Start Registration Now <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </Link>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Link to="/register" className="group flex items-center gap-3 bg-white text-slate-900 px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest">
+                    Start Registration Now <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </motion.div>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* 6. HOW-TO-USE GUIDE (New) */}
-      <section id="how-to" className="py-24 px-6 bg-slate-50 dark:bg-slate-900/30">
+      {/* 6. HOW-TO-USE GUIDE */}
+      <motion.section 
+        id="how-to" 
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        variants={fadeIn}
+        className="py-24 px-6 bg-slate-50 dark:bg-slate-900/30"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-            <div className="space-y-4">
+            <motion.div variants={slideUp} className="space-y-4">
               <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">How to use the platform</h2>
               <p className="text-slate-400 uppercase font-black tracking-[0.3em] text-[10px]">A step-by-step operational guide</p>
-            </div>
+            </motion.div>
             
-            <div className="flex bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <motion.div variants={slideUp} className="flex bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800">
               <button 
                 onClick={() => setActiveManual('student')}
                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeManual === 'student' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' : 'text-slate-400 hover:text-slate-600'}`}
@@ -265,31 +358,50 @@ const Landing = ({ isDark, setIsDark }) => {
               >
                 For Wardens
               </button>
-            </div>
+            </motion.div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {activeManual === 'student' ? (
-              <>
-                <ManualCard icon={ListChecks} title="Step 1: Check-In" desc="Log in and check your 'Desk' for the status of your admission approval." />
-                <ManualCard icon={Map} title="Step 2: Room Selection" desc="Once approved, head to 'Stay' to browse available rooms and blocks." />
-                <ManualCard icon={MessageSquare} title="Step 3: Support" desc="Need something fixed? Go to 'Support' to create a high-priority ticket." />
-              </>
-            ) : (
-              <>
-                <ManualCard icon={UserPlus} title="Step 1: Approvals" desc="Review pending scholar applications in the 'New Scholars' tab." />
-                <ManualCard icon={ShieldCheck} title="Step 2: Monitoring" desc="Use the 'Overview' dashboard to track hostel occupancy and urgent issues." />
-                <ManualCard icon={Clock} title="Step 3: Resolution" desc="View grievances, assign staff, and mark tickets as 'Resolved' when complete." />
-              </>
-            )}
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div 
+              key={activeManual}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
+              {activeManual === 'student' ? (
+                <>
+                  <ManualCard icon={ListChecks} title="Step 1: Check-In" desc="Log in and check your 'Desk' for the status of your admission approval." />
+                  <ManualCard icon={Map} title="Step 2: Room Selection" desc="Once approved, head to 'Stay' to browse available rooms and blocks." />
+                  <ManualCard icon={MessageSquare} title="Step 3: Support" desc="Need something fixed? Go to 'Support' to create a high-priority ticket." />
+                </>
+              ) : (
+                <>
+                  <ManualCard icon={UserPlus} title="Step 1: Approvals" desc="Review pending scholar applications in the 'New Scholars' tab." />
+                  <ManualCard icon={ShieldCheck} title="Step 2: Monitoring" desc="Use the 'Overview' dashboard to track hostel occupancy and urgent issues." />
+                  <ManualCard icon={Clock} title="Step 3: Resolution" desc="View grievances, assign staff, and mark tickets as 'Resolved' when complete." />
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </section>
+      </motion.section>
 
-      {/* 7. CONTACT US (New) */}
-      <section id="contact" className="py-32 px-6 bg-white dark:bg-slate-950">
+      {/* 7. CONTACT US */}
+      <motion.section 
+        id="contact" 
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        variants={fadeIn}
+        className="py-32 px-6 bg-white dark:bg-slate-950"
+      >
         <div className="max-w-7xl mx-auto">
-          <div className="bg-slate-50 dark:bg-slate-900/50 rounded-[3.5rem] border border-slate-100 dark:border-slate-800 p-8 md:p-20 relative overflow-hidden">
+          <motion.div 
+            variants={slideUp}
+            className="bg-slate-50 dark:bg-slate-900/50 rounded-[3.5rem] border border-slate-100 dark:border-slate-800 p-8 md:p-20 relative overflow-hidden"
+          >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 relative z-10">
               <div className="space-y-8">
                 <div className="space-y-4">
@@ -297,33 +409,40 @@ const Landing = ({ isDark, setIsDark }) => {
                   <p className="text-slate-500 dark:text-slate-400 font-medium">Our administrative team is here to assist you with any housing queries or technical difficulties.</p>
                 </div>
 
-                <div className="space-y-6">
+                <motion.div variants={staggerContainer} className="space-y-6">
                   <ContactItem icon={Mail} label="Administrative Support" value="housing.support@cet.ac.in" />
                   <ContactItem icon={Phone} label="Warden's Office (9AM - 5PM)" value="+91 467 2250311" />
                   <ContactItem icon={MapPin} label="Office Location" value="Admin Block, CE Trikaripur, Kerala" />
-                </div>
+                </motion.div>
               </div>
 
-              <div className="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl">
+              <motion.div 
+                whileHover={{ y: -5 }}
+                className="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl"
+              >
                 <HelpCircle className="text-slate-900 dark:text-white mb-6" size={32} />
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 font-serif">Frequently Asked?</h3>
                 <div className="space-y-4">
                   <FAQMini question="Lost your password?" answer="Contact the Chief Warden's office with your University ID for a secure reset." />
                   <FAQMini question="Emergency after hours?" answer="Call the 24/7 security desk at Ext. 101 for immediate assistance." />
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 8. FOOTER */}
       <footer className="py-12 px-6 border-t border-slate-100 dark:border-slate-900 text-center">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-center gap-3 mb-6 grayscale opacity-30 animate-pulse-soft">
+          <motion.div 
+            animate={{ opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity }}
+            className="flex items-center justify-center gap-3 mb-6 grayscale"
+          >
             <Building2 size={20} />
             <span className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Campus Housing</span>
-          </div>
+          </motion.div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
             Official System of College of Engineering Trikaripur • Designed by Group 15 • 2026
           </p>
@@ -336,29 +455,57 @@ const Landing = ({ isDark, setIsDark }) => {
 
 // --- HELPER COMPONENTS ---
 
+const FeatureMiniCard = ({ title, desc }) => (
+  <motion.div 
+    variants={{ hidden: { y: 20, opacity: 0 }, show: { y: 0, opacity: 1 } }}
+    whileHover={{ y: -5, borderColor: 'rgb(20, 184, 166)' }}
+    className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800 transition-all"
+  >
+    <CheckCircle2 className="text-teal-500 mb-3" size={24} />
+    <h4 className="font-bold text-slate-900 dark:text-white mb-1">{title}</h4>
+    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{desc}</p>
+  </motion.div>
+);
+
 const ProcessStep = ({ number, icon: Icon, title, desc }) => (
-  <div className="relative p-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm group hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+  <motion.div 
+    variants={{ hidden: { y: 30, opacity: 0 }, show: { y: 0, opacity: 1 } }}
+    className="relative p-10 bg-white dark:bg-slate-900 rounded-[3rem] border border-slate-200/60 dark:border-slate-800 shadow-sm group hover:shadow-xl transition-all duration-500 hover:-translate-y-2"
+  >
     <div className="absolute top-6 right-8 text-4xl font-black text-slate-100 dark:text-slate-800 transition-colors group-hover:text-slate-200 dark:group-hover:text-slate-700">{number}</div>
     <div className="w-14 h-14 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl flex items-center justify-center mb-8 shadow-lg group-hover:rotate-12 transition-transform">
       <Icon size={24} />
     </div>
     <h3 className="text-xl font-black text-slate-900 dark:text-white mb-4 leading-tight">{title}</h3>
     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{desc}</p>
-  </div>
+  </motion.div>
+);
+
+const PrepItem = ({ num, title, desc }) => (
+  <motion.div variants={{ hidden: { x: -20, opacity: 0 }, show: { x: 0, opacity: 1 } }} className="flex items-start gap-4">
+    <div className="w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center flex-shrink-0 font-bold">{num}</div>
+    <div>
+      <h4 className="font-bold mb-1">{title}</h4>
+      <p className="text-slate-400 text-xs leading-relaxed">{desc}</p>
+    </div>
+  </motion.div>
 );
 
 const ManualCard = ({ icon: Icon, title, desc }) => (
-  <div className="p-10 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group">
+  <motion.div 
+    whileHover={{ y: -5, scale: 1.02 }}
+    className="p-10 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-xl transition-all group"
+  >
     <div className="w-12 h-12 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
       <Icon size={24} />
     </div>
     <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-wider text-sm mb-3">{title}</h4>
     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{desc}</p>
-  </div>
+  </motion.div>
 );
 
 const ContactItem = ({ icon: Icon, label, value }) => (
-  <div className="flex items-center gap-5">
+  <motion.div variants={{ hidden: { y: 10, opacity: 0 }, show: { y: 0, opacity: 1 } }} className="flex items-center gap-5">
     <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-800 flex items-center justify-center text-slate-900 dark:text-white shadow-sm">
       <Icon size={20} />
     </div>
@@ -366,7 +513,7 @@ const ContactItem = ({ icon: Icon, label, value }) => (
       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">{label}</p>
       <p className="text-sm font-bold text-slate-900 dark:text-white">{value}</p>
     </div>
-  </div>
+  </motion.div>
 );
 
 const FAQMini = ({ question, answer }) => (
