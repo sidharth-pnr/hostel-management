@@ -114,7 +114,7 @@ const Landing = ({ isDark, setIsDark }) => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500"></span>
                 </span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-sans">Official Residential Management System</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-sans">Hostel Room And Complaint Management System</span>
               </motion.div>
 
               <motion.h1 

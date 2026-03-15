@@ -69,11 +69,11 @@ export const StudentSidebar = ({ user, isDark, setIsDark }) => {
 
       {/* Navigation */}
       <nav className="flex items-center gap-1">
-        <NavItem to="/student" icon={LayoutDashboard} label="Desk" />
-        <NavItem to="/student/book" icon={BedDouble} label="Stay" />
-        <NavItem to="/student/complaints" icon={ClipboardList} label="Support" />
-        <NavItem to="/student/profile" icon={UserCircle} label="Identity" />
-        <NavItem to="/student/about" icon={Info} label="Guide" />
+        <NavItem to="/student" icon={LayoutDashboard} label="Dashboard" />
+        <NavItem to="/student/book" icon={BedDouble} label="Book Room" />
+        <NavItem to="/student/complaints" icon={ClipboardList} label="Complaints" />
+        <NavItem to="/student/profile" icon={UserCircle} label="Profile" />
+        <NavItem to="/student/about" icon={Info} label="About" />
       </nav>
 
       {/* Profile & Controls */}

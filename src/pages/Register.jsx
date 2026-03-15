@@ -98,7 +98,7 @@ const Register = ({ isDark, setIsDark }) => {
             <div className="space-y-3 text-center sm:text-left">
               <div className="flex items-center gap-3 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 w-fit rounded-full border border-slate-100 dark:border-slate-800 mx-auto sm:mx-0">
                 <Sparkles size={12} className="text-teal-500" />
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Scholar Registry</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Student Register</span>
               </div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none">New <span className="text-slate-400">Admission</span></h1>
             </div>
@@ -171,7 +171,7 @@ const Register = ({ isDark, setIsDark }) => {
 
                 {/* Full Width Password */}
                 <div className="space-y-1.5">
-                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Set Password</label>
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
                   <input 
                     type="password" required 
                     className="w-full p-3.5 bg-slate-50 dark:bg-slate-900 border-none text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all font-bold text-sm"
@@ -193,7 +193,7 @@ const Register = ({ isDark, setIsDark }) => {
             
             <div className="pt-6 border-t border-slate-50 dark:border-slate-900 text-center">
               <p className="text-[11px] font-bold text-slate-400">
-                Member? <Link to="/login" className="text-slate-900 dark:text-white font-black hover:underline decoration-2 underline-offset-4 ml-1">Secure Sign In</Link>
+                Already a Member? <Link to="/login" className="text-slate-900 dark:text-white font-black hover:underline decoration-2 underline-offset-4 ml-1">Sign In</Link>
               </p>
             </div>
           </div>

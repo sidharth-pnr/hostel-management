@@ -139,7 +139,7 @@ const RoomManagement = () => {
       {/* 1. INVENTORY PULSE - Interactive Hover Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <PulseStat icon={Home} label="Total Inventory" value={stats.total} subValue="Configured Units" color="blue" />
+          <PulseStat icon={Home} label="Total Rooms" value={stats.total} subValue="Configured Blocks" color="blue" />
         </div>
         <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <PulseStat icon={Users} label="Bed Capacity" value={stats.capacity} subValue="Max Occupancy" color="teal" />
@@ -173,7 +173,7 @@ const RoomManagement = () => {
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
             >
-              <option value="All" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Units</option>
+              <option value="All" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">All Blocks</option>
               <option value="Available" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Available</option>
               <option value="Full" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Full Capacity</option>
             </select>

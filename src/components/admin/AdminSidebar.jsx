@@ -66,9 +66,9 @@ export const AdminSidebar = ({ user, isDark, setIsDark }) => {
 
       {/* Navigation */}
       <nav className="flex items-center gap-1">
-        <NavItem to="/admin" icon={LayoutDashboard} label="Overview" />
+        <NavItem to="/admin" icon={LayoutDashboard} label="Dashboard" />
         <NavItem to="/admin/approvals" icon={UserPlus} label="New Students" />
-        <NavItem to="/admin/students" icon={Users} label="Residents" />
+        <NavItem to="/admin/students" icon={Users} label="Students" />
         <NavItem to="/admin/complaints" icon={ClipboardList} label="Complaints" />
         <NavItem to="/admin/rooms" icon={LayoutGrid} label="Rooms" />
         {user?.role === 'SUPER' && (

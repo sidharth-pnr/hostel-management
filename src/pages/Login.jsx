@@ -105,7 +105,7 @@ const Login = ({ setUser, isDark, setIsDark }) => {
                 onClick={() => setRole('student')} 
                 className={`flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${role === 'student' ? 'bg-white dark:bg-slate-800 shadow-lg text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-600'}`}
               >
-                <UserCircle size={12} /> Resident
+                <UserCircle size={12} /> Student
               </button>
               <button 
                 onClick={() => setRole('admin')} 
@@ -120,7 +120,7 @@ const Login = ({ setUser, isDark, setIsDark }) => {
               <div className="space-y-4">
                 <div className="space-y-1.5">
                   <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                    {role === 'admin' ? "Warden Identifier" : "University ID"}
+                    {role === 'admin' ? "Username" : "University ID"}
                   </label>
                   <input 
                     type="text" required 
@@ -132,7 +132,7 @@ const Login = ({ setUser, isDark, setIsDark }) => {
                 </div>
                 
                 <div className="space-y-1.5">
-                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Secret Key</label>
+                  <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
                   <input 
                     type="password" required 
                     className="w-full p-3.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/50 text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all font-bold text-sm" 
@@ -147,14 +147,14 @@ const Login = ({ setUser, isDark, setIsDark }) => {
                 disabled={isLoading}
                 className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-900/10"
               >
-                {isLoading ? "Validating..." : "Authorize Entry"}
+                {isLoading ? "Validating..." : "Sign In"}
                 {!isLoading && <ArrowRight size={16} />}
               </button>
             </form>
             
             <div className="pt-6 border-t border-slate-50 dark:border-slate-900 text-center">
               <p className="text-[11px] font-bold text-slate-400">
-                New to Campus? <Link to="/register" className="text-slate-900 dark:text-white font-black hover:underline decoration-2 underline-offset-4 ml-1">Apply for Admission</Link>
+                New to College Hostel? <Link to="/register" className="text-slate-900 dark:text-white font-black hover:underline decoration-2 underline-offset-4 ml-1">Register Now</Link>
               </p>
             </div>
           </div>

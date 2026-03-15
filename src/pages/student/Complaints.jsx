@@ -212,7 +212,7 @@ const Complaints = () => {
                <div className="space-y-2">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500">Support Center</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-500">Complaints Center</p>
                   </div>
                   <h2 className="text-4xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">New Complaint.</h2>
                </div>

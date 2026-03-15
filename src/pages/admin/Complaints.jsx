@@ -151,7 +151,7 @@ const Complaints = () => {
                   : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
-                {tab === 'RESOLVED' ? 'FIXED' : tab.replace('_', ' ')}
+                {tab === 'RESOLVED' ? 'RESOLVED' : tab.replace('_', ' ')}
               </button>
             ))}
           </div>
@@ -275,7 +275,7 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
         <div className="relative pl-6 space-y-4 mb-8 before:absolute before:left-[5px] before:top-1.5 before:bottom-1.5 before:w-[2px] before:bg-slate-100 dark:before:bg-slate-800">
            <TimelineItem icon={Timer} label="Reported" time={c.created_at} active />
            {c.in_progress_at && <TimelineItem icon={Clock} label="Started" time={c.in_progress_at} highlight />}
-           {c.resolved_at && <TimelineItem icon={CheckCircle2} label="Fixed" time={c.resolved_at} success />}
+           {c.resolved_at && <TimelineItem icon={CheckCircle2} label="Resolved" time={c.resolved_at} success />}
         </div>
 
         <div className="space-y-4">
@@ -284,7 +284,7 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
               onClick={() => handleAction(c.complaint_id, 'in_progress')} 
               className="w-full bg-teal-600 dark:bg-teal-500 text-white dark:text-slate-900 py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-teal-500/20 group"
             >
-              Start Fixing <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              Started Fixing <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
           )}
           
@@ -319,7 +319,7 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
               </div>
 
               <button className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-800 dark:hover:bg-slate-100 transition-all active:scale-95 shadow-xl">
-                Mark as Fixed
+                Mark as Resolved
               </button>
             </form>
           )}
@@ -380,7 +380,7 @@ const StatusBadge = ({ status }) => {
   const config = {
     PENDING: { label: 'Pending', color: 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400' },
     IN_PROGRESS: { label: 'In Progress', color: 'bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400' },
-    RESOLVED: { label: 'Fixed', color: 'bg-slate-900 dark:bg-white text-white dark:text-slate-900' },
+    RESOLVED: { label: 'Resolved', color: 'bg-slate-900 dark:bg-white text-white dark:text-slate-900' },
     CLOSED: { label: 'Closed', color: 'bg-slate-900 dark:bg-white text-white dark:text-slate-900' }
   };
   const { label, color } = config[status] || config.PENDING;

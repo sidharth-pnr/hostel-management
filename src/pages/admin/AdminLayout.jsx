@@ -11,7 +11,7 @@ const AdminLayout = ({ user, isDark, setIsDark }) => {
     const segment = path.split('/').pop();
     // Special cases for better naming
     if (segment === 'approvals') return 'New Student Approvals';
-    if (segment === 'students') return 'Resident Directory';
+    if (segment === 'students') return 'Student Management';
     if (segment === 'complaints') return 'Complaints Management';
     if (segment === 'rooms') return 'Room Infrastructure';
     return segment.charAt(0).toUpperCase() + segment.slice(1);

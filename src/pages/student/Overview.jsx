@@ -158,7 +158,7 @@ const StudentOverview = () => {
                 <div className="p-8 sm:p-10 space-y-10">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-[9px] font-black uppercase tracking-widest text-blue-500">Resident Info</p>
+                      <p className="text-[9px] font-black uppercase tracking-widest text-blue-500">Student Info</p>
                       <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">My Profile.</h3>
                     </div>
                     <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center border border-slate-200 dark:border-white/10">
@@ -350,7 +350,7 @@ const StudentOverview = () => {
 
                 <div className="space-y-3 bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-slate-100 dark:border-white/5">
                   <div className="flex justify-between items-center">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Allocated Unit</span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Allocated Block</span>
                     <span className="font-black text-slate-900 dark:text-white uppercase text-sm">Room {room.approved_room_number}</span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -367,14 +367,14 @@ const StudentOverview = () => {
                       active={paymentMethod === 'MPESA'} 
                       onClick={() => setPaymentMethod('MPESA')}
                       icon={Smartphone}
-                      label="M-Pesa Express"
-                      desc="Instant STK Push"
+                      label="UPI / Mobile Money"
+                      desc="Instant Mobile Payments"
                     />
                     <PaymentOption 
                       active={paymentMethod === 'CARD'} 
                       onClick={() => setPaymentMethod('CARD')}
                       icon={Globe}
-                      label="Visa / Mastercard"
+                      label="Card Payment"
                       desc="Credit or Debit Card"
                     />
                     <PaymentOption 
@@ -382,7 +382,7 @@ const StudentOverview = () => {
                       onClick={() => setPaymentMethod('BANK')}
                       icon={Wallet}
                       label="Bank Transfer"
-                      desc="EFT / RTGS / Cash"
+                      desc="net banking or mobile banking"
                     />
                   </div>
                 </div>
@@ -392,7 +392,7 @@ const StudentOverview = () => {
                     onClick={handlePayment}
                     className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-5 rounded-xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
                   >
-                    Authorize Payment
+                    Comfirm Payment
                   </button>
                   <button 
                     onClick={() => setShowPaymentModal(false)}
