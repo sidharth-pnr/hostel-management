@@ -5,7 +5,7 @@ import {
   UserPlus, CheckCircle2, XCircle, GraduationCap, 
   Search, Calendar, Clock, Building2, User,
   CheckCircle, ShieldCheck, Activity, ArrowRight,
-  Info
+  Info, Phone
 } from 'lucide-react';
 import { API_BASE } from '../../config';
 
@@ -155,9 +155,10 @@ const ApplicationDossier = ({ student: s, onApprove, onReject }) => {
         </div>
 
         {/* Academic Details */}
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <DetailBox icon={Building2} label="Academic Faculty" value={s.department} />
           <DetailBox icon={GraduationCap} label="Course Year" value={`Year ${s.year}`} />
+          <DetailBox icon={Phone} label="Contact Number" value={s.phone || 'Not Provided'} />
         </div>
 
         {/* Action Decision Bar */}
