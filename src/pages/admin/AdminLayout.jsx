@@ -25,14 +25,6 @@ const AdminLayout = ({ user, isDark, setIsDark }) => {
       {/* 2. Main content with stable padding */}
       <main className="pt-32 px-6 pb-12">
         <div className="max-w-7xl mx-auto min-h-[80vh]">
-          {/* Section Header */}
-          <div className="mb-10">
-            <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-[0.3em] mb-2 ml-1">Management Suite</p>
-            <h1 className="text-4xl font-serif font-black text-slate-900 dark:text-white tracking-tight leading-none">
-              {getPageTitle()}
-            </h1>
-          </div>
-
           {/* Page Content with permission context */}
           <Outlet context={{ user }} />
         </div>

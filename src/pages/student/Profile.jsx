@@ -219,18 +219,9 @@ const Profile = () => {
           </div>
         )}
       </div>
-
-      {/* 4. FOOTER STATS */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-60">
-         <MiniStat icon={Activity} label="Status" val="OK" />
-         <MiniStat icon={Fingerprint} label="Access" val="PRIMARY" />
-         <MiniStat icon={Globe} label="Portal" val="TRK-01" />
-         <MiniStat icon={Settings} label="Session" val="LIVE" />
       </div>
-    </div>
-  );
-};
-
+      );
+      };
 // --- SUB-COMPONENTS ---
 
 const MiniNode = ({ icon: Icon, label, val, color }) => (

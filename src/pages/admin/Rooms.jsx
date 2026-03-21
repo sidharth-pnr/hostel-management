@@ -138,22 +138,22 @@ const RoomManagement = () => {
       
       {/* 1. INVENTORY PULSE - Interactive Hover Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
+        <div>
           <PulseStat icon={Home} label="Total Rooms" value={stats.total} subValue="Configured Blocks" color="blue" />
         </div>
-        <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
+        <div>
           <PulseStat icon={Users} label="Bed Capacity" value={stats.capacity} subValue="Max Occupancy" color="teal" />
         </div>
-        <div className="animate-slide-up" style={{ animationDelay: '0.3s' }}>
+        <div>
           <PulseStat icon={UserCheck} label="Beds Occupied" value={stats.occupied} subValue="Active Residents" color="orange" progress={stats.capacity > 0 ? (stats.occupied / stats.capacity) * 100 : 0} />
         </div>
-        <div className="animate-slide-up" style={{ animationDelay: '0.4s' }}>
+        <div>
           <PulseStat icon={UserMinus} label="Beds Available" value={stats.available} subValue="Current Vacancy" color="red" />
         </div>
       </div>
 
       {/* SEARCH, SORT & FILTER BAR */}
-      <div className="bg-white dark:bg-slate-900/50 backdrop-blur-md p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-6 animate-slide-up shadow-sm" style={{ animationDelay: '0.45s' }}>
+      <div className="bg-white dark:bg-slate-900/50 backdrop-blur-md p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-6 shadow-sm">
         <div className="flex-1 min-w-[280px] relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={18} />
           <input 
@@ -200,7 +200,7 @@ const RoomManagement = () => {
         <div className="xl:col-span-8 space-y-10">
           {Object.entries(roomsByBlock).length > 0 ? Object.entries(roomsByBlock).sort().map(([block, blockRooms], bIndex) => (
             <div key={block} className="space-y-6">
-              <div className="flex items-center justify-between px-4 animate-fade-in" style={{ animationDelay: `${0.5 + bIndex * 0.1}s` }}>
+              <div className="flex items-center justify-between px-4">
                 <h3 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center text-sm">
                     {block}
@@ -214,7 +214,7 @@ const RoomManagement = () => {
               
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-4">
                 {blockRooms.map((room, rIndex) => (
-                  <div key={room.room_id} className="animate-slide-up" style={{ animationDelay: `${0.6 + rIndex * 0.05}s` }}>
+                  <div key={room.room_id}>
                     <RoomTile 
                       room={room} 
                       onView={() => viewOccupants(room)} 
@@ -225,7 +225,7 @@ const RoomManagement = () => {
               </div>
             </div>
           )) : (
-            <div className="py-32 bg-white dark:bg-slate-900/30 rounded-[3rem] border border-dashed border-slate-200 dark:border-slate-800 text-center animate-fade-in">
+            <div className="py-32 bg-white dark:bg-slate-900/30 rounded-[3rem] border border-dashed border-slate-200 dark:border-slate-800 text-center">
               <Activity size={64} strokeWidth={1} className="mx-auto mb-6 text-slate-200 dark:text-slate-700" />
               <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Infrastructure Empty</h3>
               <p className="text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest text-[10px] mt-2">No hostel blocks have been configured yet</p>
@@ -235,7 +235,7 @@ const RoomManagement = () => {
 
         {/* 3. CONFIGURATION CONSOLE (RIGHT) - ONLY SUPER */}
         {user?.role === 'SUPER' && (
-          <div className="xl:col-span-4 sticky top-32 animate-slide-up" style={{ animationDelay: '0.5s' }}>
+          <div className="xl:col-span-4 sticky top-32">
             <div className="bg-white dark:bg-slate-900/50 backdrop-blur-sm p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl transition-shadow group">
               <div className="flex items-center justify-between mb-8">
                 <div>

@@ -132,8 +132,6 @@ const BookRoom = () => {
     }
   };
 
-  const slideUp = { hidden: { y: 20, opacity: 0 }, show: { y: 0, opacity: 1, transition: { duration: 0.6 } } };
-
   // 1. Pending Request View
   if (!isLoading && studentStatus?.status === 'PENDING') return (
     <div className="max-w-4xl mx-auto animate-in fade-in duration-700">
@@ -174,33 +172,6 @@ const BookRoom = () => {
       <div className="space-y-12 animate-in fade-in duration-700">
         <BackgroundEffect />
         
-        {/* HERO SECTION */}
-        <section className="relative flex flex-col items-center text-center pt-10 pb-16">
-          <motion.div variants={slideUp} initial="hidden" animate="show" className="space-y-8 w-full max-w-6xl">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-slate-100/50 dark:bg-slate-800/50 backdrop-blur-xl rounded-full border border-slate-200/50 dark:border-slate-700/50 shadow-sm mx-auto">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-              </span>
-              <span className="text-[9px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Room Selection</span>
-            </div>
-            
-            <div className="space-y-4">
-               <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-black text-slate-900 dark:text-white tracking-tighter leading-none">
-                Find a Room.<br />
-                <span className="text-slate-400 dark:text-slate-500 italic lowercase opacity-80">Choose where you want to stay.</span>
-               </h1>
-               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-slate-400 opacity-60">Hostel Allocation System • Group 15</p>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-10">
-               <HeroStat label="Available Rooms" value={availableRooms.length} color="text-blue-500" />
-               <HeroStat label="Hostel Blocks" value={blocks.length - 1} color="text-teal-500" />
-               <HeroStat label="System Status" value="Online" color="text-emerald-500" />
-            </div>
-          </motion.div>
-        </section>
-
         {/* REJECTION FEEDBACK */}
         {studentStatus?.room_rejection_note && (
           <motion.div 
@@ -287,6 +258,34 @@ const BookRoom = () => {
         )}
 
         <div className="max-w-7xl mx-auto space-y-12 px-4 sm:px-6">
+          {/* COMPACT STATS BAR */}
+          <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatTile 
+              label="Total Units" 
+              value={availableRooms.length} 
+              icon={Home} 
+              color="blue" 
+            />
+            <StatTile 
+              label="Open Slots" 
+              value={availableRooms.reduce((acc, r) => acc + (parseInt(r.capacity) - parseInt(r.current_occupancy)), 0)} 
+              icon={Users} 
+              color="teal" 
+            />
+            <StatTile 
+              label="Active Wings" 
+              value={blocks.length - 1} 
+              icon={Building2} 
+              color="orange" 
+            />
+            <StatTile 
+              label="System" 
+              value="Live" 
+              icon={Zap} 
+              color="emerald" 
+            />
+          </section>
+
           {/* FILTERS & SEARCH */}
           <section className="flex flex-col md:flex-row items-center gap-6">
             <div className="flex-1 relative w-full group">
@@ -508,11 +507,25 @@ const BookRoom = () => {
   );
 };
 
-const HeroStat = ({ label, value, color }) => (
-  <div className="flex flex-col items-center gap-1 group cursor-default">
-     <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">{label}</p>
-     <p className={`text-2xl md:text-3xl font-black ${color} tracking-tighter leading-none`}>{value}</p>
-  </div>
-);
+const StatTile = ({ label, value, icon: Icon, color }) => {
+  const colors = {
+    blue: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600',
+    teal: 'bg-teal-50 dark:bg-teal-900/20 text-teal-600',
+    orange: 'bg-orange-50 dark:bg-orange-900/20 text-orange-600',
+    emerald: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600'
+  };
+  
+  return (
+    <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl p-4 rounded-3xl border border-slate-200 dark:border-white/10 flex items-center gap-4">
+      <div className={`p-3 rounded-2xl ${colors[color] || colors.blue}`}>
+        <Icon size={20} />
+      </div>
+      <div>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-1">{label}</p>
+        <p className="text-xl font-black text-slate-900 dark:text-white tracking-tight">{value}</p>
+      </div>
+    </div>
+  );
+};
 
 export default BookRoom;
