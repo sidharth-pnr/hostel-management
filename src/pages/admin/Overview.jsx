@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 import { NavLink, useOutletContext } from 'react-router-dom';
 import { API_BASE, COLORS } from '../../config';
+import { StatCard, LoadingScreen, EmptyState } from '../../components/admin/AdminShared';
 
 const Overview = () => {
   const { user } = useOutletContext() || {};
@@ -52,19 +53,17 @@ const Overview = () => {
     };
   }, []);
 
-  // --- FEATURE: INTEGRATED ACTIVITY STREAM ---
   const activityStream = useMemo(() => {
     if (!stats || !stats.activity_log) return [];
     return stats.activity_log.map(log => ({
       type: log.type,
       title: log.message,
-      user: log.performed_by, // Show the real name of the person who did it!
+      user: log.performed_by,
       time: log.created_at,
       priority: 'Normal'
     }));
   }, [stats]);
 
-  // --- FEATURE: OCCUPANCY HEATMAP DATA ---
   const blocks = useMemo(() => {
     const map = {};
     rooms.forEach(r => {
@@ -80,7 +79,6 @@ const Overview = () => {
     }));
   }, [rooms]);
 
-  // --- FEATURE: SEARCH RESULTS ---
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return { students: [], rooms: [] };
     const query = searchQuery.toLowerCase();
@@ -90,14 +88,12 @@ const Overview = () => {
     };
   }, [searchQuery, allStudents, rooms]);
 
-  if (!stats) return <LoadingScreen />;
+  if (!stats) return <LoadingScreen message="Syncing Command Center..." />;
 
   const { counts, departments, complaints_dist } = stats;
 
   return (
     <div className="space-y-8 animate-slide-up relative">
-      
-      {/* 1. TOP METRICS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard icon={Icons.Users} label="Total Students" value={counts?.total_students} subValue="Active Residents" color="blue" />
         <StatCard icon={Icons.Home} label="Room Occupancy" value={`${counts?.occupancy_rate}%`} subValue={`${counts?.total_occupied} / ${counts?.total_capacity} beds`} color="teal" progress={counts?.occupancy_rate} />
@@ -105,10 +101,7 @@ const Overview = () => {
         <StatCard icon={Icons.AlertCircle} label="Urgent Issues" value={counts?.high_priority} subValue="Active Complaints" color="red" pulse={counts?.high_priority > 0} />
       </div>
 
-      {/* 2. ANALYTICS & HEATMAP */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        {/* Occupancy Heatmap */}
         <div className="lg:col-span-8 bg-white dark:bg-slate-900/50 backdrop-blur-sm p-8 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 shadow-sm group">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -131,17 +124,13 @@ const Overview = () => {
                    <p className="text-[8px] font-bold text-slate-400">{block.occupied}/{block.total}</p>
                 </div>
                 <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full transition-all duration-1000 ${block.percent > 90 ? 'bg-red-500' : block.percent > 70 ? 'bg-orange-500' : 'bg-teal-500'}`}
-                    style={{ width: `${block.percent}%` }}
-                  />
+                  <div className={`h-full transition-all duration-1000 ${block.percent > 90 ? 'bg-red-500' : block.percent > 70 ? 'bg-orange-500' : 'bg-teal-500'}`} style={{ width: `${block.percent}%` }} />
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Donut Chart */}
         <div className="lg:col-span-4 bg-white dark:bg-slate-900/50 backdrop-blur-sm p-8 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 shadow-sm flex flex-col items-center min-h-[400px]">
           <div className="w-full mb-6">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -178,10 +167,7 @@ const Overview = () => {
         </div>
       </div>
 
-      {/* 3. ACTIVITY STREAM & DEPARTMENTS */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        
-        {/* Activity Stream */}
         <div className="xl:col-span-5 bg-white dark:bg-slate-900/50 backdrop-blur-sm rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 overflow-hidden flex flex-col min-h-[500px]">
           <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/20">
             <h3 className="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-3">
@@ -203,7 +189,6 @@ const Overview = () => {
           </div>
         </div>
 
-        {/* Department Analytics */}
         <div className="xl:col-span-7 bg-white dark:bg-slate-900/50 backdrop-blur-sm p-8 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800">
           <div className="mb-8">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
@@ -227,140 +212,44 @@ const Overview = () => {
             )}
           </div>
         </div>
-
       </div>
 
-      {/* FEATURE: QUICK SEARCH OVERLAY */}
       {searchOpen && (
         <div className="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-4">
           <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setSearchOpen(false)} />
           <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[2.5rem] border border-white/20 shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-6 flex items-center gap-4 border-b border-slate-100 dark:border-slate-800">
               <Icons.Search size={24} className="text-slate-400" />
-              <input 
-                autoFocus 
-                placeholder="Find anything... (Esc to close)" 
-                className="flex-1 bg-transparent border-none outline-none text-xl font-bold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-700"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-              />
-              <button onClick={() => setSearchOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all">
-                <Icons.X size={20} className="text-slate-400" />
-              </button>
+              <input autoFocus placeholder="Find anything... (Esc to close)" className="flex-1 bg-transparent border-none outline-none text-xl font-bold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-slate-700" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+              <button onClick={() => setSearchOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all"><Icons.X size={20} className="text-slate-400" /></button>
             </div>
-            
             <div className="max-h-[60vh] overflow-y-auto p-4 scrollbar-hide">
               {searchQuery ? (
                 <div className="space-y-6">
                   {searchResults.students.length > 0 && (
-                    <SearchSection label="Residents" icon={Icons.Users}>
-                      {searchResults.students.map((s, i) => (
-                        <SearchItem key={i} title={s.name} subtitle={s.student_id} tag={s.department} to="/admin/students" />
-                      ))}
-                    </SearchSection>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-slate-400 px-2"><Icons.Users size={14} /><span className="text-[10px] font-black uppercase tracking-widest">Residents</span></div>
+                      <div className="space-y-1">{searchResults.students.map((s, i) => <NavLink key={i} to="/admin/students" className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"><div><p className="font-bold text-slate-900 dark:text-white group-hover:text-teal-600 transition-colors">{s.name}</p><p className="text-xs text-slate-400 font-medium">{s.student_id}</p></div><span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-[8px] font-black text-slate-500 uppercase tracking-widest">{s.department}</span></NavLink>)}</div>
+                    </div>
                   )}
                   {searchResults.rooms.length > 0 && (
-                    <SearchSection label="Rooms & Blocks" icon={Icons.Home}>
-                      {searchResults.rooms.map((r, i) => (
-                        <SearchItem key={i} title={`Room ${r.room_number}`} subtitle={`Block ${r.block}`} tag={`${r.current_occupancy}/${r.capacity}`} to="/admin/rooms" />
-                      ))}
-                    </SearchSection>
-                  )}
-                  {searchResults.students.length === 0 && searchResults.rooms.length === 0 && (
-                    <div className="py-12 text-center text-slate-400 italic">No matches for "{searchQuery}"</div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2 text-slate-400 px-2"><Icons.Home size={14} /><span className="text-[10px] font-black uppercase tracking-widest">Rooms & Blocks</span></div>
+                      <div className="space-y-1">{searchResults.rooms.map((r, i) => <NavLink key={i} to="/admin/rooms" className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group"><div><p className="font-bold text-slate-900 dark:text-white group-hover:text-teal-600 transition-colors">Room {r.room_number}</p><p className="text-xs text-slate-400 font-medium">Block {r.block}</p></div><span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-[8px] font-black text-slate-500 uppercase tracking-widest">{r.current_occupancy}/{r.capacity}</span></NavLink>)}</div>
+                    </div>
                   )}
                 </div>
-              ) : (
-                <div className="py-12 text-center text-slate-400">
-                   <Icons.Command size={40} className="mx-auto mb-4 opacity-10" />
-                   <p className="text-sm font-bold uppercase tracking-widest">Type to search for students or rooms</p>
-                </div>
-              )}
+              ) : <div className="py-12 text-center text-slate-400"><Icons.Command size={40} className="mx-auto mb-4 opacity-10" /><p className="text-sm font-bold uppercase tracking-widest">Type to search for students or rooms</p></div>}
             </div>
-            
             <div className="p-4 bg-slate-50 dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-[10px] font-bold text-slate-400">
-              <div className="flex gap-4">
-                <span><kbd className="bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded mr-1">↑↓</kbd> Navigate</span>
-                <span><kbd className="bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded mr-1">Enter</kbd> Select</span>
-              </div>
+              <div className="flex gap-4"><span><kbd className="bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded mr-1">↑↓</kbd> Navigate</span><span><kbd className="bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded mr-1">Enter</kbd> Select</span></div>
               <span>COMMAND CENTER SEARCH</span>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 };
-
-// --- HELPER COMPONENTS ---
-
-const StatCard = ({ icon: Icon, label, value, subValue, color, pulse, progress }) => {
-  const colorMap = {
-    blue: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20',
-    teal: 'text-teal-600 bg-teal-50 dark:bg-teal-900/20',
-    orange: 'text-orange-600 bg-orange-50 dark:bg-orange-900/20',
-    red: 'text-red-600 bg-red-50 dark:bg-red-900/20'
-  };
-
-  return (
-    <div className="bg-white dark:bg-slate-900/50 p-7 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 shadow-sm relative overflow-hidden group hover:scale-[1.02] transition-all duration-300">
-      <div className="relative z-10">
-        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-transform group-hover:rotate-6 ${colorMap[color]}`}>
-          <Icon size={28} />
-        </div>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
-        <div className="flex items-baseline gap-2">
-          <h4 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{value}</h4>
-          {pulse && <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />}
-        </div>
-        <p className="text-xs font-medium text-slate-500 mt-2">{subValue}</p>
-      </div>
-      <div className={`absolute -right-4 -bottom-4 w-32 h-32 rounded-full opacity-5 group-hover:opacity-10 transition-opacity ${colorMap[color]}`} />
-      {progress !== undefined && (
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-slate-100 dark:bg-slate-800">
-          <div className="h-full bg-teal-500 transition-all duration-1000" style={{ width: `${progress}%` }} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-const SearchSection = ({ label, icon: Icon, children }) => (
-  <div className="space-y-3">
-    <div className="flex items-center gap-2 text-slate-400 px-2">
-      <Icon size={14} />
-      <span className="text-[10px] font-black uppercase tracking-widest">{label}</span>
-    </div>
-    <div className="space-y-1">{children}</div>
-  </div>
-);
-
-const SearchItem = ({ title, subtitle, tag, to }) => (
-  <NavLink to={to} className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all group">
-    <div>
-      <p className="font-bold text-slate-900 dark:text-white group-hover:text-teal-600 transition-colors">{title}</p>
-      <p className="text-xs text-slate-400 font-medium">{subtitle}</p>
-    </div>
-    <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-[8px] font-black text-slate-500 uppercase tracking-widest">{tag}</span>
-  </NavLink>
-);
-
-const EmptyState = ({ message }) => (
-  <div className="py-20 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 italic">
-    <Icons.Activity size={40} strokeWidth={1} className="mb-4 opacity-20" />
-    <p className="text-sm font-medium tracking-widest uppercase">{message}</p>
-  </div>
-);
-
-const LoadingScreen = () => (
-  <div className="flex flex-col items-center justify-center py-24 text-slate-300 dark:text-slate-700">
-    <div className="w-20 h-20 relative">
-      <div className="absolute inset-0 border-4 border-slate-200 dark:border-slate-800 rounded-full opacity-20" />
-      <div className="absolute inset-0 border-4 border-t-slate-900 dark:border-t-white rounded-full animate-spin" />
-    </div>
-    <p className="mt-6 font-bold text-sm tracking-[0.3em] uppercase animate-pulse">Syncing Command Center...</p>
-  </div>
-);
 
 export default Overview;

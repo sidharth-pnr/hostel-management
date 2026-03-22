@@ -5,6 +5,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useOutletContext } from 'react-router-dom';
 import { API_BASE } from '../../config';
+import { StatCard, LoadingScreen, EmptyState, FilterMenu, ActionButton } from '../../components/admin/AdminShared';
 
 const Students = () => {
   const { user } = useOutletContext() || {};
@@ -29,11 +30,7 @@ const Students = () => {
       const studentData = Array.isArray(studentsRes.data) ? studentsRes.data : [];
       setStudents(studentData);
       setAvailableRooms(Array.isArray(roomsRes.data) ? roomsRes.data : []);
-      if (studentData.length === 0) {
-        console.warn("No students received from server");
-      }
     } catch (err) {
-      console.error("Fetch error:", err);
       toast.error("Failed to sync resident data");
       setStudents([]);
     } finally {
@@ -114,7 +111,7 @@ const Students = () => {
       });
   }, [students, search, sortBy, filterStatus, filterDept]);
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <LoadingScreen message="Scanning Scholar Directory..." />;
 
   return (
     <>
@@ -122,10 +119,10 @@ const Students = () => {
         
         {/* 1. PULSE ANALYTICS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <PulseStat icon={Icons.Users} label="Resident Population" value={stats.total} color="blue" />
-          <PulseStat icon={Icons.UserCheck} label="Room Assignment" value={`${stats.occupancyPercent}%`} subValue={`${stats.allocated} Active`} color="teal" progress={stats.occupancyPercent} />
-          <PulseStat icon={Icons.Building2} label="Pending Requests" value={stats.pending} subValue="Needs Action" color="orange" />
-          <PulseStat icon={Icons.GraduationCap} label="Faculties" value={stats.depts.length} subValue="Departments" color="red" />
+          <StatCard icon={Icons.Users} label="Resident Population" value={stats.total} color="blue" />
+          <StatCard icon={Icons.UserCheck} label="Room Assignment" value={`${stats.occupancyPercent}%`} subValue={`${stats.allocated} Active`} color="teal" progress={stats.occupancyPercent} />
+          <StatCard icon={Icons.Building2} label="Pending Requests" value={stats.pending} subValue="Needs Action" color="orange" />
+          <StatCard icon={Icons.GraduationCap} label="Faculties" value={stats.depts.length} subValue="Departments" color="red" />
         </div>
 
         {/* 2. ADVANCED TOOLBAR */}
@@ -142,21 +139,21 @@ const Students = () => {
           
           <div className="flex flex-wrap gap-3">
             <FilterMenu icon={Icons.SortAsc} value={sortBy} onChange={setSortBy}>
-              <option value="name" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sort: A-Z Name</option>
-              <option value="reg_no" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sort: University ID</option>
-              <option value="department" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sort: Faculty</option>
+              <option value="name">Sort: A-Z Name</option>
+              <option value="reg_no">Sort: University ID</option>
+              <option value="department">Sort: Faculty</option>
             </FilterMenu>
             
             <FilterMenu icon={Icons.Filter} value={filterStatus} onChange={setFilterStatus}>
-              <option value="ALL" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Status: All Residents</option>
-              <option value="ALLOCATED" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Status: Assigned Rooms</option>
-              <option value="PENDING" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Status: Pending Requests</option>
-              <option value="NONE" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Status: No Allocation</option>
+              <option value="ALL">Status: All Residents</option>
+              <option value="ALLOCATED">Status: Assigned Rooms</option>
+              <option value="PENDING">Status: Pending Requests</option>
+              <option value="NONE">Status: No Allocation</option>
             </FilterMenu>
 
             <FilterMenu icon={Icons.GraduationCap} value={filterDept} onChange={setFilterDept}>
-              <option value="ALL" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Faculty: All Depts</option>
-              {stats.depts.map(d => <option key={d} value={d} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">{d}</option>)}
+              <option value="ALL">Faculty: All Depts</option>
+              {stats.depts.map(d => <option key={d} value={d}>{d}</option>)}
             </FilterMenu>
           </div>
         </div>
@@ -180,10 +177,7 @@ const Students = () => {
                 userRole={user?.role} 
               />
             )) : (
-              <div className="py-24 bg-white dark:bg-slate-900/30 rounded-[2.5rem] border border-dashed border-slate-200 dark:border-slate-800 text-center">
-                <Icons.Activity size={48} strokeWidth={1} className="mx-auto mb-4 text-slate-300 dark:text-slate-700" />
-                <p className="text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest text-sm">No scholars found matching your criteria</p>
-              </div>
+              <EmptyState message="No scholars found matching your criteria" />
             )}
           </div>
         </div>
@@ -315,7 +309,6 @@ const ResidentCard = ({ student, availableRooms, handleRoomAction, onRejectReque
             <ActionButton onClick={onRejectRequest} icon={Icons.X} label="Cancel" danger />
           )}
           
-          {/* RBAC: Only Super Admins can Delete */}
           {userRole === 'SUPER' && (
             <ActionButton 
               onClick={() => { if(window.confirm("Permanently delete this scholar record? This will also remove all their complaints.")) handleRoomAction('delete_student', student_id) }} 
@@ -402,68 +395,5 @@ const ResidentCard = ({ student, availableRooms, handleRoomAction, onRejectReque
     </div>
   );
 };
-
-const ActionButton = ({ onClick, icon: Icon, label, primary, danger }) => (
-  <button 
-    onClick={onClick} 
-    className={`flex items-center justify-center gap-2 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 ${label ? 'px-4 py-2.5' : 'p-2.5'} ${
-      primary 
-        ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' 
-        : danger
-          ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
-          : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-    }`}
-  >
-    <Icon size={14} strokeWidth={3} />
-    {label && <span className="hidden sm:inline">{label}</span>}
-  </button>
-);
-
-const PulseStat = ({ icon: Icon, label, value, subValue, color, progress }) => {
-  const colorMap = {
-    blue: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20',
-    teal: 'text-teal-600 bg-teal-50 dark:bg-teal-900/20',
-    orange: 'text-orange-600 bg-orange-50 dark:bg-orange-900/20',
-    red: 'text-red-600 bg-red-50 dark:bg-red-900/20'
-  };
-
-  return (
-    <div className="bg-white dark:bg-slate-900/50 p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group hover:scale-[1.02] transition-all">
-      <div className="relative z-10">
-        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 ${colorMap[color]}`}>
-          <Icon size={24} />
-        </div>
-        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">{label}</p>
-        <h4 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{value}</h4>
-        {subValue && <p className="text-[10px] font-bold text-slate-400 mt-2">{subValue}</p>}
-      </div>
-      {progress !== undefined && (
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-slate-100 dark:bg-slate-800">
-          <div className="h-full bg-teal-500 transition-all duration-1000" style={{ width: `${progress}%` }} />
-        </div>
-      )}
-    </div>
-  );
-};
-
-const FilterMenu = ({ icon: Icon, value, onChange, children }) => (
-  <div className="bg-white dark:bg-slate-900/50 px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex items-center gap-3 shadow-sm hover:border-slate-900 dark:hover:border-white transition-all group">
-    <Icon size={18} className="text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
-    <select 
-      className="bg-transparent text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white outline-none cursor-pointer" 
-      value={value} 
-      onChange={(e) => onChange(e.target.value)}
-    >
-      {children}
-    </select>
-  </div>
-);
-
-const LoadingSpinner = () => (
-  <div className="flex flex-col items-center justify-center py-24 text-slate-300 dark:text-slate-700">
-    <div className="w-16 h-16 border-4 border-slate-200 dark:border-slate-800 border-t-slate-900 dark:border-t-white rounded-full animate-spin mb-4" />
-    <p className="font-bold text-[10px] tracking-[0.3em] uppercase animate-pulse">Scanning Scholar Directory...</p>
-  </div>
-);
 
 export default Students;
