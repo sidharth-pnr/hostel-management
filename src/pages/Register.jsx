@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { authService } from '../services/api';
 import toast from 'react-hot-toast';
 import * as Icons from '../components/Icons';
 import ThemeToggle from '../components/ThemeToggle';
-import { API_BASE, isSuccess } from '../config';
+import { isSuccess } from '../config';
 import { AuthVisualSide, Input, Select, PrimaryButton } from '../components/SharedUI';
 
 const Register = ({ isDark, setIsDark }) => {
@@ -14,15 +14,27 @@ const Register = ({ isDark, setIsDark }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validation logic
+    if (!formData.name.trim()) return toast.error("Please enter your full name");
+    
     if(!formData.phone || formData.phone.length !== 10) return toast.error("Phone number must be 10 digits");
+    if (formData.password.length < 6) return toast.error("Password must be at least 6 characters");
+
     setIsLoading(true);
     const loadingToast = toast.loading("Processing admission request...");
     try {
-      const res = await axios.post(`${API_BASE}/register.php`, formData);
+      const res = await authService.register(formData);
       toast.dismiss(loadingToast);
-      if (isSuccess(res)) { toast.success("Registration Successful."); navigate('/login'); }
+      if (isSuccess(res)) { 
+        toast.success("Registration Successful."); 
+        navigate('/login'); 
+      }
       else toast.error(res.data.error || "Registration failed");
-    } catch (err) { toast.dismiss(loadingToast); toast.error("Network error"); }
+    } catch (err) { 
+      toast.dismiss(loadingToast); 
+      toast.error(err.message || "Network error"); 
+    }
     finally { setIsLoading(false); }
   };
 
@@ -50,16 +62,16 @@ const Register = ({ isDark, setIsDark }) => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-3">
-                <Input label="Full Name" placeholder="Legal Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+                <Input label="Full Name" placeholder="Legal Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required autoComplete="name" />
                 <div className="grid grid-cols-2 gap-3">
-                  <Input label="University ID" placeholder="TKR23..." value={formData.reg_no} onChange={e => setFormData({...formData, reg_no: e.target.value})} required />
-                  <Input label="Contact No" type="tel" placeholder="10-digit Number" value={formData.phone} onChange={e => { const v = e.target.value.replace(/\D/g, ''); if (v.length <= 10) setFormData({...formData, phone: v}); }} required />
+                  <Input label="University ID" placeholder="TKR23..." value={formData.reg_no} onChange={e => setFormData({...formData, reg_no: e.target.value})} required autoComplete="username" />
+                  <Input label="Contact No" type="tel" placeholder="10-digit Number" value={formData.phone} onChange={e => { const v = e.target.value.replace(/\D/g, ''); if (v.length <= 10) setFormData({...formData, phone: v}); }} required autoComplete="tel" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <Select label="Department" value={formData.department} onChange={e => setFormData({...formData, department: e.target.value})} options={['CSE','ECE','EEE','MECH','CIVIL','IT','DS']} />
                   <Select label="Year" value={formData.year} onChange={e => setFormData({...formData, year: e.target.value})} options={[{v:'1',l:'1st Year'},{v:'2',l:'2nd Year'},{v:'3',l:'3rd Year'},{v:'4',l:'4th Year'}].map(y => ({value:y.v, label:y.l}))} />
                 </div>
-                <Input label="Password" type="password" placeholder="••••••••" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} required />
+                <Input label="Password" type="password" placeholder="••••••••" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} required autoComplete="new-password" />
               </div>
               <PrimaryButton isLoading={isLoading} loadingText="Synchronizing...">Submit Registry Request</PrimaryButton>
             </form>

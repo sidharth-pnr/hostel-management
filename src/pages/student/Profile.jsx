@@ -92,8 +92,8 @@ const Profile = () => {
                  <button type="button" onClick={() => setIsEditing(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"><Icons.X size={20} /></button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputGroup label="Full Name" value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} icon={Icons.User} />
-                <InputGroup label="Phone Number" value={editData.phone} onChange={(e) => { const val = e.target.value.replace(/\D/g, ''); if (val.length <= 10) setEditData({...editData, phone: val}); }} icon={Icons.Phone} />
+                <InputGroup label="Full Name" value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} icon={Icons.User} autoComplete="name" />
+                <InputGroup label="Phone Number" value={editData.phone} onChange={(e) => { const val = e.target.value.replace(/\D/g, ''); if (val.length <= 10) setEditData({...editData, phone: val}); }} icon={Icons.Phone} autoComplete="tel" />
                 <div className="space-y-2"><label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Department</label><select value={editData.department} onChange={(e) => setEditData({...editData, department: e.target.value})} className="w-full p-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs">{['CSE','ECE','EEE','MECH','CIVIL','IT'].map(d => <option key={d} value={d}>{d}</option>)}</select></div>
                 <div className="space-y-2"><label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Year of Study</label><select value={editData.year} onChange={(e) => setEditData({...editData, year: e.target.value})} className="w-full p-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs">{[1,2,3,4].map(y => <option key={y} value={y}>Year {y}</option>)}</select></div>
               </div>
@@ -116,10 +116,10 @@ const Profile = () => {
   );
 };
 
-const InputGroup = ({ label, value, onChange, icon: Icon }) => (
+const InputGroup = ({ label, value, onChange, icon: Icon, autoComplete }) => (
   <div className="space-y-2">
     <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">{label}</label>
-    <div className="relative group"><Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={16} /><input type="text" value={value} onChange={onChange} required className="w-full p-4 pl-12 bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs" /></div>
+    <div className="relative group"><Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={16} /><input type="text" value={value} onChange={onChange} required autoComplete={autoComplete} className="w-full p-4 pl-12 bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs" /></div>
   </div>
 );
 

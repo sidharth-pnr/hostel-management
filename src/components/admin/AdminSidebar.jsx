@@ -3,46 +3,31 @@ import { NavLink } from 'react-router-dom';
 import * as Icons from '../Icons';
 import ThemeToggle from '../ThemeToggle';
 
+const NavItem = ({ to, icon: Icon, label }) => (
+  <NavLink
+    to={to}
+    end={to === "/admin"}
+    className={({ isActive }) => 
+      `flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
+        isActive 
+          ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' 
+          : 'text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+      }`
+    }
+    title={label}
+  >
+    <Icon size={18} strokeWidth={2} />
+    <span className="text-sm font-medium hidden lg:block">{label}</span>
+  </NavLink>
+);
+
 export const AdminSidebar = ({ user, isDark, setIsDark }) => {
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const controlNavbar = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY < 50) {
-        setIsVisible(true);
-      } else if (currentScrollY > lastScrollY) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', controlNavbar);
-    return () => window.removeEventListener('scroll', controlNavbar);
-  }, [lastScrollY]);
-
-  const NavItem = ({ to, icon: Icon, label }) => (
-    <NavLink
-      to={to}
-      end={to === "/admin"}
-      className={({ isActive }) => 
-        `flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 ${
-          isActive 
-            ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-lg' 
-            : 'text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
-        }`
-      }
-      title={label}
-    >
-      <Icon size={18} strokeWidth={2} />
-      <span className="text-sm font-medium hidden lg:block">{label}</span>
-    </NavLink>
-  );
+    const timer = setTimeout(() => setIsVisible(true), 10);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');

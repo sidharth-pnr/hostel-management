@@ -1,43 +1,51 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { adminService } from '../../services/api';
 import * as Icons from '../../components/Icons';
 import { 
   ResponsiveContainer, PieChart, Pie, Cell, Tooltip, 
   BarChart, Bar, XAxis, YAxis, CartesianGrid 
 } from 'recharts';
 import { NavLink, useOutletContext } from 'react-router-dom';
-import { API_BASE, COLORS } from '../../config';
+import { COLORS } from '../../config';
 import { StatCard, LoadingScreen, EmptyState } from '../../components/admin/AdminShared';
 
 const Overview = () => {
   const { user } = useOutletContext() || {};
-  const [stats, setStats] = useState(null);
-  const [rooms, setRooms] = useState([]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [allStudents, setAllStudents] = useState([]);
   const [mounted, setMounted] = useState(false);
 
-  const fetchData = async () => {
-    try {
-      const [statsRes, roomsRes, studentsRes] = await Promise.all([
-        axios.get(`${API_BASE}/stats.php`),
-        axios.get(`${API_BASE}/manage_rooms.php`),
-        axios.get(`${API_BASE}/get_data.php?type=students`)
-      ]);
-      setStats(statsRes.data);
-      setRooms(roomsRes.data);
-      setAllStudents(studentsRes.data);
-    } catch (err) {
-      console.error("Dashboard synchronization failed:", err);
-    }
-  };
+  // Use React Query for stats, rooms, and students
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ['admin-stats'],
+    queryFn: async () => {
+      const res = await adminService.getStats();
+      return res.data;
+    },
+    refetchInterval: 60000, // Background sync every minute
+  });
+
+  const { data: rooms = [] } = useQuery({
+    queryKey: ['admin-rooms'],
+    queryFn: async () => {
+      const res = await adminService.getRooms();
+      return Array.isArray(res.data) ? res.data : [];
+    },
+    refetchInterval: 60000,
+  });
+
+  const { data: allStudents = [] } = useQuery({
+    queryKey: ['admin-students'],
+    queryFn: async () => {
+      const res = await adminService.getStudents();
+      return Array.isArray(res.data) ? res.data : [];
+    },
+    refetchInterval: 60000,
+  });
 
   useEffect(() => {
-    fetchData();
     setMounted(true);
-    const interval = setInterval(fetchData, 60000);
-
     const handleKeyDown = (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
@@ -48,7 +56,6 @@ const Overview = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      clearInterval(interval);
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);

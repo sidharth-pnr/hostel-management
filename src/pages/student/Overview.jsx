@@ -1,48 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { studentService } from '../../services/api';
 import * as Icons from '../../components/Icons';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { API_BASE, isSuccess } from '../../config';
+import { isSuccess } from '../../config';
 import BackgroundEffect from '../../components/BackgroundEffect';
 import { GlassCard, InfoNode } from '../../components/student/StudentShared';
 
 const StudentOverview = () => {
   const { user } = useOutletContext();
   const navigate = useNavigate();
-  const [room, setRoom] = useState(null);
-  const [roommates, setRoommates] = useState([]);
-  const [activities, setActivities] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('MPESA');
+  const sid = user.student_id || user.id;
 
-  const fetchData = async () => {
-    try {
-      const sid = user.student_id || user.id;
-      const [roomRes, roommatesRes, activitiesRes] = await Promise.all([
-        axios.get(`${API_BASE}/student_room.php?id=${sid}`),
-        axios.get(`${API_BASE}/get_roommates.php?student_id=${sid}`),
-        axios.get(`${API_BASE}/get_student_logs.php?id=${sid}`)
-      ]);
-      setRoom(roomRes.data);
-      setRoommates(Array.isArray(roommatesRes.data) ? roommatesRes.data : []);
-      setActivities(Array.isArray(activitiesRes.data) ? activitiesRes.data : []);
-    } catch (err) {
-      console.error("Dashboard sync failure:", err);
-    }
-  };
+  // Use React Query for data synchronization
+  const { data: room, refetch: refetchRoom } = useQuery({
+    queryKey: ['student-room', sid],
+    queryFn: async () => {
+      const res = await studentService.getRoomInfo(sid);
+      return res.data;
+    },
+    refetchInterval: 60000,
+  });
 
-  useEffect(() => {
-    fetchData();
-  }, [user.id, user.student_id]);
+  const { data: roommates = [] } = useQuery({
+    queryKey: ['student-roommates', sid],
+    queryFn: async () => {
+      const res = await studentService.getRoommates(`${sid}&t=${Date.now()}`);
+      return Array.isArray(res.data) ? res.data : [];
+    },
+    refetchInterval: 60000,
+  });
+
+  const { data: activities = [] } = useQuery({
+    queryKey: ['student-logs', sid],
+    queryFn: async () => {
+      const res = await studentService.getLogs(sid);
+      return Array.isArray(res.data) ? res.data : [];
+    },
+    refetchInterval: 60000,
+  });
 
   const handlePayment = async () => {
     const loadingToast = toast.loading(`Connecting to ${paymentMethod} gateway...`);
     try {
-      const res = await axios.post(`${API_BASE}/process_payment.php`, {
-        student_id: user.student_id || user.id,
+      const res = await studentService.processPayment({
+        student_id: sid,
         room_id: room.room_id,
         payment_method: paymentMethod
       });
@@ -50,13 +56,13 @@ const StudentOverview = () => {
       if (isSuccess(res)) {
         toast.success("Payment Received! Room Allocated.");
         setShowPaymentModal(false);
-        fetchData();
+        refetchRoom();
       } else {
         toast.error(res.data.error || "Payment failed");
       }
-    } catch (_err) {
+    } catch (err) {
       toast.dismiss(loadingToast);
-      toast.error("Gateway connection error");
+      toast.error(err.message || "Gateway connection error");
     }
   };
 

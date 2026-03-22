@@ -64,8 +64,8 @@ const Login = ({ setUser, isDark, setIsDark }) => {
 
             <form onSubmit={handleLogin} className="space-y-5">
               <div className="space-y-4">
-                <Input label={role === 'admin' ? "Username" : "University ID"} placeholder={role === 'admin' ? "e.g. WARDEN_01" : "e.g. TKR23CS101"} value={email} onChange={e => setEmail(e.target.value)} required />
-                <Input label="Password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                <Input label={role === 'admin' ? "Username" : "University ID"} placeholder={role === 'admin' ? "e.g. WARDEN_01" : "e.g. TKR23CS101"} value={email} onChange={e => setEmail(e.target.value)} required autoComplete="username" />
+                <Input label="Password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required autoComplete="current-password" />
               </div>
               <PrimaryButton isLoading={isLoading} loadingText="Validating...">Sign In</PrimaryButton>
             </form>
