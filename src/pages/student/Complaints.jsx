@@ -2,34 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  AlertCircle, 
-  Send, 
-  Trash2, 
-  CheckCircle2, 
-  Clock,
-  Activity,
-  ShieldAlert,
-  Terminal,
-  Zap,
-  Wrench,
-  Wifi,
-  Layers,
-  Ghost,
-  MoreHorizontal,
-  ArrowUpRight,
-  Timer,
-  CheckCircle,
-  Loader2,
-  ShieldCheck,
-  RefreshCcw,
-  Archive,
-  FileText,
-  Calendar,
-  Image as ImageIcon,
-  X,
-  Maximize2
-} from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { API_BASE } from '../../config';
 import BackgroundEffect from '../../components/BackgroundEffect';
@@ -48,12 +21,12 @@ const Complaints = () => {
   const [lightboxImage, setLightboxImage] = useState(null);
 
   const categories = [
-    { id: 'Electrical', icon: <Zap size={20} />, label: 'Electrical', color: 'amber' },
-    { id: 'Plumbing', icon: <Wrench size={20} />, label: 'Plumbing', color: 'blue' },
-    { id: 'Internet', icon: <Wifi size={20} />, label: 'Internet', color: 'indigo' },
-    { id: 'Furniture', icon: <Layers size={20} />, label: 'Furniture', color: 'emerald' },
-    { id: 'Cleaning', icon: <Ghost size={20} />, label: 'Cleaning', color: 'teal' },
-    { id: 'Other', icon: <MoreHorizontal size={20} />, label: 'Other', color: 'slate' },
+    { id: 'Electrical', icon: <Icons.Zap size={20} />, label: 'Electrical', color: 'amber' },
+    { id: 'Plumbing', icon: <Icons.Wrench size={20} />, label: 'Plumbing', color: 'blue' },
+    { id: 'Internet', icon: <Icons.Wifi size={20} />, label: 'Internet', color: 'indigo' },
+    { id: 'Furniture', icon: <Icons.Layers size={20} />, label: 'Furniture', color: 'emerald' },
+    { id: 'Cleaning', icon: <Icons.Ghost size={20} />, label: 'Cleaning', color: 'teal' },
+    { id: 'Other', icon: <Icons.MoreHorizontal size={20} />, label: 'Other', color: 'slate' },
   ];
 
   const fetchData = async () => {
@@ -199,9 +172,9 @@ const Complaints = () => {
 
       {/* 1. STATUS HUB */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <StatNode label="Solved Rate" value={stats.uptime + "%"} icon={Activity} color="text-emerald-500" />
-        <StatNode label="Active Issues" value={complaints.filter(c => ['PENDING', 'IN_PROGRESS'].includes(c.status)).length} icon={ShieldAlert} color="text-amber-500" />
-        <StatNode label="Total Complaints" value={stats.total} icon={Terminal} color="text-blue-500" />
+        <StatNode label="Solved Rate" value={stats.uptime + "%"} icon={Icons.Activity} color="text-emerald-500" />
+        <StatNode label="Active Issues" value={complaints.filter(c => ['PENDING', 'IN_PROGRESS'].includes(c.status)).length} icon={Icons.ShieldAlert} color="text-amber-500" />
+        <StatNode label="Total Complaints" value={stats.total} icon={Icons.Terminal} color="text-blue-500" />
       </div>
 
       {/* 2. COMPLAINT FORM */}
@@ -267,7 +240,7 @@ const Complaints = () => {
                   <div className="flex items-center gap-6">
                     <label className="cursor-pointer group">
                       <div className="flex items-center gap-3 px-6 py-4 bg-slate-50 dark:bg-white/5 border border-dashed border-slate-200 dark:border-white/10 rounded-2xl group-hover:border-blue-500/50 transition-all">
-                        <ImageIcon size={20} className="text-slate-400 group-hover:text-blue-500" />
+                        <Icons.Image size={20} className="text-slate-400 group-hover:text-blue-500" />
                         <span className="text-xs font-bold text-slate-500 group-hover:text-slate-900 dark:group-hover:text-white">Choose Photo</span>
                       </div>
                       <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
@@ -280,7 +253,7 @@ const Complaints = () => {
                           type="button" onClick={() => { setPreviewImage(null); setSelectedFile(null); }}
                           className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                         >
-                          <X size={12} />
+                          <Icons.X size={12} />
                         </button>
                       </div>
                     )}
@@ -293,7 +266,7 @@ const Complaints = () => {
                     disabled={user?.account_status === 'PENDING'}
                     className={`px-12 py-5 rounded-2xl font-black text-[11px] uppercase tracking-[0.3em] transition-all flex items-center gap-4 active:scale-[0.98] shadow-2xl ${user?.account_status === 'PENDING' ? 'bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed opacity-50' : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:scale-[1.02]'}`}
                   >
-                    <Send size={18} className="text-blue-500" />
+                    <Icons.Send size={18} className="text-blue-500" />
                     Submit Complaint
                   </button>
                 </div>
@@ -335,8 +308,8 @@ const Complaints = () => {
                         </div>
                         <h4 className="font-black text-slate-900 dark:text-white text-2xl tracking-tighter leading-tight uppercase">{c.title}</h4>
                         <div className="flex items-center gap-4 text-slate-400">
-                          <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5"><Layers size={12} /> {c.category}</span>
-                          <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5" title="Submission Time"><Calendar size={12} /> {formatDateTime(c.created_at)}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5"><Icons.Layers size={12} /> {c.category}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5" title="Submission Time"><Icons.Calendar size={12} /> {formatDateTime(c.created_at)}</span>
                         </div>
                       </div>
                       <PriorityIndicator level={c.priority} />
@@ -352,7 +325,7 @@ const Complaints = () => {
                       <div className="grid gap-3">
                         {c.in_progress_at && (
                           <div className="flex items-center gap-4 p-4 bg-blue-500/5 rounded-2xl border border-blue-500/10">
-                            <RefreshCcw size={14} className="text-blue-500" />
+                            <Icons.RefreshCcw size={14} className="text-blue-500" />
                             <div>
                               <p className="text-[9px] font-black uppercase text-blue-600 tracking-wider">Started Handling</p>
                               <p className="text-[10px] font-bold text-slate-500">{formatDateTime(c.in_progress_at)}</p>
@@ -361,7 +334,7 @@ const Complaints = () => {
                         )}
                         {c.resolved_at && (
                           <div className="flex items-center gap-4 p-4 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
-                            <CheckCircle2 size={14} className="text-emerald-500" />
+                            <Icons.CheckCircle2 size={14} className="text-emerald-500" />
                             <div>
                               <p className="text-[9px] font-black uppercase text-emerald-600 tracking-wider">Resolved On</p>
                               <p className="text-[10px] font-bold text-slate-500">{formatDateTime(c.resolved_at)}</p>
@@ -387,7 +360,7 @@ const Complaints = () => {
                       </div>
                       
                       <div className="flex items-center gap-2">
-                        <button onClick={() => deleteComplaint(c.complaint_id)} className="p-4 text-slate-300 dark:text-slate-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all"><Trash2 size={18} /></button>
+                        <button onClick={() => deleteComplaint(c.complaint_id)} className="p-4 text-slate-300 dark:text-slate-600 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-2xl transition-all"><Icons.Trash2 size={18} /></button>
                         
                         {c.status === 'RESOLVED' && (
                           <>
@@ -395,13 +368,13 @@ const Complaints = () => {
                               onClick={() => reopenComplaint(c.complaint_id)}
                               className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-500/20 transition-all flex items-center gap-2"
                             >
-                              <RefreshCcw size={14} /> Reopen
+                              <Icons.RefreshCcw size={14} /> Reopen
                             </button>
                             <button 
                               onClick={() => closeComplaint(c.complaint_id)}
                               className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-all flex items-center gap-2"
                             >
-                              <CheckCircle size={14} /> Close
+                              <Icons.CheckCircle size={14} /> Close
                             </button>
                           </>
                         )}
@@ -416,7 +389,7 @@ const Complaints = () => {
                         <div className="relative group/img aspect-video border-r border-slate-100 dark:border-white/5 overflow-hidden">
                           <img src={c.issue_image_url} alt="Issue" className="w-full h-full object-cover transition-all duration-500" />
                           <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                            <button onClick={() => setLightboxImage(c.issue_image_url)} className="p-3 bg-white text-slate-900 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Maximize2 size={20} /></button>
+                            <button onClick={() => setLightboxImage(c.issue_image_url)} className="p-3 bg-white text-slate-900 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Icons.Maximize2 size={20} /></button>
                           </div>
                           <div className="absolute top-3 left-3 px-2 py-1 bg-white/90 dark:bg-slate-900/90 rounded-md shadow-sm">
                             <p className="text-[8px] font-black uppercase text-slate-500 tracking-tighter">Reported Evidence</p>
@@ -428,7 +401,7 @@ const Complaints = () => {
                         <div className="relative group/img aspect-video overflow-hidden">
                           <img src={c.resolution_image_url} alt="Resolution" className="w-full h-full object-cover transition-all duration-500" />
                           <div className="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                            <button onClick={() => setLightboxImage(c.resolution_image_url)} className="p-3 bg-white text-emerald-600 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Maximize2 size={20} /></button>
+                            <button onClick={() => setLightboxImage(c.resolution_image_url)} className="p-3 bg-white text-emerald-600 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Icons.Maximize2 size={20} /></button>
                           </div>
                           <div className="absolute top-3 left-3 px-2 py-1 bg-emerald-500/90 text-white rounded-md shadow-sm">
                             <p className="text-[8px] font-black uppercase tracking-tighter">Resolution Proof</p>
@@ -445,7 +418,7 @@ const Complaints = () => {
               </motion.div>
             )) : (
               <div className="col-span-full py-32 text-center bg-white/20 dark:bg-white/5 rounded-[4rem] border border-dashed border-slate-300 dark:border-white/10">
-                <ShieldCheck size={48} className="mx-auto text-blue-500/20 mb-6" />
+                <Icons.ShieldCheck size={48} className="mx-auto text-blue-500/20 mb-6" />
                 <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">No Complaints.</h3>
                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mt-2">You don't have any active problems reported.</p>
               </div>
@@ -462,7 +435,7 @@ const Complaints = () => {
             className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-xl flex items-center justify-center p-4 sm:p-10"
             onClick={() => setLightboxImage(null)}
           >
-            <button className="absolute top-8 right-8 p-4 text-white hover:bg-white/10 rounded-full transition-all"><X size={32} /></button>
+            <button className="absolute top-8 right-8 p-4 text-white hover:bg-white/10 rounded-full transition-all"><Icons.X size={32} /></button>
             <motion.img 
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
               src={lightboxImage} alt="Full Evidence" 
@@ -503,10 +476,10 @@ const StatusBadge = ({ status }) => {
 
 const PriorityIndicator = ({ level }) => {
   const levels = {
-    Low: { color: 'bg-emerald-500/10 text-emerald-500', icon: CheckCircle },
-    Medium: { color: 'bg-blue-500/10 text-blue-500', icon: Timer },
-    High: { color: 'bg-amber-500/10 text-amber-500', icon: AlertCircle },
-    Urgent: { color: 'bg-red-500 text-white shadow-lg animate-pulse', icon: ShieldAlert }
+    Low: { color: 'bg-emerald-500/10 text-emerald-500', icon: Icons.CheckCircle },
+    Medium: { color: 'bg-blue-500/10 text-blue-500', icon: Icons.Timer },
+    High: { color: 'bg-amber-500/10 text-amber-500', icon: Icons.AlertCircle },
+    Urgent: { color: 'bg-red-500 text-white shadow-lg animate-pulse', icon: Icons.ShieldAlert }
   };
   const { color, icon: Icon } = levels[level] || levels.Low;
   return (

@@ -1,12 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { 
-  UserPlus, CheckCircle2, XCircle, GraduationCap, 
-  Search, Calendar, Clock, Building2, User,
-  CheckCircle, ShieldCheck, Activity, ArrowRight,
-  Info, Phone
-} from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { API_BASE } from '../../config';
 
 const Approvals = ({ user }) => {
@@ -76,15 +71,15 @@ const Approvals = ({ user }) => {
       
       {/* 1. VERIFICATION ANALYTICS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatTile icon={UserPlus} label="Awaiting Review" value={stats.total} subValue="Total Applications" color="blue" />
-        <StatTile icon={Calendar} label="New Today" value={stats.today} subValue="Fresh Inbound" color="teal" pulse={stats.today > 0} />
-        <StatTile icon={Building2} label="Lead Faculty" value={stats.topDept} subValue="Highest Volume" color="orange" />
+        <StatTile icon={Icons.UserPlus} label="Awaiting Review" value={stats.total} subValue="Total Applications" color="blue" />
+        <StatTile icon={Icons.Calendar} label="New Today" value={stats.today} subValue="Fresh Inbound" color="teal" pulse={stats.today > 0} />
+        <StatTile icon={Icons.Building2} label="Lead Faculty" value={stats.topDept} subValue="Highest Volume" color="orange" />
       </div>
 
       {/* 2. VERIFICATION TOOLBAR */}
       <div className="flex flex-col md:flex-row gap-6 items-center">
         <div className="relative flex-1 group w-full">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={20}/>
+          <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={20}/>
           <input 
             placeholder="Search by name, ID, or department..." 
             className="w-full pl-12 pr-6 py-4 bg-white dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-800 outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all text-slate-900 dark:text-white font-medium"
@@ -93,7 +88,7 @@ const Approvals = ({ user }) => {
           />
         </div>
         <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800/50 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400">
-          <ShieldCheck size={14} /> Verification Mode Active
+          <Icons.ShieldCheck size={14} /> Verification Mode Active
         </div>
       </div>
 
@@ -108,7 +103,7 @@ const Approvals = ({ user }) => {
           />
         )) : (
           <div className="col-span-full py-32 bg-white dark:bg-slate-900/30 rounded-[3rem] border border-dashed border-slate-200 dark:border-slate-800 text-center">
-            <CheckCircle2 size={64} strokeWidth={1} className="mx-auto mb-6 text-teal-500/20" />
+            <Icons.CheckCircle2 size={64} strokeWidth={1} className="mx-auto mb-6 text-teal-500/20" />
             <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Queue Cleared</h3>
             <p className="text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest text-xs mt-2">All scholar registrations have been verified</p>
           </div>
@@ -148,7 +143,7 @@ const ApplicationDossier = ({ student: s, onApprove, onReject }) => {
                 {s.reg_no}
               </span>
               <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                <Clock size={12} /> Received {timeSince}
+                <Icons.Clock size={12} /> Received {timeSince}
               </span>
             </div>
           </div>
@@ -156,9 +151,9 @@ const ApplicationDossier = ({ student: s, onApprove, onReject }) => {
 
         {/* Academic Details */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <DetailBox icon={Building2} label="Academic Faculty" value={s.department} />
-          <DetailBox icon={GraduationCap} label="Course Year" value={`Year ${s.year}`} />
-          <DetailBox icon={Phone} label="Contact Number" value={s.phone || 'Not Provided'} />
+          <DetailBox icon={Icons.Building2} label="Academic Faculty" value={s.department} />
+          <DetailBox icon={Icons.GraduationCap} label="Course Year" value={`Year ${s.year}`} />
+          <DetailBox icon={Icons.Phone} label="Contact Number" value={s.phone || 'Not Provided'} />
         </div>
 
         {/* Action Decision Bar */}
@@ -167,13 +162,13 @@ const ApplicationDossier = ({ student: s, onApprove, onReject }) => {
             onClick={onApprove} 
             className="flex-[2] bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-900/10 group"
           >
-            <CheckCircle size={18} /> Confirm Admission
+            <Icons.CheckCircle size={18} /> Confirm Admission
           </button>
           <button 
             onClick={() => { if(window.confirm("Decline this application?")) onReject(); }} 
             className="flex-1 bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-all active:scale-95"
           >
-            <XCircle size={18} /> Decline
+            <Icons.XCircle size={18} /> Decline
           </button>
         </div>
       </div>
@@ -184,7 +179,7 @@ const ApplicationDossier = ({ student: s, onApprove, onReject }) => {
           <div className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Identity Verification Pending</span>
         </div>
-        <Info size={14} className="text-slate-200 dark:text-slate-700" />
+        <Icons.Info size={14} className="text-slate-200 dark:text-slate-700" />
       </div>
     </div>
   );

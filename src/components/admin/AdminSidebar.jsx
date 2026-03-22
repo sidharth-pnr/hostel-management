@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, UserPlus, Users, ClipboardList, LayoutGrid, LogOut, Building2, Shield } from 'lucide-react';
+import * as Icons from '../Icons';
 import ThemeToggle from '../ThemeToggle';
 
 export const AdminSidebar = ({ user, isDark, setIsDark }) => {
@@ -56,7 +56,7 @@ export const AdminSidebar = ({ user, isDark, setIsDark }) => {
       {/* Brand */}
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-slate-900 shadow-lg flex-shrink-0">
-          <Building2 size={20} />
+          <Icons.Building2 size={20} />
         </div>
         <div className="hidden sm:block">
           <h2 className="font-black text-slate-900 dark:text-white text-[10px] uppercase tracking-tighter leading-none">Campus</h2>
@@ -66,13 +66,13 @@ export const AdminSidebar = ({ user, isDark, setIsDark }) => {
 
       {/* Navigation */}
       <nav className="flex items-center gap-1">
-        <NavItem to="/admin" icon={LayoutDashboard} label="Dashboard" />
-        <NavItem to="/admin/approvals" icon={UserPlus} label="New Students" />
-        <NavItem to="/admin/students" icon={Users} label="Students" />
-        <NavItem to="/admin/complaints" icon={ClipboardList} label="Complaints" />
-        <NavItem to="/admin/rooms" icon={LayoutGrid} label="Rooms" />
+        <NavItem to="/admin" icon={Icons.LayoutDashboard} label="Dashboard" />
+        <NavItem to="/admin/approvals" icon={Icons.UserPlus} label="New Students" />
+        <NavItem to="/admin/students" icon={Icons.Users} label="Students" />
+        <NavItem to="/admin/complaints" icon={Icons.ClipboardList} label="Complaints" />
+        <NavItem to="/admin/rooms" icon={Icons.LayoutGrid} label="Rooms" />
         {user?.role === 'SUPER' && (
-          <NavItem to="/admin/admins" icon={Shield} label="Admin Access" />
+          <NavItem to="/admin/admins" icon={Icons.Shield} label="Admin Access" />
         )}
       </nav>
 
@@ -96,7 +96,7 @@ export const AdminSidebar = ({ user, isDark, setIsDark }) => {
           className="p-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-full transition-all"
           title="Sign Out"
         >
-          <LogOut size={18} />
+          <Icons.LogOut size={18} />
         </button>
       </div>
     </div>

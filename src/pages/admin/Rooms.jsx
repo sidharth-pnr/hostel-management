@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { 
-  PlusCircle, Trash2, Home, Users, MapPin, 
-  Eye, X, Building2, UserCheck, UserMinus, Activity,
-  ShieldCheck, Info, Search, Filter, ArrowUpDown
-} from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { useOutletContext } from 'react-router-dom';
 import { API_BASE } from '../../config';
 
@@ -139,23 +135,23 @@ const RoomManagement = () => {
       {/* 1. INVENTORY PULSE - Interactive Hover Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div>
-          <PulseStat icon={Home} label="Total Rooms" value={stats.total} subValue="Configured Blocks" color="blue" />
+          <PulseStat icon={Icons.Home} label="Total Rooms" value={stats.total} subValue="Configured Blocks" color="blue" />
         </div>
         <div>
-          <PulseStat icon={Users} label="Bed Capacity" value={stats.capacity} subValue="Max Occupancy" color="teal" />
+          <PulseStat icon={Icons.Users} label="Bed Capacity" value={stats.capacity} subValue="Max Occupancy" color="teal" />
         </div>
         <div>
-          <PulseStat icon={UserCheck} label="Beds Occupied" value={stats.occupied} subValue="Active Residents" color="orange" progress={stats.capacity > 0 ? (stats.occupied / stats.capacity) * 100 : 0} />
+          <PulseStat icon={Icons.UserCheck} label="Beds Occupied" value={stats.occupied} subValue="Active Residents" color="orange" progress={stats.capacity > 0 ? (stats.occupied / stats.capacity) * 100 : 0} />
         </div>
         <div>
-          <PulseStat icon={UserMinus} label="Beds Available" value={stats.available} subValue="Current Vacancy" color="red" />
+          <PulseStat icon={Icons.UserMinus} label="Beds Available" value={stats.available} subValue="Current Vacancy" color="red" />
         </div>
       </div>
 
       {/* SEARCH, SORT & FILTER BAR */}
       <div className="bg-white dark:bg-slate-900/50 backdrop-blur-md p-6 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-6 shadow-sm">
         <div className="flex-1 min-w-[280px] relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={18} />
+          <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={18} />
           <input 
             type="text" 
             placeholder="Search by Room or Block..." 
@@ -167,7 +163,7 @@ const RoomManagement = () => {
         
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl">
-            <Filter size={16} className="text-slate-400" />
+            <Icons.Filter size={16} className="text-slate-400" />
             <select 
               className="bg-transparent border-none outline-none text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white cursor-pointer appearance-none"
               value={filterStatus}
@@ -180,7 +176,7 @@ const RoomManagement = () => {
           </div>
 
           <div className="flex items-center gap-3 px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-2xl">
-            <ArrowUpDown size={16} className="text-slate-400" />
+            <Icons.ArrowUpDown size={16} className="text-slate-400" />
             <select 
               className="bg-transparent border-none outline-none text-xs font-black uppercase tracking-widest text-slate-900 dark:text-white cursor-pointer appearance-none"
               value={sortBy}
@@ -226,7 +222,7 @@ const RoomManagement = () => {
             </div>
           )) : (
             <div className="py-32 bg-white dark:bg-slate-900/30 rounded-[3rem] border border-dashed border-slate-200 dark:border-slate-800 text-center">
-              <Activity size={64} strokeWidth={1} className="mx-auto mb-6 text-slate-200 dark:text-slate-700" />
+              <Icons.Activity size={64} strokeWidth={1} className="mx-auto mb-6 text-slate-200 dark:text-slate-700" />
               <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Infrastructure Empty</h3>
               <p className="text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest text-[10px] mt-2">No hostel blocks have been configured yet</p>
             </div>
@@ -243,7 +239,7 @@ const RoomManagement = () => {
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-1">Configure New Accommodation</p>
                 </div>
                 <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl text-slate-900 dark:text-white group-hover:rotate-12 transition-transform">
-                  <PlusCircle size={24} />
+                  <Icons.PlusCircle size={24} />
                 </div>
               </div>
 
@@ -284,8 +280,8 @@ const RoomManagement = () => {
                     onChange={e => setNewRoom({...newRoom, price: e.target.value})} 
                   />
                 </div>
-                <button className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-5 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-900/10">
-                  <ShieldCheck size={18} /> Initialize Room
+                <button className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-5 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-slate-900/10">
+                  <Icons.ShieldCheck size={18} /> Initialize Room
                 </button>
               </form>
             </div>
@@ -306,7 +302,7 @@ const RoomManagement = () => {
                 </div>
               </div>
               <button onClick={() => setSelectedRoom(null)} className="p-3 bg-white dark:bg-slate-800 text-slate-400 hover:text-red-500 rounded-2xl transition-all shadow-sm">
-                <X size={20} />
+                <Icons.X size={20} />
               </button>
             </div>
             <div className="p-10 max-h-[60vh] overflow-y-auto scrollbar-hide">
@@ -330,7 +326,7 @@ const RoomManagement = () => {
                 </div>
               ) : (
                 <div className="py-20 text-center">
-                  <UserMinus size={48} strokeWidth={1} className="mx-auto text-slate-200 dark:text-slate-700 mb-4" />
+                  <Icons.UserMinus size={48} strokeWidth={1} className="mx-auto text-slate-200 dark:text-slate-700 mb-4" />
                   <p className="text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest text-xs">This residential unit is currently vacant</p>
                 </div>
               )}
@@ -361,7 +357,7 @@ const RoomTile = ({ room, onView, onDelete }) => {
             <span className="text-[10px] font-bold text-teal-600 dark:text-teal-400 mt-1">RS. {room.price}</span>
           </div>
           <button onClick={onDelete} className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 transition-colors">
-            <Trash2 size={18} />
+            <Icons.Trash2 size={18} />
           </button>
         </div>
         
@@ -385,7 +381,7 @@ const RoomTile = ({ room, onView, onDelete }) => {
             onClick={onView}
             className="mt-6 w-full py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-[9px] font-black uppercase tracking-widest flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all transform hover:scale-105"
           >
-            <Eye size={14} /> View Residents
+            <Icons.Eye size={14} /> View Residents
           </button>
         )}
       </div>

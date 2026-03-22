@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Building2, ArrowRight, ShieldCheck, UserCircle, ChevronLeft, Quote } from 'lucide-react';
+import * as Icons from '../components/Icons';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import ThemeToggle from '../components/ThemeToggle';
@@ -56,7 +56,7 @@ const Login = ({ setUser, isDark, setIsDark }) => {
         <div className="absolute bottom-16 left-16 right-16 space-y-4 animate-slide-up">
           <div className="w-10 h-1 bg-white rounded-full opacity-50" />
           <div className="relative">
-            <Quote className="absolute -top-8 -left-8 w-16 h-16 text-white/5" />
+            <Icons.Quote className="absolute -top-8 -left-8 w-16 h-16 text-white/5" />
             <h2 className="text-4xl font-serif font-black text-white leading-tight tracking-tight max-w-xl">
               Precision in management, <br/>
               <span className="text-slate-400 italic font-medium">comfort in living.</span>
@@ -68,7 +68,7 @@ const Login = ({ setUser, isDark, setIsDark }) => {
         </div>
 
         <div className="absolute bottom-8 left-16 flex items-center gap-2 text-white/20">
-          <Building2 size={14} />
+          <Icons.Building2 size={14} />
           <span className="text-[9px] font-black uppercase tracking-[0.4em]">Campus Housing Secure Protocol</span>
         </div>
       </div>
@@ -79,7 +79,7 @@ const Login = ({ setUser, isDark, setIsDark }) => {
         {/* Navigation & Controls - Compact */}
         <div className="p-6 flex justify-between items-center w-full">
           <Link to="/" className="group flex items-center gap-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
-            <ChevronLeft size={18} />
+            <Icons.ChevronLeft size={18} />
             <span className="text-[9px] font-black uppercase tracking-widest">Back to Home</span>
           </Link>
           <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
@@ -91,7 +91,7 @@ const Login = ({ setUser, isDark, setIsDark }) => {
             {/* Branding - Smaller */}
             <div className="space-y-3">
               <div className="w-12 h-12 bg-slate-900 dark:bg-white rounded-2xl flex items-center justify-center text-white dark:text-slate-900 shadow-xl transform hover:rotate-12 transition-transform">
-                <Building2 size={24} />
+                <Icons.Building2 size={24} />
               </div>
               <div>
                 <h1 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Portal <span className="text-slate-400 font-medium">Access</span></h1>
@@ -105,13 +105,13 @@ const Login = ({ setUser, isDark, setIsDark }) => {
                 onClick={() => setRole('student')} 
                 className={`flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${role === 'student' ? 'bg-white dark:bg-slate-800 shadow-lg text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-600'}`}
               >
-                <UserCircle size={12} /> Student
+                <Icons.UserCircle size={12} /> Student
               </button>
               <button 
                 onClick={() => setRole('admin')} 
                 className={`flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all duration-300 flex items-center justify-center gap-2 ${role === 'admin' ? 'bg-white dark:bg-slate-800 shadow-lg text-slate-900 dark:text-white' : 'text-slate-400 hover:text-slate-600'}`}
               >
-                <ShieldCheck size={12} /> Warden
+                <Icons.ShieldCheck size={12} /> Warden
               </button>
             </div>
 
@@ -148,7 +148,7 @@ const Login = ({ setUser, isDark, setIsDark }) => {
                 className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-900/10"
               >
                 {isLoading ? "Validating..." : "Sign In"}
-                {!isLoading && <ArrowRight size={16} />}
+                {!isLoading && <Icons.ArrowRight size={16} />}
               </button>
             </form>
             

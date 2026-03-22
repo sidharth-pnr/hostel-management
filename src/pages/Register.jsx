@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { UserPlus, Building2, ChevronLeft, ArrowRight, Quote, Sparkles } from 'lucide-react';
+import * as Icons from '../components/Icons';
 import ThemeToggle from '../components/ThemeToggle';
 import { API_BASE } from '../config';
 
@@ -62,7 +62,7 @@ const Register = ({ isDark, setIsDark }) => {
         <div className="absolute bottom-16 left-16 right-16 space-y-4 animate-slide-up">
           <div className="w-10 h-1 bg-white rounded-full opacity-50" />
           <div className="relative">
-            <Quote className="absolute -top-8 -left-8 w-16 h-16 text-white/5" />
+            <Icons.Quote className="absolute -top-8 -left-8 w-16 h-16 text-white/5" />
             <h2 className="text-4xl font-serif font-black text-white leading-tight tracking-tight max-w-xl">
               A community built on <br/>
               <span className="text-slate-400 italic font-medium">excellence & synergy.</span>
@@ -74,7 +74,7 @@ const Register = ({ isDark, setIsDark }) => {
         </div>
 
         <div className="absolute bottom-8 left-16 flex items-center gap-2 text-white/20">
-          <Building2 size={14} />
+          <Icons.Building2 size={14} />
           <span className="text-[9px] font-black uppercase tracking-[0.4em]">Campus Housing Secure Protocol</span>
         </div>
       </div>
@@ -85,7 +85,7 @@ const Register = ({ isDark, setIsDark }) => {
         {/* Navigation & Controls - Compact */}
         <div className="p-6 flex justify-between items-center w-full">
           <Link to="/" className="group flex items-center gap-2 text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
-            <ChevronLeft size={18} />
+            <Icons.ChevronLeft size={18} />
             <span className="text-[9px] font-black uppercase tracking-widest">Back to Home</span>
           </Link>
           <ThemeToggle isDark={isDark} setIsDark={setIsDark} />
@@ -97,7 +97,7 @@ const Register = ({ isDark, setIsDark }) => {
             {/* Branding - Compact */}
             <div className="space-y-3 text-center sm:text-left">
               <div className="flex items-center gap-3 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 w-fit rounded-full border border-slate-100 dark:border-slate-800 mx-auto sm:mx-0">
-                <Sparkles size={12} className="text-teal-500" />
+                <Icons.Sparkles size={12} className="text-teal-500" />
                 <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">Student Register</span>
               </div>
               <h1 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none">New <span className="text-slate-400">Admission</span></h1>
@@ -187,7 +187,7 @@ const Register = ({ isDark, setIsDark }) => {
                 className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-900/10"
               >
                 {isLoading ? "Synchronizing..." : "Submit Registry Request"}
-                {!isLoading && <ArrowRight size={16} />}
+                {!isLoading && <Icons.ArrowRight size={16} />}
               </button>
             </form>
             

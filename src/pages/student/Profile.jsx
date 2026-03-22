@@ -1,30 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  UserCircle, 
-  Pencil, 
-  GraduationCap, 
-  Phone, 
-  MapPin, 
-  CheckCircle2, 
-  X, 
-  Clock,
-  ShieldCheck,
-  Fingerprint,
-  Cpu,
-  Zap,
-  Globe,
-  MoreHorizontal,
-  ChevronRight,
-  User,
-  Hash,
-  Activity,
-  Verified,
-  Settings,
-  ShieldAlert,
-  ArrowUpRight,
-  Building2,
-  BedDouble
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import * as Icons from '../../components/Icons';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -92,7 +67,7 @@ const Profile = () => {
         <div className="relative">
           <div className="w-32 h-32 rounded-3xl bg-slate-100 dark:bg-white/5 p-1 border border-slate-200 dark:border-white/10 shadow-xl overflow-hidden group">
             <div className="w-full h-full rounded-[1.25rem] bg-white dark:bg-slate-900 flex items-center justify-center relative overflow-hidden">
-              <UserCircle size={80} strokeWidth={1} className="text-slate-300 dark:text-slate-600" />
+              <Icons.UserCircle size={80} strokeWidth={1} className="text-slate-300 dark:text-slate-600" />
               <motion.div 
                 animate={{ top: ['-100%', '100%'] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
@@ -101,7 +76,7 @@ const Profile = () => {
             </div>
           </div>
           <div className="absolute -bottom-1 -right-1 bg-emerald-500 p-1.5 rounded-lg border-2 border-white dark:border-slate-950 shadow-lg">
-            <ShieldCheck size={14} className="text-white" />
+            <Icons.ShieldCheck size={14} className="text-white" />
           </div>
         </div>
 
@@ -125,7 +100,7 @@ const Profile = () => {
             onClick={() => setIsEditing(true)}
             className="px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-black uppercase tracking-widest text-[9px] shadow-lg hover:scale-105 transition-all flex items-center gap-2"
           >
-            <Pencil size={14} /> Edit Profile
+            <Icons.Pencil size={14} /> Edit Profile
           </button>
         )}
       </section>
@@ -137,10 +112,10 @@ const Profile = () => {
             key="view" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
           >
-            <MiniNode icon={GraduationCap} label="Department" val={user.department} color="blue" />
-            <MiniNode icon={Clock} label="Year of Study" val={`Year ${user.year}`} color="teal" />
-            <MiniNode icon={Phone} label="Phone Number" val={user.phone || 'Not Set'} color="indigo" />
-            <MiniNode icon={Hash} label="Student ID" val={user.reg_no} color="slate" />
+            <MiniNode icon={Icons.GraduationCap} label="Department" val={user.department} color="blue" />
+            <MiniNode icon={Icons.Clock} label="Year of Study" val={`Year ${user.year}`} color="teal" />
+            <MiniNode icon={Icons.Phone} label="Phone Number" val={user.phone || 'Not Set'} color="indigo" />
+            <MiniNode icon={Icons.Hash} label="Student ID" val={user.reg_no} color="slate" />
           </motion.div>
         ) : (
           <motion.form 
@@ -150,15 +125,15 @@ const Profile = () => {
           >
             <div className="flex justify-between items-center border-b border-slate-100 dark:border-white/5 pb-4">
                <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Update Info.</h3>
-               <button type="button" onClick={() => setIsEditing(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"><X size={20} /></button>
+               <button type="button" onClick={() => setIsEditing(false)} className="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all"><Icons.X size={20} /></button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputGroup label="Full Name" value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} icon={User} />
+              <InputGroup label="Full Name" value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} icon={Icons.User} />
               <InputGroup label="Phone Number" value={editData.phone} onChange={(e) => {
                 const val = e.target.value.replace(/\D/g, '');
                 if (val.length <= 10) setEditData({...editData, phone: val});
-              }} icon={Phone} />
+              }} icon={Icons.Phone} />
               
               <div className="space-y-2">
                 <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Department</label>
@@ -186,7 +161,7 @@ const Profile = () => {
             <div className="flex justify-end gap-4 pt-4 border-t border-slate-100 dark:border-white/5">
               <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-3 rounded-lg font-black text-[9px] uppercase tracking-widest text-slate-400 hover:text-slate-900 dark:hover:text-white">Cancel</button>
               <button type="submit" className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-black uppercase tracking-widest text-[9px] shadow-lg flex items-center gap-2">
-                <CheckCircle2 size={14} className="text-blue-500" /> Save Changes
+                <Icons.CheckCircle2 size={14} className="text-blue-500" /> Save Changes
               </button>
             </div>
           </motion.form>
@@ -203,7 +178,7 @@ const Profile = () => {
           >
             <div className="flex items-center gap-6">
               <div className="w-16 h-16 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-600 border border-blue-600/20 group-hover:scale-110 transition-transform">
-                <BedDouble size={32} />
+                <Icons.BedDouble size={32} />
               </div>
               <div>
                 <p className="text-[9px] font-black uppercase tracking-widest text-blue-500">My Room Info</p>
@@ -211,7 +186,7 @@ const Profile = () => {
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Block {room.block} • Standard Room</p>
               </div>
             </div>
-            <ArrowUpRight size={24} className="text-slate-300 dark:text-slate-600 group-hover:text-blue-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+            <Icons.ArrowUpRight size={24} className="text-slate-300 dark:text-slate-600 group-hover:text-blue-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
           </motion.div>
         ) : (
           <div className="h-[100px] flex items-center justify-center border border-dashed border-slate-200 dark:border-white/5 rounded-[2rem] opacity-40">
@@ -219,9 +194,10 @@ const Profile = () => {
           </div>
         )}
       </div>
-      </div>
-      );
-      };
+    </div>
+  );
+};
+
 // --- SUB-COMPONENTS ---
 
 const MiniNode = ({ icon: Icon, label, val, color }) => (
@@ -233,14 +209,6 @@ const MiniNode = ({ icon: Icon, label, val, color }) => (
       <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">{label}</p>
       <p className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight">{val}</p>
     </div>
-  </div>
-);
-
-const MiniStat = ({ icon: Icon, label, val }) => (
-  <div className="flex items-center gap-2 px-4 py-2 bg-slate-100/50 dark:bg-white/5 rounded-xl border border-slate-200/50 dark:border-white/5">
-    <Icon size={12} className="text-slate-400" />
-    <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">{label}:</span>
-    <span className="text-[8px] font-black uppercase tracking-widest text-slate-900 dark:text-white">{val}</span>
   </div>
 );
 

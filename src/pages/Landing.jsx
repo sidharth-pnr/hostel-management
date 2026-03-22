@@ -1,25 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Building2, 
-  ChevronRight, 
-  ShieldCheck, 
-  Zap, 
-  Map, 
-  Users, 
-  ArrowRight,
-  GraduationCap,
-  MessageSquare,
-  Clock,
-  Mail,
-  Phone,
-  MapPin,
-  CheckCircle2,
-  ListChecks,
-  UserPlus,
-  HelpCircle
-} from 'lucide-react';
+import * as Icons from '../components/Icons';
 import ThemeToggle from '../components/ThemeToggle';
 import BackgroundEffect from '../components/BackgroundEffect';
 
@@ -63,7 +45,7 @@ const Landing = ({ isDark, setIsDark }) => {
               whileHover={{ rotate: 10, scale: 1.1 }}
               className="w-10 h-10 bg-slate-900 dark:bg-white rounded-xl flex items-center justify-center text-white dark:text-slate-900 shadow-lg"
             >
-              <Building2 size={22} />
+              <Icons.Building2 size={22} />
             </motion.div>
             <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white uppercase">Campus <span className="text-slate-500 font-medium">Housing</span></span>
           </div>
@@ -148,7 +130,7 @@ const Landing = ({ isDark, setIsDark }) => {
                     to="/register" 
                     className="w-full sm:w-auto px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 shadow-2xl shadow-slate-900/20"
                   >
-                    Apply for Admission <ArrowRight size={18} />
+                    Apply for Admission <Icons.ArrowRight size={18} />
                   </Link>
                 </motion.div>
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -256,25 +238,25 @@ const Landing = ({ isDark, setIsDark }) => {
           <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <ProcessStep 
               number="01" 
-              icon={GraduationCap} 
+              icon={Icons.GraduationCap} 
               title="Identity Check" 
               desc="Register using your University ID and academic details for verification." 
             />
             <ProcessStep 
               number="02" 
-              icon={ShieldCheck} 
+              icon={Icons.ShieldCheck} 
               title="Warden Review" 
               desc="Administrative team checks eligibility and grants residential portal access." 
             />
             <ProcessStep 
               number="03" 
-              icon={Map} 
+              icon={Icons.Map} 
               title="Smart Booking" 
               desc="Browse the 3D block map and select your preferred bed space." 
             />
             <ProcessStep 
               number="04" 
-              icon={MessageSquare} 
+              icon={Icons.MessageSquare} 
               title="Concierge Care" 
               desc="Our maintenance team is one click away via the ticketing system." 
             />
@@ -304,7 +286,7 @@ const Landing = ({ isDark, setIsDark }) => {
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
                 >
-                  <UserPlus className="mx-auto mb-6 text-teal-400" size={48} />
+                  <Icons.UserPlus className="mx-auto mb-6 text-teal-400" size={48} />
                 </motion.div>
                 <h2 className="text-3xl font-black tracking-tight mb-4">What you'll need to register</h2>
                 <p className="text-slate-400 text-sm uppercase font-black tracking-widest">Preparation Guide</p>
@@ -320,7 +302,7 @@ const Landing = ({ isDark, setIsDark }) => {
               <div className="pt-6 flex justify-center">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Link to="/register" className="group flex items-center gap-3 bg-white text-slate-900 px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest">
-                    Start Registration Now <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                    Start Registration Now <Icons.ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </motion.div>
               </div>
@@ -372,15 +354,15 @@ const Landing = ({ isDark, setIsDark }) => {
             >
               {activeManual === 'student' ? (
                 <>
-                  <ManualCard icon={ListChecks} title="Step 1: Check-In" desc="Log in and check your 'Desk' for the status of your admission approval." />
-                  <ManualCard icon={Map} title="Step 2: Room Selection" desc="Once approved, head to 'Stay' to browse available rooms and blocks." />
-                  <ManualCard icon={MessageSquare} title="Step 3: Support" desc="Need something fixed? Go to 'Support' to create a high-priority ticket." />
+                  <ManualCard icon={Icons.ListChecks} title="Step 1: Check-In" desc="Log in and check your 'Desk' for the status of your admission approval." />
+                  <ManualCard icon={Icons.Map} title="Step 2: Room Selection" desc="Once approved, head to 'Stay' to browse available rooms and blocks." />
+                  <ManualCard icon={Icons.MessageSquare} title="Step 3: Support" desc="Need something fixed? Go to 'Support' to create a high-priority ticket." />
                 </>
               ) : (
                 <>
-                  <ManualCard icon={UserPlus} title="Step 1: Approvals" desc="Review pending scholar applications in the 'New Scholars' tab." />
-                  <ManualCard icon={ShieldCheck} title="Step 2: Monitoring" desc="Use the 'Overview' dashboard to track hostel occupancy and urgent issues." />
-                  <ManualCard icon={Clock} title="Step 3: Resolution" desc="View grievances, assign staff, and mark tickets as 'Resolved' when complete." />
+                  <ManualCard icon={Icons.UserPlus} title="Step 1: Approvals" desc="Review pending scholar applications in the 'New Scholars' tab." />
+                  <ManualCard icon={Icons.ShieldCheck} title="Step 2: Monitoring" desc="Use the 'Overview' dashboard to track hostel occupancy and urgent issues." />
+                  <ManualCard icon={Icons.Clock} title="Step 3: Resolution" desc="View grievances, assign staff, and mark tickets as 'Resolved' when complete." />
                 </>
               )}
             </motion.div>
@@ -410,9 +392,9 @@ const Landing = ({ isDark, setIsDark }) => {
                 </div>
 
                 <motion.div variants={staggerContainer} className="space-y-6">
-                  <ContactItem icon={Mail} label="Administrative Support" value="housing.support@cet.ac.in" />
-                  <ContactItem icon={Phone} label="Warden's Office (9AM - 5PM)" value="+91 467 2250311" />
-                  <ContactItem icon={MapPin} label="Office Location" value="Admin Block, CE Trikaripur, Kerala" />
+                  <ContactItem icon={Icons.Mail} label="Administrative Support" value="housing.support@cet.ac.in" />
+                  <ContactItem icon={Icons.Phone} label="Warden's Office (9AM - 5PM)" value="+91 467 2250311" />
+                  <ContactItem icon={Icons.MapPin} label="Office Location" value="Admin Block, CE Trikaripur, Kerala" />
                 </motion.div>
               </div>
 
@@ -420,7 +402,7 @@ const Landing = ({ isDark, setIsDark }) => {
                 whileHover={{ y: -5 }}
                 className="bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl"
               >
-                <HelpCircle className="text-slate-900 dark:text-white mb-6" size={32} />
+                <Icons.HelpCircle className="text-slate-900 dark:text-white mb-6" size={32} />
                 <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 font-serif">Frequently Asked?</h3>
                 <div className="space-y-4">
                   <FAQMini question="Lost your password?" answer="Contact the Chief Warden's office with your University ID for a secure reset." />
@@ -440,7 +422,7 @@ const Landing = ({ isDark, setIsDark }) => {
             transition={{ duration: 4, repeat: Infinity }}
             className="flex items-center justify-center gap-3 mb-6 grayscale"
           >
-            <Building2 size={20} />
+            <Icons.Building2 size={20} />
             <span className="text-sm font-black uppercase tracking-widest text-slate-900 dark:text-white">Campus Housing</span>
           </motion.div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
@@ -461,7 +443,7 @@ const FeatureMiniCard = ({ title, desc }) => (
     whileHover={{ y: -5, borderColor: 'rgb(20, 184, 166)' }}
     className="p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800 transition-all"
   >
-    <CheckCircle2 className="text-teal-500 mb-3" size={24} />
+    <Icons.CheckCircle2 className="text-teal-500 mb-3" size={24} />
     <h4 className="font-bold text-slate-900 dark:text-white mb-1">{title}</h4>
     <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{desc}</p>
   </motion.div>

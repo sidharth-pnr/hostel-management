@@ -1,30 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  UserCircle, 
-  Home, 
-  Users, 
-  Clock, 
-  ArrowUpRight,
-  Calendar,
-  Building2,
-  Phone,
-  GraduationCap,
-  MessageSquare,
-  BedDouble,
-  Activity,
-  User,
-  Hash,
-  Pencil,
-  History,
-  ArrowRightLeft,
-  CreditCard,
-  CheckCircle2,
-  ShieldCheck,
-  Zap,
-  Smartphone,
-  Globe,
-  Wallet
-} from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -129,9 +104,9 @@ const StudentOverview = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="mb-12 bg-amber-500/10 border border-amber-500/20 rounded-[3rem] p-8 md:p-12 relative overflow-hidden shadow-2xl"
             >
-              <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard size={150} className="text-amber-500" /></div>
+              <div className="absolute top-0 right-0 p-8 opacity-10"><Icons.CreditCard size={150} className="text-amber-500" /></div>
               <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
-                 <div className="w-20 h-20 bg-amber-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Zap size={40} /></div>
+                 <div className="w-20 h-20 bg-amber-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Icons.Zap size={40} /></div>
                  <div className="space-y-3 flex-1">
                     <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">Action Required</p>
                     <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Payment Pending.</h3>
@@ -143,7 +118,7 @@ const StudentOverview = () => {
                    onClick={() => setShowPaymentModal(true)}
                    className="px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3"
                  >
-                   <CreditCard size={16} />
+                   <Icons.CreditCard size={16} />
                    Pay & Check-In
                  </button>
               </div>
@@ -162,23 +137,23 @@ const StudentOverview = () => {
                       <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">My Profile.</h3>
                     </div>
                     <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center border border-slate-200 dark:border-white/10">
-                      <UserCircle size={32} className="text-slate-400" />
+                      <Icons.UserCircle size={32} className="text-slate-400" />
                     </div>
                   </div>
 
                   <div className="grid gap-6">
-                    <InfoItem icon={User} label="Full Name" value={user?.name || "N/A"} />
-                    <InfoItem icon={Hash} label="Student ID" value={user?.reg_no || "N/A"} />
-                    <InfoItem icon={GraduationCap} label="Department" value={user?.department || "N/A"} />
-                    <InfoItem icon={Calendar} label="Year of Study" value={user?.year ? `Year ${user.year}` : "N/A"} />
-                    <InfoItem icon={Phone} label="Contact" value={user?.phone || 'N/A'} />
+                    <InfoItem icon={Icons.User} label="Full Name" value={user?.name || "N/A"} />
+                    <InfoItem icon={Icons.Hash} label="Student ID" value={user?.reg_no || "N/A"} />
+                    <InfoItem icon={Icons.GraduationCap} label="Department" value={user?.department || "N/A"} />
+                    <InfoItem icon={Icons.Calendar} label="Year of Study" value={user?.year ? `Year ${user.year}` : "N/A"} />
+                    <InfoItem icon={Icons.Phone} label="Contact" value={user?.phone || 'N/A'} />
                   </div>
 
                   <button 
                     onClick={() => navigate('/student/profile')}
                     className="w-full py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
                   >
-                    <Pencil size={14} className="text-blue-500" />
+                    <Icons.Pencil size={14} className="text-blue-500" />
                     Update My Profile
                   </button>
                 </div>
@@ -190,7 +165,7 @@ const StudentOverview = () => {
               <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-[40px] rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden group">
                 <div className="p-8 sm:p-10 relative">
                   <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <Building2 size={150} className="text-blue-500" />
+                    <Icons.Building2 size={150} className="text-blue-500" />
                   </div>
 
                   <div className="relative z-10 space-y-8">
@@ -232,7 +207,7 @@ const StudentOverview = () => {
                                   onClick={() => navigate('/student/book')}
                                   className="ml-auto md:ml-4 px-5 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-black text-[9px] uppercase tracking-widest shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
                                 >
-                                  <ArrowRightLeft size={12} className="text-blue-500" />
+                                  <Icons.ArrowRightLeft size={12} className="text-blue-500" />
                                   Change My Room
                                 </button>
                             </div>
@@ -241,7 +216,7 @@ const StudentOverview = () => {
                     ) : (
                       <div className="py-12 text-center space-y-6">
                          <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto">
-                            <BedDouble size={32} className="text-slate-300" />
+                            <Icons.BedDouble size={32} className="text-slate-300" />
                          </div>
                          <div className="space-y-2">
                             <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
@@ -251,7 +226,7 @@ const StudentOverview = () => {
                               onClick={() => navigate('/student/book')}
                               className="text-blue-500 font-black text-xs uppercase tracking-[0.3em] hover:tracking-[0.4em] transition-all flex items-center justify-center gap-2 mx-auto pt-2"
                             >
-                              {room?.approved_room_id ? "View Other Rooms" : "Find a Room Now"} <ArrowUpRight size={16} />
+                              {room?.approved_room_id ? "View Other Rooms" : "Find a Room Now"} <Icons.ArrowUpRight size={16} />
                             </button>
                          </div>
                       </div>
@@ -264,7 +239,7 @@ const StudentOverview = () => {
               <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-[40px] rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-2xl p-8 sm:p-10">
                 <div className="flex items-center justify-between mb-8">
                   <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">My Roommates.</h4>
-                  <Users size={20} className="text-slate-400" />
+                  <Icons.Users size={20} className="text-slate-400" />
                 </div>
                 
                 {roommates.length > 0 ? (
@@ -305,7 +280,7 @@ const StudentOverview = () => {
                     <p className="text-[9px] font-black uppercase tracking-widest text-blue-500">History</p>
                     <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Recent Activity.</h3>
                   </div>
-                  <History size={24} className="text-slate-400" />
+                  <Icons.History size={24} className="text-slate-400" />
                 </div>
 
                 <div className="space-y-4">
@@ -342,7 +317,7 @@ const StudentOverview = () => {
               <div className="p-6 sm:p-8 overflow-y-auto scrollbar-hide space-y-8">
                 <div className="text-center space-y-3">
                   <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 mx-auto">
-                    <ShieldCheck size={32} />
+                    <Icons.ShieldCheck size={32} />
                   </div>
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">Checkout.</h3>
                   <p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400">Secure Payment Portal</p>
@@ -366,21 +341,21 @@ const StudentOverview = () => {
                     <PaymentOption 
                       active={paymentMethod === 'MPESA'} 
                       onClick={() => setPaymentMethod('MPESA')}
-                      icon={Smartphone}
+                      icon={Icons.Smartphone}
                       label="UPI / Mobile Money"
                       desc="Instant Mobile Payments"
                     />
                     <PaymentOption 
                       active={paymentMethod === 'CARD'} 
                       onClick={() => setPaymentMethod('CARD')}
-                      icon={Globe}
+                      icon={Icons.Globe}
                       label="Card Payment"
                       desc="Credit or Debit Card"
                     />
                     <PaymentOption 
                       active={paymentMethod === 'BANK'} 
                       onClick={() => setPaymentMethod('BANK')}
-                      icon={Wallet}
+                      icon={Icons.Wallet}
                       label="Bank Transfer"
                       desc="net banking or mobile banking"
                     />
@@ -428,17 +403,17 @@ const PaymentOption = ({ active, onClick, icon: Icon, label, desc }) => (
       <p className={`text-[10px] font-black uppercase tracking-tight ${active ? 'text-slate-900 dark:text-white' : 'text-slate-500'}`}>{label}</p>
       <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{desc}</p>
     </div>
-    {active && <CheckCircle2 size={14} className="text-blue-500" />}
+    {active && <Icons.CheckCircle2 size={14} className="text-blue-500" />}
   </button>
 );
 
 const ActivityItem = ({ log }) => {
   const getIcon = (type) => {
     switch(type) {
-      case 'registration': return UserCircle;
-      case 'allocation': return Home;
-      case 'complaint': return MessageSquare;
-      default: return Activity;
+      case 'registration': return Icons.UserCircle;
+      case 'allocation': return Icons.Home;
+      case 'complaint': return Icons.MessageSquare;
+      default: return Icons.Activity;
     }
   };
 
@@ -458,7 +433,7 @@ const ActivityItem = ({ log }) => {
             {log.performed_by}
           </span>
           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-            <Clock size={10} />
+            <Icons.Clock size={10} />
             {new Date(log.created_at).toLocaleString('en-US', { 
               month: 'short', 
               day: 'numeric', 

@@ -2,31 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Home, 
-  Users, 
-  MapPin, 
-  ArrowRight, 
-  Building2, 
-  LayoutGrid, 
-  ShieldCheck, 
-  Timer, 
-  Zap, 
-  Search, 
-  Filter, 
-  ArrowRightLeft,
-  Box,
-  CheckCircle2,
-  AlertCircle,
-  Loader2,
-  BedDouble,
-  FileText,
-  XCircle,
-  MessageSquare,
-  ShieldAlert,
-  ArrowUpRight,
-  Info
-} from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { API_BASE } from '../../config';
 import BackgroundEffect from '../../components/BackgroundEffect';
@@ -143,7 +119,7 @@ const BookRoom = () => {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500/0 via-amber-500 to-amber-500/0" />
         <div className="relative z-10 space-y-10">
           <div className="w-24 h-24 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto relative">
-            <Timer size={48} className="text-amber-500 animate-pulse" />
+            <Icons.Timer size={48} className="text-amber-500 animate-pulse" />
             <div className="absolute -inset-4 border border-amber-500/20 rounded-full animate-ping opacity-20" />
           </div>
           <div className="space-y-4">
@@ -159,7 +135,7 @@ const BookRoom = () => {
           )}
 
           <div className="inline-flex items-center gap-3 px-6 py-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-amber-600 dark:text-amber-400 text-[10px] font-black uppercase tracking-widest">
-            <ShieldAlert size={16} />
+            <Icons.ShieldAlert size={16} />
             Waiting for Warden
           </div>
         </div>
@@ -179,9 +155,9 @@ const BookRoom = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="max-w-5xl mx-auto bg-red-500/10 border border-red-500/20 rounded-[3rem] p-10 relative overflow-hidden shadow-2xl"
           >
-            <div className="absolute top-0 right-0 p-8 opacity-10"><ShieldAlert size={150} className="text-red-500" /></div>
+            <div className="absolute top-0 right-0 p-8 opacity-10"><Icons.ShieldAlert size={150} className="text-red-500" /></div>
             <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
-               <div className="w-20 h-20 bg-red-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><ShieldAlert size={40} /></div>
+               <div className="w-20 h-20 bg-red-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Icons.ShieldAlert size={40} /></div>
                <div className="space-y-3 flex-1">
                   <p className="text-[10px] font-black uppercase tracking-widest text-red-500">Notice from Warden</p>
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Request Rejected.</h3>
@@ -208,9 +184,9 @@ const BookRoom = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="max-w-5xl mx-auto bg-blue-500/10 border border-blue-500/20 rounded-[3rem] p-10 relative overflow-hidden shadow-2xl"
           >
-            <div className="absolute top-0 right-0 p-8 opacity-10"><Zap size={150} className="text-blue-500" /></div>
+            <div className="absolute top-0 right-0 p-8 opacity-10"><Icons.Zap size={150} className="text-blue-500" /></div>
             <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
-               <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Building2 size={40} /></div>
+               <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Icons.Building2 size={40} /></div>
                <div className="space-y-3 flex-1">
                   <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Official Suggestion</p>
                   <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">New Room Available.</h3>
@@ -249,7 +225,7 @@ const BookRoom = () => {
                    }}
                    className="px-10 py-5 bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3"
                  >
-                   <CheckCircle2 size={16} />
+                   <Icons.CheckCircle2 size={16} />
                    Accept & Move
                  </button>
                </div>
@@ -263,25 +239,25 @@ const BookRoom = () => {
             <StatTile 
               label="Total Units" 
               value={availableRooms.length} 
-              icon={Home} 
+              icon={Icons.Home} 
               color="blue" 
             />
             <StatTile 
               label="Open Slots" 
               value={availableRooms.reduce((acc, r) => acc + (parseInt(r.capacity) - parseInt(r.current_occupancy)), 0)} 
-              icon={Users} 
+              icon={Icons.Users} 
               color="teal" 
             />
             <StatTile 
               label="Active Wings" 
               value={blocks.length - 1} 
-              icon={Building2} 
+              icon={Icons.Building2} 
               color="orange" 
             />
             <StatTile 
               label="System" 
               value="Live" 
-              icon={Zap} 
+              icon={Icons.Zap} 
               color="emerald" 
             />
           </section>
@@ -289,7 +265,7 @@ const BookRoom = () => {
           {/* FILTERS & SEARCH */}
           <section className="flex flex-col md:flex-row items-center gap-6">
             <div className="flex-1 relative w-full group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={20} />
+              <Icons.Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={20} />
               <input 
                 type="text"
                 placeholder="Search room number or block..."
@@ -319,7 +295,7 @@ const BookRoom = () => {
           <div className="min-h-[40vh] relative">
             {isLoading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
-                <Loader2 size={40} className="animate-spin text-blue-500 opacity-20" />
+                <Icons.Loader2 size={40} className="animate-spin text-blue-500 opacity-20" />
                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 animate-pulse">Checking rooms...</p>
               </div>
             ) : (
@@ -339,12 +315,12 @@ const BookRoom = () => {
                       <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-3xl rounded-[3rem] border border-slate-200 dark:border-white/10 shadow-xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-blue-500/30 flex flex-col h-full">
                         <div className="p-8 md:p-10 flex-1 relative overflow-hidden">
                           <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                            <LayoutGrid size={120} />
+                            <Icons.LayoutGrid size={120} />
                           </div>
 
                           <div className="flex justify-between items-start mb-10 relative z-10">
                             <div className="p-5 bg-blue-600/10 dark:bg-white/5 text-blue-600 dark:text-white rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-inner">
-                              <BedDouble size={32} />
+                              <Icons.BedDouble size={32} />
                             </div>
                             <div className="flex flex-col items-end gap-2">
                               <span className="bg-blue-500/10 text-blue-600 dark:text-blue-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-500/20 shadow-sm">
@@ -360,7 +336,7 @@ const BookRoom = () => {
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Room Number</p>
                             <h3 className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">ROOM {r.room_number}</h3>
                             <div className="flex items-center gap-2 pt-2 text-slate-500 dark:text-slate-400 font-bold text-[11px] uppercase tracking-widest">
-                              <Building2 size={14} className="text-blue-500" />
+                              <Icons.Building2 size={14} className="text-blue-500" />
                               <span>Block {r.block} • Standard Room</span>
                             </div>
                           </div>
@@ -399,7 +375,7 @@ const BookRoom = () => {
                           <span className="relative z-10">
                             {user?.account_status === 'PENDING' ? "Waiting for Approval" : (studentStatus?.room_id ? "Request Change" : "Book Room")}
                           </span>
-                          {user?.account_status !== 'PENDING' && <ArrowRight size={18} className="relative z-10 group-hover:translate-x-2 transition-transform" />}
+                          {user?.account_status !== 'PENDING' && <Icons.ArrowRight size={18} className="relative z-10 group-hover:translate-x-2 transition-transform" />}
                         </button>
                       </div>
                     </motion.div>
@@ -411,7 +387,7 @@ const BookRoom = () => {
                       exit={{ opacity: 0 }}
                       className="col-span-full py-32 text-center bg-white/20 dark:bg-white/5 rounded-[4rem] border border-dashed border-slate-300 dark:border-white/10 shadow-inner"
                     >
-                      <Box size={64} className="mx-auto text-slate-300 dark:text-slate-700 mb-8 animate-pulse" />
+                      <Icons.Box size={64} className="mx-auto text-slate-300 dark:text-slate-700 mb-8 animate-pulse" />
                       <div className="space-y-2">
                         <h3 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">No Rooms Found.</h3>
                         <p className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">All rooms in Block {selectedBlock} are currently full.</p>
@@ -458,7 +434,7 @@ const BookRoom = () => {
                    {studentStatus?.room_id ? (
                      <div className="space-y-3">
                         <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                           <FileText size={14} />
+                           <Icons.FileText size={14} />
                            Reason for Request
                         </label>
                         <textarea 
@@ -476,7 +452,7 @@ const BookRoom = () => {
                    )}
 
                    <div className="flex items-center gap-4 bg-blue-500/5 p-5 rounded-2xl border border-blue-500/10">
-                      <Info size={20} className="text-blue-500 shrink-0" />
+                      <Icons.Info size={20} className="text-blue-500 shrink-0" />
                       <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 leading-relaxed uppercase tracking-wider">
                          Note: All requests must be approved by the warden.
                       </p>
@@ -494,7 +470,7 @@ const BookRoom = () => {
                      onClick={requestRoom}
                      className="flex-[2] bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-5 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
                    >
-                     <ArrowUpRight size={18} />
+                     <Icons.ArrowUpRight size={18} />
                      Submit Request
                    </button>
                 </div>

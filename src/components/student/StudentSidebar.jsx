@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Building2, LayoutDashboard, BedDouble, ClipboardList, UserCircle, Info, LogOut } from 'lucide-react';
+import * as Icons from '../Icons';
 import ThemeToggle from '../ThemeToggle';
 
 export const StudentSidebar = ({ user, isDark, setIsDark }) => {
@@ -59,7 +59,7 @@ export const StudentSidebar = ({ user, isDark, setIsDark }) => {
       {/* Brand */}
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-slate-900 dark:bg-white rounded-full flex items-center justify-center text-white dark:text-slate-900 shadow-lg flex-shrink-0">
-          <Building2 size={20} />
+          <Icons.Building2 size={20} />
         </div>
         <div className="hidden sm:block">
           <h2 className="font-black text-slate-900 dark:text-white text-[10px] uppercase tracking-tighter leading-none">Campus</h2>
@@ -69,11 +69,11 @@ export const StudentSidebar = ({ user, isDark, setIsDark }) => {
 
       {/* Navigation */}
       <nav className="flex items-center gap-1">
-        <NavItem to="/student" icon={LayoutDashboard} label="Dashboard" />
-        <NavItem to="/student/book" icon={BedDouble} label="Book Room" />
-        <NavItem to="/student/complaints" icon={ClipboardList} label="Complaints" />
-        <NavItem to="/student/profile" icon={UserCircle} label="Profile" />
-        <NavItem to="/student/about" icon={Info} label="About" />
+        <NavItem to="/student" icon={Icons.LayoutDashboard} label="Dashboard" />
+        <NavItem to="/student/book" icon={Icons.BedDouble} label="Book Room" />
+        <NavItem to="/student/complaints" icon={Icons.ClipboardList} label="Complaints" />
+        <NavItem to="/student/profile" icon={Icons.UserCircle} label="Profile" />
+        <NavItem to="/student/about" icon={Icons.Info} label="About" />
       </nav>
 
       {/* Profile & Controls */}
@@ -88,7 +88,7 @@ export const StudentSidebar = ({ user, isDark, setIsDark }) => {
           className="p-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 rounded-full transition-all"
           title="Sign Out"
         >
-          <LogOut size={18} />
+          <Icons.LogOut size={18} />
         </button>
       </div>
     </div>

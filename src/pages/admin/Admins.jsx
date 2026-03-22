@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { UserPlus, Shield, Trash2, Mail, User } from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { API_BASE } from '../../config';
 
 const Admins = () => {
@@ -74,7 +74,7 @@ const Admins = () => {
   if (user.role !== 'SUPER') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-500">
-        <Shield size={48} className="mb-4 opacity-20" />
+        <Icons.Shield size={48} className="mb-4 opacity-20" />
         <h2 className="text-xl font-bold">Access Denied</h2>
         <p>Only SUPER admins can manage other accounts.</p>
       </div>
@@ -92,7 +92,7 @@ const Admins = () => {
           onClick={() => setShowAddForm(!showAddForm)}
           className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-2.5 rounded-full font-bold text-sm flex items-center gap-2 hover:scale-105 transition-all shadow-lg"
         >
-          <UserPlus size={18} />
+          <Icons.UserPlus size={18} />
           {showAddForm ? 'Cancel' : 'New Admin'}
         </button>
       </div>
@@ -154,20 +154,20 @@ const Admins = () => {
           <div key={adm.admin_id} className="bg-white dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-200/60 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group">
             <div className="flex items-start justify-between mb-4">
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${adm.role === 'SUPER' ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-600'}`}>
-                <Shield size={24} />
+                <Icons.Shield size={24} />
               </div>
               {adm.admin_id !== 1 && adm.admin_id != user.id && (
                 <button
                   onClick={() => handleDelete(adm.admin_id)}
                   className="p-2 text-slate-300 hover:text-red-500 transition-colors"
                 >
-                  <Trash2 size={18} />
+                  <Icons.Trash2 size={18} />
                 </button>
               )}
             </div>
             <h3 className="font-bold text-slate-900 dark:text-white">{adm.name}</h3>
             <div className="flex items-center gap-2 text-slate-500 text-xs mt-1">
-              <User size={12} />
+              <Icons.User size={12} />
               <span>{adm.username}</span>
             </div>
             <div className="mt-4">

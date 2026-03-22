@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Trash2, AlertCircle, Clock, CheckCircle2, ClipboardList, 
-  Timer, MessageSquare, ArrowRight, ShieldAlert, Zap,
-  Filter, SortAsc, Activity, MoreVertical, Search,
-  History, Settings2, CheckCircle, Info, Image as ImageIcon, X,
-  Maximize2
-} from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOutletContext } from 'react-router-dom';
 import axios from 'axios';
@@ -122,16 +116,16 @@ const Complaints = () => {
         
         {/* 1. COMPLAINTS SUMMARY */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard icon={ClipboardList} label="Total Complaints" value={stats.total} subValue="All Time" color="blue" />
-          <StatCard icon={ShieldAlert} label="Urgent Problems" value={stats.high} subValue="High Priority" color="red" pulse={stats.high > 0} />
-          <StatCard icon={Activity} label="In Progress" value={stats.inProgress} subValue="Being Fixed" color="teal" />
-          <StatCard icon={CheckCircle} label="Solved Rate" value={`${stats.total > 0 ? Math.round((stats.resolved / stats.total) * 100) : 0}%`} subValue="Resolved Issues" color="teal" />
+          <StatCard icon={Icons.ClipboardList} label="Total Complaints" value={stats.total} subValue="All Time" color="blue" />
+          <StatCard icon={Icons.ShieldAlert} label="Urgent Problems" value={stats.high} subValue="High Priority" color="red" pulse={stats.high > 0} />
+          <StatCard icon={Icons.Activity} label="In Progress" value={stats.inProgress} subValue="Being Fixed" color="teal" />
+          <StatCard icon={Icons.CheckCircle} label="Solved Rate" value={`${stats.total > 0 ? Math.round((stats.resolved / stats.total) * 100) : 0}%`} subValue="Resolved Issues" color="teal" />
         </div>
 
         {/* 2. SEARCH & FILTER */}
         <div className="flex flex-col xl:flex-row gap-6 items-stretch xl:items-center">
           <div className="relative flex-1 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={20}/>
+            <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 group-focus-within:text-slate-900 dark:group-focus-within:text-white transition-colors" size={20}/>
             <input 
               placeholder="Search by ID, title, or student name..." 
               className="w-full pl-12 pr-6 py-4 bg-white dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-200 dark:border-slate-800 outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-white transition-all text-slate-900 dark:text-white"
@@ -170,7 +164,7 @@ const Complaints = () => {
             />
           )) : (
             <div className="col-span-full py-32 bg-white dark:bg-slate-900/30 rounded-[3rem] border border-dashed border-slate-200 dark:border-slate-800 text-center">
-              <CheckCircle2 size={64} strokeWidth={1} className="mx-auto mb-6 text-teal-500/20" />
+              <Icons.CheckCircle2 size={64} strokeWidth={1} className="mx-auto mb-6 text-teal-500/20" />
               <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">All Clear</h3>
               <p className="text-slate-400 dark:text-slate-600 font-bold uppercase tracking-widest text-xs mt-2">No complaints in this category</p>
             </div>
@@ -187,7 +181,7 @@ const Complaints = () => {
             onClick={() => setLightboxImage(null)}
           >
             <button className="absolute top-8 right-8 p-4 text-white hover:bg-white/10 rounded-full transition-all">
-              <X size={32} />
+              <Icons.X size={32} />
             </button>
             <motion.img 
               initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
@@ -260,22 +254,22 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
               onClick={() => { if(window.confirm("Delete this complaint?")) handleAction(c.complaint_id, 'delete') }}
               className="p-3 bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 hover:text-red-500 dark:hover:text-red-400 rounded-2xl transition-all"
             >
-              <Trash2 size={20} />
+              <Icons.Trash2 size={20} />
             </button>
           )}
         </div>
 
         <div className="bg-slate-50/50 dark:bg-white/5 p-6 rounded-3xl border border-slate-100 dark:border-white/5 relative group/msg mb-6">
-          <MessageSquare className="absolute -top-3 -right-3 text-slate-200 dark:text-slate-800 transition-transform group-hover/msg:scale-110" size={32} />
+          <Icons.MessageSquare className="absolute -top-3 -right-3 text-slate-200 dark:text-slate-800 transition-transform group-hover/msg:scale-110" size={32} />
           <p className="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed italic">
             "{c.description}"
           </p>
         </div>
 
         <div className="relative pl-6 space-y-4 mb-8 before:absolute before:left-[5px] before:top-1.5 before:bottom-1.5 before:w-[2px] before:bg-slate-100 dark:before:bg-slate-800">
-           <TimelineItem icon={Timer} label="Reported" time={c.created_at} active />
-           {c.in_progress_at && <TimelineItem icon={Clock} label="Started" time={c.in_progress_at} highlight />}
-           {c.resolved_at && <TimelineItem icon={CheckCircle2} label="Resolved" time={c.resolved_at} success />}
+           <TimelineItem icon={Icons.Timer} label="Reported" time={c.created_at} active />
+           {c.in_progress_at && <TimelineItem icon={Icons.Clock} label="Started" time={c.in_progress_at} highlight />}
+           {c.resolved_at && <TimelineItem icon={Icons.CheckCircle2} label="Resolved" time={c.resolved_at} success />}
         </div>
 
         <div className="space-y-4">
@@ -284,7 +278,7 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
               onClick={() => handleAction(c.complaint_id, 'in_progress')} 
               className="w-full bg-teal-600 dark:bg-teal-500 text-white dark:text-slate-900 py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-teal-500/20 group"
             >
-              Started Fixing <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              Started Fixing <Icons.ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
           )}
           
@@ -297,13 +291,13 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
                   placeholder="What was done to fix this?..." 
                   className="w-full p-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-medium text-slate-900 dark:text-white outline-none focus:ring-4 focus:ring-blue-500/5 transition-all resize-none h-24 shadow-sm"
                 />
-                <div className="absolute top-4 right-4 text-slate-200 dark:text-slate-800"><Settings2 size={16} /></div>
+                <div className="absolute top-4 right-4 text-slate-200 dark:text-slate-800"><Icons.Settings2 size={16} /></div>
               </div>
 
               <div className="flex items-center gap-4">
                 <label className="cursor-pointer group flex-1">
                   <div className="flex items-center justify-center gap-2 py-3 bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-200 dark:border-white/10 rounded-xl group-hover:border-blue-500/50 transition-all">
-                    <ImageIcon size={16} className="text-slate-400 group-hover:text-blue-500" />
+                    <Icons.Image size={16} className="text-slate-400 group-hover:text-blue-500" />
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Add Proof</span>
                   </div>
                   <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
@@ -312,7 +306,7 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
                   <div className="relative w-12 h-12 rounded-xl overflow-hidden border border-blue-500/20 shadow-lg">
                     <img src={resPreview} alt="Resolution" className="w-full h-full object-cover" />
                     <button type="button" onClick={() => { setResFile(null); setResPreview(null); }} className="absolute top-0 right-0 p-0.5 bg-red-500 text-white rounded-bl-lg">
-                      <X size={10} />
+                      <Icons.X size={10} />
                     </button>
                   </div>
                 )}
@@ -327,7 +321,7 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
           {(c.status === 'RESOLVED' || c.status === 'CLOSED') && (
             <div className="p-6 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-3xl flex flex-col gap-4 shadow-lg animate-in fade-in zoom-in-95">
               <div className="flex items-start gap-4">
-                <History className="flex-shrink-0 mt-1 opacity-40" size={20} />
+                <Icons.History className="flex-shrink-0 mt-1 opacity-40" size={20} />
                 <div>
                   <p className="text-[9px] font-black uppercase tracking-[0.2em] mb-1 opacity-50">Resolution Note</p>
                   <p className="text-sm font-bold leading-relaxed">{c.resolution_note || 'Issue resolved.'}</p>
@@ -345,7 +339,7 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
             <div className="relative group/img aspect-video border-r border-slate-100 dark:border-white/5 overflow-hidden">
               <img src={c.issue_image_url} alt="Issue" className="w-full h-full object-cover transition-all duration-500" />
               <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                <button onClick={() => setLightboxImage(c.issue_image_url)} className="p-3 bg-white text-slate-900 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Maximize2 size={20} /></button>
+                <button onClick={() => setLightboxImage(c.issue_image_url)} className="p-3 bg-white text-slate-900 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Icons.Maximize2 size={20} /></button>
               </div>
               <div className="absolute top-3 left-3 px-2 py-1 bg-white/90 dark:bg-slate-900/90 rounded-md shadow-sm">
                 <p className="text-[8px] font-black uppercase text-slate-500 tracking-tighter">Reported Evidence</p>
@@ -357,7 +351,7 @@ const ComplaintTicket = ({ complaint: c, handleAction, handleAdminComplaintActio
             <div className="relative group/img aspect-video overflow-hidden">
               <img src={c.resolution_image_url} alt="Resolution" className="w-full h-full object-cover transition-all duration-500" />
               <div className="absolute inset-0 bg-emerald-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                <button onClick={() => setLightboxImage(c.resolution_image_url)} className="p-3 bg-white text-emerald-600 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Maximize2 size={20} /></button>
+                <button onClick={() => setLightboxImage(c.resolution_image_url)} className="p-3 bg-white text-emerald-600 rounded-full scale-75 group-hover/img:scale-100 transition-transform"><Icons.Maximize2 size={20} /></button>
               </div>
               <div className="absolute top-3 left-3 px-2 py-1 bg-emerald-500/90 text-white rounded-md shadow-sm">
                 <p className="text-[8px] font-black uppercase tracking-tighter">Resolution Proof</p>

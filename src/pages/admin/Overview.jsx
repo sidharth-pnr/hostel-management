@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { 
-  Users, Home, ClipboardList, AlertCircle, TrendingUp, 
-  ArrowRight, ShieldCheck, UserPlus, Zap, LayoutGrid,
-  BarChart3, Activity, Search, Command, X, Clock,
-  CheckCircle2, AlertTriangle, Building
-} from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { 
   ResponsiveContainer, PieChart, Pie, Cell, Tooltip, 
   BarChart, Bar, XAxis, YAxis, CartesianGrid 
@@ -104,10 +99,10 @@ const Overview = () => {
       
       {/* 1. TOP METRICS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard icon={Users} label="Total Students" value={counts?.total_students} subValue="Active Residents" color="blue" />
-        <StatCard icon={Home} label="Room Occupancy" value={`${counts?.occupancy_rate}%`} subValue={`${counts?.total_occupied} / ${counts?.total_capacity} beds`} color="teal" progress={counts?.occupancy_rate} />
-        <StatCard icon={UserPlus} label="New Admissions" value={counts?.pending_students} subValue="Pending Review" color="orange" pulse={counts?.pending_students > 0} />
-        <StatCard icon={AlertCircle} label="Urgent Issues" value={counts?.high_priority} subValue="Active Complaints" color="red" pulse={counts?.high_priority > 0} />
+        <StatCard icon={Icons.Users} label="Total Students" value={counts?.total_students} subValue="Active Residents" color="blue" />
+        <StatCard icon={Icons.Home} label="Room Occupancy" value={`${counts?.occupancy_rate}%`} subValue={`${counts?.total_occupied} / ${counts?.total_capacity} beds`} color="teal" progress={counts?.occupancy_rate} />
+        <StatCard icon={Icons.UserPlus} label="New Admissions" value={counts?.pending_students} subValue="Pending Review" color="orange" pulse={counts?.pending_students > 0} />
+        <StatCard icon={Icons.AlertCircle} label="Urgent Issues" value={counts?.high_priority} subValue="Active Complaints" color="red" pulse={counts?.high_priority > 0} />
       </div>
 
       {/* 2. ANALYTICS & HEATMAP */}
@@ -118,12 +113,12 @@ const Overview = () => {
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Building size={20} className="text-slate-400" /> Infrastructure Heatmap
+                <Icons.Building size={20} className="text-slate-400" /> Infrastructure Heatmap
               </h3>
               <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-wider">Visual Block Density</p>
             </div>
             <button onClick={() => setSearchOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-[10px] font-bold text-slate-500 hover:text-slate-900 dark:hover:text-white transition-all uppercase tracking-widest">
-              <Command size={14} /> K Search
+              <Icons.Command size={14} /> K Search
             </button>
           </div>
           
@@ -150,7 +145,7 @@ const Overview = () => {
         <div className="lg:col-span-4 bg-white dark:bg-slate-900/50 backdrop-blur-sm p-8 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 shadow-sm flex flex-col items-center min-h-[400px]">
           <div className="w-full mb-6">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Activity size={20} className="text-slate-400" /> Resolution Map
+              <Icons.Activity size={20} className="text-slate-400" /> Resolution Map
             </h3>
           </div>
           <div className="relative flex justify-center py-4 w-full h-[200px]">
@@ -190,7 +185,7 @@ const Overview = () => {
         <div className="xl:col-span-5 bg-white dark:bg-slate-900/50 backdrop-blur-sm rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800 overflow-hidden flex flex-col min-h-[500px]">
           <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/20">
             <h3 className="font-bold text-slate-900 dark:text-white text-lg flex items-center gap-3">
-              <Clock size={20} className="text-slate-400" /> Integrated Activity
+              <Icons.Clock size={20} className="text-slate-400" /> Integrated Activity
             </h3>
             <span className="px-3 py-1 bg-slate-200/50 dark:bg-slate-800 rounded-full text-[8px] font-black uppercase tracking-[0.2em]">Audit Trail</span>
           </div>
@@ -212,7 +207,7 @@ const Overview = () => {
         <div className="xl:col-span-7 bg-white dark:bg-slate-900/50 backdrop-blur-sm p-8 rounded-[2.5rem] border border-slate-200/60 dark:border-slate-800">
           <div className="mb-8">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <BarChart3 size={20} className="text-slate-400" /> Academic Composition
+              <Icons.BarChart3 size={20} className="text-slate-400" /> Academic Composition
             </h3>
             <p className="text-xs font-medium text-slate-400 mt-1 uppercase tracking-wider">Residents by Department</p>
           </div>
@@ -241,7 +236,7 @@ const Overview = () => {
           <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setSearchOpen(false)} />
           <div className="relative w-full max-w-2xl bg-white dark:bg-slate-900 rounded-[2.5rem] border border-white/20 shadow-2xl overflow-hidden animate-in zoom-in duration-200">
             <div className="p-6 flex items-center gap-4 border-b border-slate-100 dark:border-slate-800">
-              <Search size={24} className="text-slate-400" />
+              <Icons.Search size={24} className="text-slate-400" />
               <input 
                 autoFocus 
                 placeholder="Find anything... (Esc to close)" 
@@ -250,7 +245,7 @@ const Overview = () => {
                 onChange={e => setSearchQuery(e.target.value)}
               />
               <button onClick={() => setSearchOpen(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all">
-                <X size={20} className="text-slate-400" />
+                <Icons.X size={20} className="text-slate-400" />
               </button>
             </div>
             
@@ -258,14 +253,14 @@ const Overview = () => {
               {searchQuery ? (
                 <div className="space-y-6">
                   {searchResults.students.length > 0 && (
-                    <SearchSection label="Residents" icon={Users}>
+                    <SearchSection label="Residents" icon={Icons.Users}>
                       {searchResults.students.map((s, i) => (
                         <SearchItem key={i} title={s.name} subtitle={s.student_id} tag={s.department} to="/admin/students" />
                       ))}
                     </SearchSection>
                   )}
                   {searchResults.rooms.length > 0 && (
-                    <SearchSection label="Rooms & Blocks" icon={Home}>
+                    <SearchSection label="Rooms & Blocks" icon={Icons.Home}>
                       {searchResults.rooms.map((r, i) => (
                         <SearchItem key={i} title={`Room ${r.room_number}`} subtitle={`Block ${r.block}`} tag={`${r.current_occupancy}/${r.capacity}`} to="/admin/rooms" />
                       ))}
@@ -277,7 +272,7 @@ const Overview = () => {
                 </div>
               ) : (
                 <div className="py-12 text-center text-slate-400">
-                   <Command size={40} className="mx-auto mb-4 opacity-10" />
+                   <Icons.Command size={40} className="mx-auto mb-4 opacity-10" />
                    <p className="text-sm font-bold uppercase tracking-widest">Type to search for students or rooms</p>
                 </div>
               )}
@@ -353,7 +348,7 @@ const SearchItem = ({ title, subtitle, tag, to }) => (
 
 const EmptyState = ({ message }) => (
   <div className="py-20 flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 italic">
-    <Activity size={40} strokeWidth={1} className="mb-4 opacity-20" />
+    <Icons.Activity size={40} strokeWidth={1} className="mb-4 opacity-20" />
     <p className="text-sm font-medium tracking-widest uppercase">{message}</p>
   </div>
 );

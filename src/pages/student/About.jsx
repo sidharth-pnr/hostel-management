@@ -1,18 +1,5 @@
 import React from 'react';
-import { 
-  Mail, 
-  Link as LinkIcon, 
-  Info, 
-  ShieldCheck, 
-  Cpu, 
-  Globe, 
-  Zap, 
-  ArrowUpRight, 
-  ChevronRight,
-  Database,
-  Terminal,
-  Activity
-} from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { motion } from 'framer-motion';
 import BackgroundEffect from '../../components/BackgroundEffect';
 
@@ -28,10 +15,10 @@ const StudentAbout = () => {
         <motion.div variants={slideUp} initial="hidden" animate="show" className="space-y-6">
           <div className="flex flex-wrap items-center gap-3">
             <span className="px-3 py-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg text-[9px] font-black uppercase tracking-widest border border-blue-500/20 flex items-center gap-2">
-              <Cpu size={12} /> System Version 2.4.0
+              <Icons.Cpu size={12} /> System Version 2.4.0
             </span>
             <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-500/20 flex items-center gap-2">
-              <Activity size={12} className="animate-pulse" /> System Running Smoothly
+              <Icons.Activity size={12} className="animate-pulse" /> System Running Smoothly
             </span>
           </div>
 
@@ -52,7 +39,7 @@ const StudentAbout = () => {
         {/* Support Matrix */}
         <motion.div variants={slideUp} initial="hidden" animate="show" className="space-y-6">
           <div className="flex items-center gap-3 px-2">
-            <Terminal size={18} className="text-blue-500" />
+            <Icons.Terminal size={18} className="text-blue-500" />
             <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Contact Support</h3>
           </div>
           
@@ -60,13 +47,13 @@ const StudentAbout = () => {
             <ContactNode 
               label="Warden's Office" 
               value="warden.ops@campus.edu" 
-              icon={Mail} 
+              icon={Icons.Mail} 
               color="blue" 
             />
             <ContactNode 
               label="Technical Support" 
               value="support.systems@campus.edu" 
-              icon={Database} 
+              icon={Icons.Database} 
               color="indigo" 
             />
           </div>
@@ -75,7 +62,7 @@ const StudentAbout = () => {
         {/* Links */}
         <motion.div variants={slideUp} initial="hidden" animate="show" className="space-y-6">
           <div className="flex items-center gap-3 px-2">
-            <Globe size={18} className="text-teal-500" />
+            <Icons.Globe size={18} className="text-teal-500" />
             <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Important Links</h3>
           </div>
 
@@ -94,7 +81,7 @@ const StudentAbout = () => {
         className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-10 rounded-[3rem] shadow-2xl relative overflow-hidden group"
       >
         <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-1000">
-          <Zap size={180} />
+          <Icons.Zap size={180} />
         </div>
         
         <div className="relative z-10 space-y-6">
@@ -121,7 +108,7 @@ const StudentAbout = () => {
       <footer className="pt-10 text-center opacity-30">
         <div className="flex items-center justify-center gap-4 mb-4">
           <div className="h-px w-12 bg-slate-400" />
-          <ShieldCheck size={16} />
+          <Icons.ShieldCheck size={16} />
           <div className="h-px w-12 bg-slate-400" />
         </div>
         <p className="text-[9px] font-black uppercase tracking-[0.6em] text-slate-500">
@@ -152,10 +139,10 @@ const PortalLink = ({ label }) => (
     className="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all group"
   >
     <span className="text-xs font-black text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white uppercase tracking-widest transition-colors flex items-center gap-3">
-      <ChevronRight size={14} className="text-blue-500 group-hover:translate-x-1 transition-transform" />
+      <Icons.ChevronRight size={14} className="text-blue-500 group-hover:translate-x-1 transition-transform" />
       {label}
     </span>
-    <ArrowUpRight size={16} className="text-slate-300 dark:text-slate-700 group-hover:text-blue-500 transition-colors" />
+    <Icons.ArrowUpRight size={16} className="text-slate-300 dark:text-slate-700 group-hover:text-blue-500 transition-colors" />
   </a>
 );
 

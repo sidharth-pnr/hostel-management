@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { AlertCircle } from 'lucide-react';
+import * as Icons from '../../components/Icons';
 import { StudentSidebar } from '../../components/student/StudentSidebar.jsx';
 
 const StudentLayout = ({ user, setUser, isDark, setIsDark }) => {
@@ -19,7 +19,7 @@ const StudentLayout = ({ user, setUser, isDark, setIsDark }) => {
           {user?.account_status === 'PENDING' && (
             <div className={`p-6 bg-slate-900 dark:bg-slate-900 text-white rounded-[2rem] flex items-center gap-5 shadow-lg border border-white/5 mb-8 ${isOverview ? "max-w-7xl mx-auto mt-28 px-6" : "mx-2"}`}>
               <div className="p-3 bg-white/10 rounded-2xl">
-                <AlertCircle size={24} />
+                <Icons.AlertCircle size={24} />
               </div>
               <div>
                 <h3 className="font-bold text-lg leading-tight">Registration Under Review</h3>
