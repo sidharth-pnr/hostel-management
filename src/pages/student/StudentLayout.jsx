@@ -6,17 +6,6 @@ const StudentLayout = ({ user, setUser, isDark, setIsDark }) => {
   const location = useLocation();
 
   const isOverview = location.pathname === '/student' || location.pathname === '/student/';
-  const getPageName = () => {
-    if (isOverview) return 'Scholar Desk';
-    const path = location.pathname.toLowerCase();
-
-    if (path.includes('/book')) return 'Room Booking';
-    if (path.includes('/complaints')) return 'Complaints';
-    if (path.includes('/profile')) return 'Identity Profile';
-    if (path.includes('/about')) return 'System Guide';
-
-    return 'Scholar Desk';
-  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 selection:bg-slate-900 selection:text-white dark:selection:bg-white dark:selection:text-slate-950">

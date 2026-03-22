@@ -5,18 +5,6 @@ import { AdminSidebar } from '../../components/admin/AdminSidebar.jsx';
 const AdminLayout = ({ user, isDark, setIsDark }) => {
   const location = useLocation();
 
-  const getPageTitle = () => {
-    const path = location.pathname;
-    if (path === '/admin') return 'Dashboard';
-    const segment = path.split('/').pop();
-    // Special cases for better naming
-    if (segment === 'approvals') return 'New Student Approvals';
-    if (segment === 'students') return 'Student Management';
-    if (segment === 'complaints') return 'Complaints Management';
-    if (segment === 'rooms') return 'Room Infrastructure';
-    return segment.charAt(0).toUpperCase() + segment.slice(1);
-  };
-
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       {/* 1. Fixed Top Navigation */}
