@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from '../../components/Icons';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { API_BASE } from '../../config';
+import { API_BASE, isSuccess } from '../../config';
 import BackgroundEffect from '../../components/BackgroundEffect';
 import { GlassCard, StatNode, FilterTab, EmptyState } from '../../components/student/StudentShared';
 
@@ -74,7 +74,7 @@ const Complaints = () => {
     try {
       const res = await axios.post(`${API_BASE}/complaints.php`, data);
       toast.dismiss(loadingToast);
-      if (res.data.status === 'success') {
+      if (isSuccess(res)) {
         toast.success("Complaint submitted successfully.");
         e.target.reset();
         setSelectedCategory('Other');
@@ -91,7 +91,7 @@ const Complaints = () => {
   const updateComplaintStatus = async (id, status) => {
     try {
       const res = await axios.put(`${API_BASE}/complaints.php`, { complaint_id: id, status, admin_name: user.name });
-      if (res.data.status === 'success') { toast.success(`Complaint ${status.toLowerCase()}.`); fetchData(); }
+      if (isSuccess(res)) { toast.success(`Complaint ${status.toLowerCase()}.`); fetchData(); }
       else toast.error(res.data.error || "Operation failed");
     } catch (err) { toast.error("Connection error"); }
   };
@@ -100,7 +100,7 @@ const Complaints = () => {
     if (!window.confirm("Delete this complaint record?")) return;
     try {
       const res = await axios.delete(`${API_BASE}/complaints.php?id=${id}`);
-      if (res.data.status === 'success') { toast.success("Record deleted."); fetchData(); }
+      if (isSuccess(res)) { toast.success("Record deleted."); fetchData(); }
       else toast.error(res.data.error || "Failed to delete");
     } catch (err) { toast.error("Connection error"); }
   };

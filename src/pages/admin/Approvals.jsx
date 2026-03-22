@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import * as Icons from '../../components/Icons';
-import { API_BASE } from '../../config';
+import { API_BASE, isSuccess } from '../../config';
 import { StatCard, LoadingScreen, EmptyState } from '../../components/admin/AdminShared';
 
 const Approvals = ({ user }) => {
@@ -33,7 +33,7 @@ const Approvals = ({ user }) => {
         admin_name: user?.name
       });
       toast.dismiss(loadingToast);
-      if (res.data.status === 'success') {
+      if (isSuccess(res)) {
         toast.success(`Scholar ${status === 'ACTIVE' ? 'Approved' : 'Declined'} Successfully`);
         fetchData();
       } else {

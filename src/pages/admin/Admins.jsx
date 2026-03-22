@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import * as Icons from '../../components/Icons';
-import { API_BASE } from '../../config';
+import { API_BASE, isSuccess } from '../../config';
 import { LoadingScreen } from '../../components/admin/AdminShared';
 
 const Admins = () => {
@@ -40,7 +40,7 @@ const Admins = () => {
         admin_role: user.role,
         action: 'add'
       });
-      if (res.data.status === 'success') {
+      if (isSuccess(res)) {
         toast.success("Admin account created");
         setShowAddForm(false);
         setFormData({ name: '', username: '', password: '', role: 'STAFF' });
@@ -61,7 +61,7 @@ const Admins = () => {
         admin_role: user.role,
         action: 'delete'
       });
-      if (res.data.status === 'success') {
+      if (isSuccess(res)) {
         toast.success("Admin removed");
         fetchAdmins();
       } else {

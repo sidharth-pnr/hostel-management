@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { API_BASE } from '../../config';
+import { API_BASE, isSuccess } from '../../config';
 import { StatCard, LoadingScreen, EmptyState } from '../../components/admin/AdminShared';
 
 const Complaints = () => {
@@ -48,7 +48,7 @@ const Complaints = () => {
         res = await axios.put(`${API_BASE}/complaints.php`, { complaint_id: id, status, admin_name: user?.name, note });
       }
       toast.dismiss(loadingToast);
-      if (res.data.status === 'success') { toast.success(`Action completed!`); fetchData(); }
+      if (isSuccess(res)) { toast.success(`Action completed!`); fetchData(); }
       else toast.error(res.data.error || "Operation failed");
     } catch (err) {
       toast.dismiss(loadingToast);
