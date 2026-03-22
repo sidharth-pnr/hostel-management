@@ -141,7 +141,7 @@ const Overview = () => {
             {mounted && (
               <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
-                  <Pie data={complaints_dist || []} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={8} dataKey="value" stroke="none">
+                  <Pie data={(complaints_dist || []).map(d => ({ ...d, value: Number(d.value) }))} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={8} dataKey="value" stroke="none">
                     {(complaints_dist || []).map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                   </Pie>
                   <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', background: '#fff' }} />
@@ -149,15 +149,15 @@ const Overview = () => {
               </ResponsiveContainer>
             )}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <p className="text-2xl font-bold text-slate-900 dark:text-white">{(complaints_dist || []).reduce((acc, curr) => acc + (curr.value || 0), 0)}</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">{(complaints_dist || []).reduce((acc, curr) => acc + Number(curr.value || 0), 0)}</p>
               <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Cases</p>
             </div>
           </div>
           <div className="w-full mt-6 space-y-2">
             {(complaints_dist || []).map((entry, index) => (
               <div key={index} className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                <div className="flex items-center gap-3">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
                   <span className="font-bold text-slate-500 uppercase text-[9px] tracking-wider">{entry.name}</span>
                 </div>
                 <span className="font-bold text-slate-900 dark:text-white text-xs">{entry.value}</span>
