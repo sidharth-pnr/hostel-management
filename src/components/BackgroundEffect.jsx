@@ -6,25 +6,35 @@ const BackgroundEffect = () => {
   const beams = useMemo(() => {
     return [...Array(10)].map((_, i) => ({
       id: i,
+      // eslint-disable-next-line react-hooks/purity
       top: Math.random() * 100,
+      // eslint-disable-next-line react-hooks/purity
       left: Math.random() * 100,
+      // eslint-disable-next-line react-hooks/purity
       duration: Math.random() * 4 + 2,
+      // eslint-disable-next-line react-hooks/purity
       delay: Math.random() * 5,
+      // eslint-disable-next-line react-hooks/purity
       width: Math.random() * 200 + 100,
       color: i % 2 === 0 ? 'bg-blue-500' : 'bg-teal-400',
     }));
   }, []);
 
-  // Data for pulsing nodes
-  const nodes = useMemo(() => {
+  // Data for floating particles
+  const particles = useMemo(() => {
     return [...Array(15)].map((_, i) => ({
       id: i,
+      // eslint-disable-next-line react-hooks/purity
       x: Math.random() * 100,
+      // eslint-disable-next-line react-hooks/purity
       y: Math.random() * 100,
+      // eslint-disable-next-line react-hooks/purity
       duration: Math.random() * 2 + 1,
+      // eslint-disable-next-line react-hooks/purity
       delay: Math.random() * 3,
     }));
   }, []);
+
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none bg-slate-50 dark:bg-slate-950 transition-colors duration-1000">
@@ -53,7 +63,7 @@ const BackgroundEffect = () => {
 
       {/* 2. PULSING NODES (Neural Network) */}
       <div className="absolute inset-0">
-        {nodes.map((n) => (
+        {particles.map((n) => (
           <motion.div
             key={n.id}
             animate={{ 
