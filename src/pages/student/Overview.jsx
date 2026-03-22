@@ -31,8 +31,6 @@ const StudentOverview = () => {
       setActivities(Array.isArray(activitiesRes.data) ? activitiesRes.data : []);
     } catch (err) {
       console.error("Dashboard sync failure:", err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -45,7 +43,7 @@ const StudentOverview = () => {
     try {
       const res = await axios.post(`${API_BASE}/process_payment.php`, {
         student_id: user.student_id || user.id,
-        room_id: room.approved_room_id,
+        room_id: room.room_id,
         payment_method: paymentMethod
       });
       toast.dismiss(loadingToast);
@@ -56,7 +54,7 @@ const StudentOverview = () => {
       } else {
         toast.error(res.data.error || "Payment failed");
       }
-    } catch (err) {
+    } catch (_err) {
       toast.dismiss(loadingToast);
       toast.error("Gateway connection error");
     }
@@ -90,7 +88,7 @@ const StudentOverview = () => {
 
             <div className="flex flex-wrap justify-center gap-10 pt-4">
                <HeroStat label="My Status" value={user?.account_status === 'ACTIVE' ? 'Active' : 'Pending'} color="text-emerald-500" />
-               <HeroStat label="Room Status" value={room?.room_number ? 'Occupied' : room?.approved_room_id ? 'Approved' : 'No Room'} color="text-blue-500" />
+               <HeroStat label="Room Status" value={room?.room_number && room?.status === 'ALLOCATED' ? 'Occupied' : room?.payment_status === 'PENDING' ? 'Approved' : 'No Room'} color="text-blue-500" />
                <HeroStat label="System" value="Stable" color="text-teal-500" />
             </div>
           </motion.div>
@@ -99,7 +97,7 @@ const StudentOverview = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           
           {/* PAYMENT PENDING NOTICE */}
-          {room?.approved_room_id && room?.payment_status === 'PENDING' && (
+          {room?.payment_status === 'PENDING' && (
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
               className="mb-12 bg-amber-500/10 border border-amber-500/20 rounded-[3rem] p-8 md:p-12 relative overflow-hidden shadow-2xl"
@@ -111,7 +109,7 @@ const StudentOverview = () => {
                     <p className="text-[10px] font-black uppercase tracking-widest text-amber-500">Action Required</p>
                     <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Payment Pending.</h3>
                     <p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed uppercase tracking-widest">
-                      Your request for Room {room.approved_room_number} has been approved. Please complete the payment of CASH {room.approved_room_price} to finalize allocation.
+                      Your request for Room {room.room_number} has been approved. Please complete the payment of CASH {room.price} to finalize allocation.
                     </p>
                  </div>
                  <button onClick={() => setShowPaymentModal(true)} className="px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all active:scale-95 flex items-center gap-3"><Icons.CreditCard size={16} /> Pay & Check-In</button>
@@ -156,7 +154,7 @@ const StudentOverview = () => {
                         <div className="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-full text-[9px] font-black uppercase tracking-widest">Room Allocated</div>
                       ) : (
                         <div className="px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-full text-[9px] font-black uppercase tracking-widest">
-                          {room?.status === 'SUGGESTED' || room?.suggested_room_id ? 'Relocation Offered' : room?.approved_room_id ? 'Approval Pending Payment' : 'No Room Set'}
+                          {room?.status === 'SUGGESTED' ? 'Relocation Offered' : room?.status === 'APPROVED' ? 'Approval Pending Payment' : room?.status === 'REQUESTED' ? 'Request Pending' : 'No Room Set'}
                         </div>
                       )}
                       </div>
@@ -179,14 +177,16 @@ const StudentOverview = () => {
                          <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto"><Icons.BedDouble size={32} className="text-slate-300" /></div>
                          <div className="space-y-2">
                             <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-                              {room?.status === 'SUGGESTED' || room?.suggested_room_id 
-                                ? `The Warden has suggested Room ${room.suggested_room_number || room.room_number || ''} for you.` 
-                                : room?.approved_room_id 
-                                  ? `Room ${room.approved_room_number} approved! Proceed to payment.` 
-                                  : "You haven't booked a room yet."}
+                              {room?.status === 'SUGGESTED' 
+                                ? `The Warden has suggested Room ${room.room_number} for you.` 
+                                : room?.status === 'APPROVED' 
+                                  ? `Room ${room.room_number} approved! Proceed to payment.` 
+                                  : room?.status === 'REQUESTED'
+                                    ? `Your request for Room ${room.room_number} is in review.`
+                                    : "You haven't booked a room yet."}
                             </p>
                             <button onClick={() => navigate('/student/book')} className="text-blue-500 font-black text-xs uppercase tracking-[0.3em] hover:tracking-[0.4em] transition-all flex items-center justify-center gap-2 mx-auto pt-2">
-                              {room?.status === 'SUGGESTED' || room?.suggested_room_id ? "View & Accept Suggestion" : room?.approved_room_id ? "View Other Rooms" : "Find a Room Now"} <Icons.ArrowUpRight size={16} />
+                              {room?.status === 'SUGGESTED' ? "View & Accept Suggestion" : room?.status === 'APPROVED' ? "Complete Payment" : "Find a Room Now"} <Icons.ArrowUpRight size={16} />
                             </button>
                          </div>
                       </div>
@@ -236,7 +236,7 @@ const StudentOverview = () => {
             >
               <div className="p-6 sm:p-8 overflow-y-auto scrollbar-hide space-y-8">
                 <div className="text-center space-y-3"><div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 mx-auto"><Icons.ShieldCheck size={32} /></div><h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">Checkout.</h3><p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400">Secure Payment Portal</p></div>
-                <div className="space-y-3 bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-slate-100 dark:border-white/5"><div className="flex justify-between items-center"><span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Allocated Block</span><span className="font-black text-slate-900 dark:text-white uppercase text-sm">Room {room.approved_room_number}</span></div><div className="flex justify-between items-center"><span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Total Due</span><span className="text-xl font-black text-blue-500 tracking-tighter">CASH {room.approved_room_price}</span></div></div>
+                <div className="space-y-3 bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-slate-100 dark:border-white/5"><div className="flex justify-between items-center"><span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Allocated Block</span><span className="font-black text-slate-900 dark:text-white uppercase text-sm">Room {room.room_number}</span></div><div className="flex justify-between items-center"><span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Total Due</span><span className="text-xl font-black text-blue-500 tracking-tighter">CASH {room.price}</span></div></div>
                 <div className="space-y-2">
                   <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Select Gateway</p>
                   <div className="grid grid-cols-1 gap-2"><PaymentOption active={paymentMethod === 'MPESA'} onClick={() => setPaymentMethod('MPESA')} icon={Icons.Smartphone} label="UPI / Mobile Money" desc="Instant Mobile Payments" /><PaymentOption active={paymentMethod === 'CARD'} onClick={() => setPaymentMethod('CARD')} icon={Icons.Globe} label="Card Payment" desc="Credit or Debit Card" /><PaymentOption active={paymentMethod === 'BANK'} onClick={() => setPaymentMethod('BANK')} icon={Icons.Wallet} label="Bank Transfer" desc="net banking or mobile banking" /></div>

@@ -69,17 +69,17 @@ const BookRoom = () => {
         toast.success("Request submitted successfully.");
         setSelectedRoomForApply(null); setRequestReason(''); fetchData();
       } else toast.error(res.data.error || "Server failed to process request");
-    } catch (err) { toast.dismiss(loadingToast); toast.error("Network error"); }
+    } catch (_err) { toast.dismiss(loadingToast); toast.error("Network error"); }
   };
 
-  if (!isLoading && studentStatus?.status === 'PENDING') return (
+  if (!isLoading && studentStatus?.status === 'REQUESTED') return (
     <div className="max-w-4xl mx-auto animate-in fade-in duration-700">
       <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
         <GlassCard className="text-center relative py-20">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500/0 via-amber-500 to-amber-500/0" />
           <div className="space-y-10">
             <div className="w-24 h-24 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto relative"><Icons.Timer size={48} className="text-amber-500 animate-pulse" /><div className="absolute -inset-4 border border-amber-500/20 rounded-full animate-ping opacity-20" /></div>
-            <div className="space-y-4"><h2 className="text-5xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">Request<br />In Review.</h2><p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 max-w-md mx-auto">Your request for Room {studentStatus.requested_room_id} is being checked by the warden.</p></div>
+            <div className="space-y-4"><h2 className="text-5xl md:text-6xl font-black text-slate-900 dark:text-white tracking-tighter uppercase leading-none">Request<br />In Review.</h2><p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 max-w-md mx-auto">Your request for Room {studentStatus.room_number} is being checked by the warden.</p></div>
             {studentStatus.room_request_reason && <div className="bg-slate-50/50 dark:bg-white/5 p-6 rounded-3xl border border-slate-100 dark:border-white/5 text-left max-w-lg mx-auto"><p className="text-[8px] font-black uppercase tracking-widest text-slate-400 mb-2">Your Reason</p><p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic">"{studentStatus.room_request_reason}"</p></div>}
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-amber-600 dark:text-amber-400 text-[10px] font-black uppercase tracking-widest"><Icons.ShieldAlert size={16} />Waiting for Warden</div>
           </div>
@@ -102,13 +102,13 @@ const BookRoom = () => {
         </motion.div>
       )}
 
-      {studentStatus?.suggested_room_id && (
+      {studentStatus?.status === 'SUGGESTED' && (
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-5xl mx-auto bg-blue-500/10 border border-blue-500/20 rounded-[3rem] p-10 relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 p-8 opacity-10"><Icons.Zap size={150} className="text-blue-500" /></div>
           <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
              <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Icons.Building2 size={40} /></div>
-             <div className="space-y-3 flex-1"><p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Official Suggestion</p><h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">New Room Available.</h3><div className="mt-4 bg-white/40 dark:bg-slate-950/40 p-6 rounded-3xl border border-red-500/10 backdrop-blur-md"><p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed uppercase tracking-widest">The Warden suggests you move to Room {studentStatus.suggested_room_number || studentStatus.suggested_room_id}.</p></div></div>
-             <div className="flex flex-col sm:flex-row gap-4"><button onClick={() => axios.post(`${API_BASE}/admin_action.php`, { action: 'reject_request', student_id: studentId, rejection_note: '' }).then(() => fetchData())} className="px-8 py-5 text-slate-500 hover:text-red-500 font-black uppercase text-[10px] tracking-widest transition-colors">Decline</button><button onClick={() => { const lt = toast.loading("Processing relocation..."); axios.post(`${API_BASE}/admin_action.php`, { action: 'accept_suggestion', student_id: studentId, room_id: studentStatus.suggested_room_id }).then((res) => { toast.dismiss(lt); if (isSuccess(res)) { toast.success("Relocation successful!"); fetchData(); } else toast.error(res.data.error || "Failed to process move"); }).catch(() => { toast.dismiss(lt); toast.error("Network error"); }); }} className="px-10 py-5 bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all flex items-center gap-3"><Icons.CheckCircle2 size={16} />Accept & Move</button></div>
+             <div className="space-y-3 flex-1"><p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Official Suggestion</p><h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">New Room Available.</h3><div className="mt-4 bg-white/40 dark:bg-slate-950/40 p-6 rounded-3xl border border-red-500/10 backdrop-blur-md"><p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed uppercase tracking-widest">The Warden suggests you move to Room {studentStatus.room_number}.</p></div></div>
+             <div className="flex flex-col sm:flex-row gap-4"><button onClick={() => axios.post(`${API_BASE}/admin_action.php`, { action: 'reject_request', student_id: studentId, rejection_note: 'Student declined suggestion' }).then(() => fetchData())} className="px-8 py-5 text-slate-500 hover:text-red-500 font-black uppercase text-[10px] tracking-widest transition-colors">Decline</button><button onClick={() => { const lt = toast.loading("Processing relocation..."); axios.post(`${API_BASE}/admin_action.php`, { action: 'accept_suggestion', student_id: studentId, room_id: studentStatus.room_id }).then((res) => { toast.dismiss(lt); if (isSuccess(res)) { toast.success("Relocation successful!"); fetchData(); } else toast.error(res.data.error || "Failed to process move"); }).catch(() => { toast.dismiss(lt); toast.error("Network error"); }); }} className="px-10 py-5 bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all flex items-center gap-3"><Icons.CheckCircle2 size={16} />Accept & Move</button></div>
           </div>
         </motion.div>
       )}
