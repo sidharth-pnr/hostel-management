@@ -4,7 +4,7 @@ import { useOutletContext, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { API_BASE } from '../../config';
+import { API_BASE, isSuccess } from '../../config';
 import BackgroundEffect from '../../components/BackgroundEffect';
 import { GlassCard, InfoNode } from '../../components/student/StudentShared';
 
@@ -49,7 +49,7 @@ const StudentOverview = () => {
         payment_method: paymentMethod
       });
       toast.dismiss(loadingToast);
-      if (res.data.status === 'success') {
+      if (isSuccess(res)) {
         toast.success("Payment Received! Room Allocated.");
         setShowPaymentModal(false);
         fetchData();
@@ -152,14 +152,16 @@ const StudentOverview = () => {
                         <p className="text-[9px] font-black uppercase tracking-widest text-blue-500">Accommodation</p>
                         <h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">Room Status.</h3>
                       </div>
-                      {room && room.room_number ? (
+                      {room && room.status === 'ALLOCATED' ? (
                         <div className="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 rounded-full text-[9px] font-black uppercase tracking-widest">Room Allocated</div>
                       ) : (
-                        <div className="px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-full text-[9px] font-black uppercase tracking-widest">{room?.approved_room_id ? 'Approval Pending Payment' : 'No Room Set'}</div>
+                        <div className="px-4 py-1.5 bg-amber-500/10 border border-amber-500/20 text-amber-500 rounded-full text-[9px] font-black uppercase tracking-widest">
+                          {room?.status === 'SUGGESTED' || room?.suggested_room_id ? 'Relocation Offered' : room?.approved_room_id ? 'Approval Pending Payment' : 'No Room Set'}
+                        </div>
                       )}
-                    </div>
+                      </div>
 
-                    {room && room.room_number ? (
+                      {room && room.status === 'ALLOCATED' ? (
                       <div className="flex flex-col md:flex-row items-center gap-8">
                          <div className="w-full md:w-48 aspect-square bg-blue-600/10 rounded-[2.5rem] flex items-center justify-center text-blue-600 border border-blue-600/20 shadow-inner group-hover:scale-105 transition-transform duration-700">
                             <div className="text-center"><p className="text-[10px] font-black uppercase tracking-widest opacity-60">Room</p><p className="text-6xl font-black tracking-tighter">{room.room_number}</p></div>
@@ -172,16 +174,23 @@ const StudentOverview = () => {
                             </div>
                          </div>
                       </div>
-                    ) : (
+                      ) : (
                       <div className="py-12 text-center space-y-6">
                          <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto"><Icons.BedDouble size={32} className="text-slate-300" /></div>
                          <div className="space-y-2">
-                            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">{room?.approved_room_id ? `Room ${room.approved_room_number} approved! Proceed to payment.` : "You haven't booked a room yet."}</p>
-                            <button onClick={() => navigate('/student/book')} className="text-blue-500 font-black text-xs uppercase tracking-[0.3em] hover:tracking-[0.4em] transition-all flex items-center justify-center gap-2 mx-auto pt-2">{room?.approved_room_id ? "View Other Rooms" : "Find a Room Now"} <Icons.ArrowUpRight size={16} /></button>
+                            <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
+                              {room?.status === 'SUGGESTED' || room?.suggested_room_id 
+                                ? `The Warden has suggested Room ${room.suggested_room_number || room.room_number || ''} for you.` 
+                                : room?.approved_room_id 
+                                  ? `Room ${room.approved_room_number} approved! Proceed to payment.` 
+                                  : "You haven't booked a room yet."}
+                            </p>
+                            <button onClick={() => navigate('/student/book')} className="text-blue-500 font-black text-xs uppercase tracking-[0.3em] hover:tracking-[0.4em] transition-all flex items-center justify-center gap-2 mx-auto pt-2">
+                              {room?.status === 'SUGGESTED' || room?.suggested_room_id ? "View & Accept Suggestion" : room?.approved_room_id ? "View Other Rooms" : "Find a Room Now"} <Icons.ArrowUpRight size={16} />
+                            </button>
                          </div>
                       </div>
-                    )}
-                  </div>
+                      )}                  </div>
                 </div>
               </GlassCard>
 

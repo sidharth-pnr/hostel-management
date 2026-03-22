@@ -4,7 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import * as Icons from '../components/Icons';
 import ThemeToggle from '../components/ThemeToggle';
-import { API_BASE } from '../config';
+import { API_BASE, isSuccess } from '../config';
 import { AuthVisualSide, Input, Select, PrimaryButton } from '../components/SharedUI';
 
 const Register = ({ isDark, setIsDark }) => {
@@ -20,7 +20,7 @@ const Register = ({ isDark, setIsDark }) => {
     try {
       const res = await axios.post(`${API_BASE}/register.php`, formData);
       toast.dismiss(loadingToast);
-      if (res.data.status === "success") { toast.success("Registration Successful."); navigate('/login'); }
+      if (isSuccess(res)) { toast.success("Registration Successful."); navigate('/login'); }
       else toast.error(res.data.error || "Registration failed");
     } catch (err) { toast.dismiss(loadingToast); toast.error("Network error"); }
     finally { setIsLoading(false); }

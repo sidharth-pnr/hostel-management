@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import * as Icons from '../../components/Icons';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { API_BASE } from '../../config';
+import { API_BASE, isSuccess } from '../../config';
 import BackgroundEffect from '../../components/BackgroundEffect';
 import { GlassCard, StatNode, EmptyState } from '../../components/student/StudentShared';
 
@@ -65,7 +65,7 @@ const BookRoom = () => {
     try {
       const res = await axios.post(`${API_BASE}/book_room.php`, { student_id: studentId, room_id: selectedRoomForApply.room_id, reason: requestReason });
       toast.dismiss(loadingToast);
-      if (res.data.status === 'success') {
+      if (isSuccess(res)) {
         toast.success("Request submitted successfully.");
         setSelectedRoomForApply(null); setRequestReason(''); fetchData();
       } else toast.error(res.data.error || "Server failed to process request");
@@ -108,7 +108,7 @@ const BookRoom = () => {
           <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
              <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Icons.Building2 size={40} /></div>
              <div className="space-y-3 flex-1"><p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Official Suggestion</p><h3 className="text-3xl font-black text-slate-900 dark:text-white tracking-tighter uppercase">New Room Available.</h3><div className="mt-4 bg-white/40 dark:bg-slate-950/40 p-6 rounded-3xl border border-red-500/10 backdrop-blur-md"><p className="text-sm font-bold text-slate-600 dark:text-slate-300 italic leading-relaxed uppercase tracking-widest">The Warden suggests you move to Room {studentStatus.suggested_room_number || studentStatus.suggested_room_id}.</p></div></div>
-             <div className="flex flex-col sm:flex-row gap-4"><button onClick={() => axios.post(`${API_BASE}/admin_action.php`, { action: 'reject_request', student_id: studentId, rejection_note: '' }).then(() => fetchData())} className="px-8 py-5 text-slate-500 hover:text-red-500 font-black uppercase text-[10px] tracking-widest transition-colors">Decline</button><button onClick={() => { const lt = toast.loading("Processing relocation..."); axios.post(`${API_BASE}/admin_action.php`, { action: 'accept_suggestion', student_id: studentId, room_id: studentStatus.suggested_room_id }).then((res) => { toast.dismiss(lt); if (res.data.status === 'success') { toast.success("Relocation successful!"); fetchData(); } else toast.error(res.data.error || "Failed to process move"); }).catch(() => { toast.dismiss(lt); toast.error("Network error"); }); }} className="px-10 py-5 bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all flex items-center gap-3"><Icons.CheckCircle2 size={16} />Accept & Move</button></div>
+             <div className="flex flex-col sm:flex-row gap-4"><button onClick={() => axios.post(`${API_BASE}/admin_action.php`, { action: 'reject_request', student_id: studentId, rejection_note: '' }).then(() => fetchData())} className="px-8 py-5 text-slate-500 hover:text-red-500 font-black uppercase text-[10px] tracking-widest transition-colors">Decline</button><button onClick={() => { const lt = toast.loading("Processing relocation..."); axios.post(`${API_BASE}/admin_action.php`, { action: 'accept_suggestion', student_id: studentId, room_id: studentStatus.suggested_room_id }).then((res) => { toast.dismiss(lt); if (isSuccess(res)) { toast.success("Relocation successful!"); fetchData(); } else toast.error(res.data.error || "Failed to process move"); }).catch(() => { toast.dismiss(lt); toast.error("Network error"); }); }} className="px-10 py-5 bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all flex items-center gap-3"><Icons.CheckCircle2 size={16} />Accept & Move</button></div>
           </div>
         </motion.div>
       )}

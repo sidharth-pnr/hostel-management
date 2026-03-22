@@ -4,7 +4,7 @@ import * as Icons from '../components/Icons';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import ThemeToggle from '../components/ThemeToggle';
-import { API_BASE } from '../config';
+import { API_BASE, isSuccess } from '../config';
 import { AuthVisualSide, Input, PrimaryButton } from '../components/SharedUI';
 
 const Login = ({ setUser, isDark, setIsDark }) => {
@@ -21,7 +21,7 @@ const Login = ({ setUser, isDark, setIsDark }) => {
     try {
       const res = await axios.post(`${API_BASE}/login.php`, { email, password, role });
       toast.dismiss(loadingToast);
-      if (res.data.status === "success") {
+      if (isSuccess(res)) {
         toast.success(`Welcome back, ${res.data.user.name}`);
         const userWithRole = { ...res.data.user, role: role === 'admin' ? res.data.user.role : 'student' };
         setUser(userWithRole);

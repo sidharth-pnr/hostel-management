@@ -4,7 +4,7 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { API_BASE } from '../../config';
+import { API_BASE, isSuccess } from '../../config';
 import BackgroundEffect from '../../components/BackgroundEffect';
 import { GlassCard, InfoNode } from '../../components/student/StudentShared';
 
@@ -27,7 +27,7 @@ const Profile = () => {
   const fetchLatestUserData = async () => {
     try {
       const res = await axios.get(`${API_BASE}/get_student.php?id=${user.student_id || user.id}`);
-      if (res.data.status === 'success') {
+      if (isSuccess(res)) {
         const updatedUser = { ...user, ...res.data.student };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
@@ -42,7 +42,7 @@ const Profile = () => {
     try {
       const res = await axios.post(`${API_BASE}/update_student_profile.php`, { student_id: user.student_id || user.id, ...editData });
       toast.dismiss(loadingToast);
-      if (res.data.status === 'success') { toast.success("Profile updated."); setIsEditing(false); fetchLatestUserData(); }
+      if (isSuccess(res)) { toast.success("Profile updated."); setIsEditing(false); fetchLatestUserData(); }
       else toast.error(res.data.message || "Failed to update.");
     } catch (err) { toast.dismiss(loadingToast); toast.error("Connection failed."); }
   };
