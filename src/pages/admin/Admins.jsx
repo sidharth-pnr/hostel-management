@@ -40,7 +40,7 @@ const Admins = () => {
         admin_role: user.role,
         action: 'add'
       });
-      if (res.data.status === 'Success') {
+      if (res.data.status === 'success') {
         toast.success("Admin account created");
         setShowAddForm(false);
         setFormData({ name: '', username: '', password: '', role: 'STAFF' });
@@ -61,7 +61,7 @@ const Admins = () => {
         admin_role: user.role,
         action: 'delete'
       });
-      if (res.data.status === 'Success') {
+      if (res.data.status === 'success') {
         toast.success("Admin removed");
         fetchAdmins();
       } else {

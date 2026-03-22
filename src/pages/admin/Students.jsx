@@ -55,7 +55,7 @@ const Students = () => {
       const res = await axios.post(`${API_BASE}/admin_action.php`, payload);
       toast.dismiss(loadingToast);
       
-      if (res.data.status === 'Success') {
+      if (res.data.status === 'success') {
         toast.success(res.data.message || "Operation successful");
         setRejectingStudent(null);
         setRejectionNote('');

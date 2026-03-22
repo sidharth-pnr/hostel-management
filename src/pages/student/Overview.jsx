@@ -49,7 +49,7 @@ const StudentOverview = () => {
         payment_method: paymentMethod
       });
       toast.dismiss(loadingToast);
-      if (res.data.status === 'Success') {
+      if (res.data.status === 'success') {
         toast.success("Payment Received! Room Allocated.");
         setShowPaymentModal(false);
         fetchData();

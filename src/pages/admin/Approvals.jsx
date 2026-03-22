@@ -33,7 +33,7 @@ const Approvals = ({ user }) => {
         admin_name: user?.name
       });
       toast.dismiss(loadingToast);
-      if (res.data.status === 'Success') {
+      if (res.data.status === 'success') {
         toast.success(`Scholar ${status === 'ACTIVE' ? 'Approved' : 'Declined'} Successfully`);
         fetchData();
       } else {

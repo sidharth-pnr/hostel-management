@@ -42,7 +42,7 @@ const RoomManagement = () => {
         admin_role: user?.role
       });
       toast.dismiss(loadingToast);
-      if (res.data.status === 'Success') { 
+      if (res.data.status === 'success') { 
         toast.success("Infrastructure Updated!"); 
         fetchRooms(); 
         setNewRoom({ block: '', room_number: '', capacity: 3, price: '' }); 
@@ -64,7 +64,7 @@ const RoomManagement = () => {
         admin_name: user?.name,
         admin_role: user?.role
       });
-      if (res.data.status === 'Success') {
+      if (res.data.status === 'success') {
         toast.success("Unit Removed");
         fetchRooms();
       } else {
