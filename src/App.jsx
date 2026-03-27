@@ -2,7 +2,6 @@ import React, {useState, useEffect} from'react';
 import {BrowserRouter as Router, Routes, Route, Navigate} from'react-router-dom';
 import {Toaster} from'react-hot-toast';
 
-import Landing from'./pages/Landing';
 import Login from'./pages/Login';
 import Register from'./pages/Register';
 import AdminLayout from'./pages/admin/AdminLayout';
@@ -18,7 +17,6 @@ import StudentOverview from'./pages/student/Overview';
 import StudentBookRoom from'./pages/student/BookRoom';
 import StudentComplaints from'./pages/student/Complaints';
 import StudentProfile from'./pages/student/Profile';
-import StudentAbout from'./pages/student/About';
 
 export default function App() {
  const [user, setUser] = useState(() => {
@@ -41,7 +39,7 @@ export default function App() {
  <Router>
  <Toaster position="top-right"/> 
  <Routes>
- <Route path="/"element={<Landing />} />
+ <Route path="/" element={<Navigate to="/login" />} />
  <Route path="/login"element={<Login setUser={setUser} />} />
  <Route path="/register"element={<Register />} />
  
@@ -51,7 +49,6 @@ export default function App() {
  <Route path="book"element={<StudentBookRoom />} />
  <Route path="complaints"element={<StudentComplaints />} />
  <Route path="profile"element={<StudentProfile />} />
- <Route path="about"element={<StudentAbout />} />
  </Route>
  
  {/* Admin Nested Routes */}
