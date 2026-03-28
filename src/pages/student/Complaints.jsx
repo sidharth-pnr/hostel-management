@@ -1,10 +1,9 @@
 import React, {useState, useEffect, useMemo} from'react';
-import axios from'axios';
 import toast from'react-hot-toast';
 import {motion, AnimatePresence} from'framer-motion';
 import * as Icons from'../../components/Icons';
 import {useOutletContext, useNavigate} from'react-router-dom';
-import {API_BASE, isSuccess} from'../../config';
+import {studentService} from'../../services/api';
 import BackgroundEffect from'../../components/BackgroundEffect';
 import {GlassCard, StatNode, FilterTab, EmptyState} from'../../components/student/StudentShared';
 
@@ -26,7 +25,7 @@ const Complaints = () => {
 
  const fetchData = async () => {
  try {
- const res = await axios.get(`${API_BASE}/complaints.php?id=${user.id}`);
+ const res = await studentService.getComplaints(user.id);
  setComplaints(Array.isArray(res.data) ? res.data : []);
 } catch (err) {
  console.error("Sync error:", err);
@@ -57,7 +56,6 @@ const Complaints = () => {
  e.preventDefault();
  const formData = new FormData(e.target);
  const payload = {
- student_id: user.id,
  title: formData.get('title'),
  description: formData.get('description'),
  priority: formData.get('priority'),
@@ -66,35 +64,33 @@ const Complaints = () => {
 
  const loadingToast = toast.loading("Sending your complaint...");
  try {
- const res = await axios.post(`${API_BASE}/complaints.php`, payload);
+ await studentService.submitComplaint(payload, user);
  toast.dismiss(loadingToast);
- if (isSuccess(res)) {
  toast.success("Complaint submitted successfully.");
  e.target.reset();
  setSelectedCategory('Other');
  fetchData();
-} else toast.error(res.data.error ||"Failed to send");
-} catch (_err) {
+} catch (err) {
  toast.dismiss(loadingToast);
- toast.error("Connection error");
+ toast.error(err.message || "Failed to send");
 }
 };
 
  const updateComplaintStatus = async (id, status) => {
  try {
- const res = await axios.put(`${API_BASE}/complaints.php`, {complaint_id: id, status, admin_name: user.name});
- if (isSuccess(res)) {toast.success(`Complaint ${status.toLowerCase()}.`); fetchData();}
- else toast.error(res.data.error ||"Operation failed");
-} catch (_err) {toast.error("Connection error");}
+ await studentService.updateComplaintStatus({complaint_id: id, status}, user);
+ toast.success(`Complaint ${status.toLowerCase()}.`); 
+ fetchData();
+} catch (err) {toast.error(err.message || "Operation failed");}
 };
 
  const deleteComplaint = async (id) => {
  if (!window.confirm("Delete this complaint record?")) return;
  try {
- const res = await axios.delete(`${API_BASE}/complaints.php?id=${id}`);
- if (isSuccess(res)) {toast.success("Record deleted."); fetchData();}
- else toast.error(res.data.error ||"Failed to delete");
-} catch (_err) {toast.error("Connection error");}
+ await studentService.deleteComplaint(id, user);
+ toast.success("Record deleted."); 
+ fetchData();
+} catch (err) {toast.error(err.message || "Failed to delete");}
 };
 
  const formatDateTime = (dateStr) => dateStr ? new Date(dateStr).toLocaleString('en-GB', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : null;
@@ -223,4 +219,3 @@ const PriorityIndicator = ({level}) => {
 };
 
 export default Complaints;
-

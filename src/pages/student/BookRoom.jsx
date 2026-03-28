@@ -1,10 +1,9 @@
 import React, {useState, useEffect, useMemo} from'react';
-import axios from'axios';
 import toast from'react-hot-toast';
 import {motion, AnimatePresence} from'framer-motion';
 import * as Icons from'../../components/Icons';
 import {useOutletContext, useNavigate} from'react-router-dom';
-import {API_BASE, isSuccess} from'../../config';
+import {studentService, adminService} from'../../services/api';
 import BackgroundEffect from'../../components/BackgroundEffect';
 import {GlassCard, StatNode, EmptyState} from'../../components/student/StudentShared';
 
@@ -25,8 +24,8 @@ const BookRoom = () => {
  if (!studentId) return;
  try {
  const [roomsRes, statusRes] = await Promise.all([
- axios.get(`${API_BASE}/book_room.php`),
- axios.get(`${API_BASE}/student_room.php?id=${studentId}`)
+ adminService.getRooms(), // Any active student can see available rooms
+ studentService.getRoomInfo(studentId)
 ]);
  setAvailableRooms(Array.isArray(roomsRes.data) ? roomsRes.data : []);
  setStudentStatus(statusRes.data || null);
@@ -59,18 +58,28 @@ const BookRoom = () => {
 
  const requestRoom = async () => {
  if (!selectedRoomForApply || !studentId) return toast.error("User identity not found.");
- if (studentStatus?.room_id && !requestReason.trim()) return toast.error("Please provide a reason for changing your room.");
+ if (studentStatus?.status === 'ALLOCATED' && !requestReason.trim()) return toast.error("Please provide a reason for changing your room.");
 
  const loadingToast = toast.loading("Submitting your request...");
  try {
- const res = await axios.post(`${API_BASE}/book_room.php`, {student_id: studentId, room_id: selectedRoomForApply.room_id, reason: requestReason});
+ await studentService.bookRoom({room_id: selectedRoomForApply.room_id, reason: requestReason}, user);
  toast.dismiss(loadingToast);
- if (isSuccess(res)) {
  toast.success("Request submitted successfully.");
  setSelectedRoomForApply(null); setRequestReason(''); fetchData();
-} else toast.error(res.data.error ||"Server failed to process request");
-} catch (_err) {toast.dismiss(loadingToast); toast.error("Network error");}
+} catch (err) {
+    toast.dismiss(loadingToast); 
+    toast.error(err.message || "Server failed to process request");
+}
 };
+
+ const handleAction = async (action, payload = {}) => {
+    try {
+        await adminService.adminAction({ action, student_id: studentId, ...payload }, user);
+        fetchData();
+    } catch (err) {
+        toast.error(err.message || "Action failed");
+    }
+ };
 
  if (!isLoading && studentStatus?.status ==='REQUESTED') return (
  <div className="max-w-4xl mx-auto animate-in fade-in duration-700">
@@ -97,7 +106,7 @@ const BookRoom = () => {
  <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
  <div className="w-20 h-20 bg-red-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Icons.ShieldAlert size={40} /></div>
  <div className="space-y-3 flex-1"><p className="text-[10px] font-black uppercase tracking-widest text-red-500">Notice from Warden</p><h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Request Rejected.</h3><div className="mt-4 bg-white/40 p-6 rounded-3xl border border-red-500/10 backdrop-blur-md"><p className="text-sm font-bold text-slate-600 italic leading-relaxed">"Reason: {studentStatus.room_rejection_note}"</p></div></div>
- <button onClick={() => axios.post(`${API_BASE}/admin_action.php`, {action:'dismiss_rejection', student_id: studentId}).then(() => fetchData())} className="px-10 py-5 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all">Dismiss</button>
+ <button onClick={() => handleAction('dismiss_rejection')} className="px-10 py-5 bg-slate-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all">Dismiss</button>
  </div>
  </motion.div>
  )}
@@ -108,17 +117,17 @@ const BookRoom = () => {
  <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-10">
  <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl rotate-3"><Icons.Building2 size={40} /></div>
  <div className="space-y-3 flex-1"><p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Official Suggestion</p><h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">New Room Available.</h3><div className="mt-4 bg-white/40 p-6 rounded-3xl border border-red-500/10 backdrop-blur-md"><p className="text-sm font-bold text-slate-600 italic leading-relaxed uppercase tracking-widest">The Warden suggests you move to Room {studentStatus.room_number}.</p></div></div>
- <div className="flex flex-col sm:flex-row gap-4"><button onClick={() => axios.post(`${API_BASE}/admin_action.php`, {action:'reject_request', student_id: studentId, rejection_note:'Student declined suggestion'}).then(() => fetchData())} className="px-8 py-5 text-slate-500 hover:text-red-500 font-black uppercase text-[10px] tracking-widest transition-colors">Decline</button><button onClick={() => {const lt = toast.loading("Processing relocation..."); axios.post(`${API_BASE}/admin_action.php`, {action:'accept_suggestion', student_id: studentId, room_id: studentStatus.room_id}).then((res) => {toast.dismiss(lt); if (isSuccess(res)) {toast.success("Relocation successful!"); fetchData();} else toast.error(res.data.error ||"Failed to process move");}).catch(() => {toast.dismiss(lt); toast.error("Network error");});}} className="px-10 py-5 bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all flex items-center gap-3"><Icons.CheckCircle2 size={16} />Accept & Move</button></div>
+ <div className="flex flex-col sm:flex-row gap-4"><button onClick={() => handleAction('reject_request', {rejection_note: 'Student declined suggestion'})} className="px-8 py-5 text-slate-500 hover:text-red-500 font-black uppercase text-[10px] tracking-widest transition-colors">Decline</button><button onClick={() => {const lt = toast.loading("Processing relocation..."); adminService.adminAction({action:'accept_suggestion', student_id: studentId, room_id: studentStatus.room_id}, user).then((res) => {toast.dismiss(lt); toast.success("Relocation successful!"); fetchData();}).catch((err) => {toast.dismiss(lt); toast.error(err.message || "Network error");});}} className="px-10 py-5 bg-blue-600 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest shadow-2xl hover:scale-105 transition-all flex items-center gap-3"><Icons.CheckCircle2 size={16} />Accept & Move</button></div>
  </div>
  </motion.div>
  )}
 
  <div className="max-w-7xl mx-auto space-y-12 px-4 sm:px-6">
  <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
- <StatNode label="Total Units"value={availableRooms.length} icon={Icons.Home} color="blue"/>
- <StatNode label="Open Slots"value={availableRooms.reduce((acc, r) => acc + (parseInt(r.capacity) - parseInt(r.current_occupancy)), 0)} icon={Icons.Users} color="teal"/>
- <StatNode label="Active Wings"value={blocks.length - 1} icon={Icons.Building2} color="orange"/>
- <StatNode label="System"value="Live"icon={Icons.Zap} color="emerald"/>
+ <StatNode label="Total Units" value={availableRooms.length} icon={Icons.Home} color="blue"/>
+ <StatNode label="Open Slots" value={availableRooms.reduce((acc, r) => acc + (parseInt(r.capacity) - parseInt(r.current_occupancy)), 0)} icon={Icons.Users} color="teal"/>
+ <StatNode label="Active Wings" value={blocks.length - 1} icon={Icons.Building2} color="orange"/>
+ <StatNode label="System" value="Live" icon={Icons.Zap} color="emerald"/>
  </section>
 
  <section className="flex flex-col md:flex-row items-center gap-6">
@@ -146,7 +155,7 @@ const BookRoom = () => {
  <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden shadow-inner"><motion.div initial={{width: 0}} animate={{width: `${(r.current_occupancy / r.capacity) * 100}%`}} transition={{duration: 1}} className={`h-full rounded-full ${r.current_occupancy >= r.capacity ?'bg-slate-900':'bg-gradient-to-r from-blue-600 to-indigo-500'}`} /></div>
  </div>
  </div>
- <button onClick={() => setSelectedRoomForApply(r)} disabled={user?.account_status ==='PENDING'} className={`w-full py-8 font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all relative overflow-hidden group/btn ${user?.account_status ==='PENDING'?'bg-slate-100 text-slate-400 cursor-not-allowed opacity-50':'bg-slate-900 text-white hover:bg-slate-800'}`}><div className="absolute inset-0 bg-blue-500/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500"/><span className="relative z-10">{user?.account_status ==='PENDING'?"Waiting for Approval": (studentStatus?.room_id ?"Request Change":"Book Room")}</span>{user?.account_status !=='PENDING'&& <Icons.ArrowRight size={18} className="relative z-10 group-hover:translate-x-2 transition-transform"/>}</button>
+ <button onClick={() => setSelectedRoomForApply(r)} disabled={user?.account_status ==='PENDING'} className={`w-full py-8 font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all relative overflow-hidden group/btn ${user?.account_status ==='PENDING'?'bg-slate-100 text-slate-400 cursor-not-allowed opacity-50':'bg-slate-900 text-white hover:bg-slate-800'}`}><div className="absolute inset-0 bg-blue-500/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-500"/><span className="relative z-10">{user?.account_status ==='PENDING'?"Waiting for Approval": (studentStatus?.status === 'ALLOCATED' ?"Request Change":"Book Room")}</span>{user?.account_status !=='PENDING'&& <Icons.ArrowRight size={18} className="relative z-10 group-hover:translate-x-2 transition-transform"/>}</button>
  </GlassCard>
  </motion.div>
  )) : <EmptyState title="No Rooms Found."message={`All rooms in Block ${selectedBlock} are currently full.`} />}
@@ -170,7 +179,7 @@ const BookRoom = () => {
  <span className="text-[8px] font-black uppercase tracking-widest">New Request</span>
  </div>
  <h3 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none">
- {studentStatus?.room_id ?"Change Room.":"Book Room."}
+ {studentStatus?.status === 'ALLOCATED' ?"Change Room.":"Book Room."}
  </h3>
  </div>
  <div className="p-3 bg-slate-900 rounded-2xl text-white font-black text-xl tracking-tighter flex flex-col items-end shadow-xl">
@@ -180,7 +189,7 @@ const BookRoom = () => {
  </div>
 
  <div className="space-y-6">
- {studentStatus?.room_id ? (
+ {studentStatus?.status === 'ALLOCATED' ? (
  <div className="space-y-3">
  <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-900 ml-1">
  <Icons.FileText size={12} className="text-blue-600" />

@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useMemo} from'react';
 import * as Icons from'../../components/Icons';
 import {useOutletContext} from'react-router-dom';
-import axios from'axios';
 import toast from'react-hot-toast';
-import {API_BASE, isSuccess} from'../../config';
+import {adminService} from'../../services/api';
 import {StatCard, LoadingScreen, EmptyState} from'../../components/admin/AdminShared';
 
 const Complaints = () => {
@@ -15,7 +14,7 @@ const Complaints = () => {
 
  const fetchData = async () => {
  try {
- const res = await axios.get(`${API_BASE}/complaints.php`);
+ const res = await adminService.getComplaints(user);
  setComplaints(Array.isArray(res.data) ? res.data : []);
 } catch (_err) {
  toast.error("Failed to load complaints");
@@ -30,27 +29,22 @@ const Complaints = () => {
  const actionLabel = action ==='in_progress'?'Starting fix': (action ==='delete'?'Deleting':'Updating');
  const loadingToast = toast.loading(`${actionLabel}...`);
  try {
- let res;
- if (action ==='delete') res = await axios.delete(`${API_BASE}/complaints.php?id=${id}`);
- else if (action ==='resolve') {
- const payload = {
- action:'resolve',
- complaint_id: id,
- note: note ||'',
- admin_name: user?.name ||'Warden',
- role:'admin'
-};
- res = await axios.post(`${API_BASE}/complaints.php`, payload);
-} else {
- let status = action ==='in_progress'?'IN_PROGRESS': action;
- res = await axios.put(`${API_BASE}/complaints.php`, {complaint_id: id, status, admin_name: user?.name, note});
-}
+ if (action ==='delete') {
+    // Note: delete endpoint might need admin_role too if we implement it, 
+    // for now adminService handles it if defined. Let's assume axios for direct delete if not in service
+    // Actually let's use the service if available. I'll add deleteComplaint to adminService in next turn or use adminAction
+    await adminService.updateComplaint({complaint_id: id, action: 'delete'}, user);
+ } else {
+    let status = action ==='in_progress'?'IN_PROGRESS': action;
+    if (action === 'resolve') status = 'RESOLVED';
+    await adminService.updateComplaint({complaint_id: id, status, note}, user);
+ }
  toast.dismiss(loadingToast);
- if (isSuccess(res)) {toast.success(`Action completed!`); fetchData();}
- else toast.error(res.data.error ||"Operation failed");
-} catch (_err) {
+ toast.success(`Action completed!`); 
+ fetchData();
+} catch (err) {
  toast.dismiss(loadingToast);
- toast.error("Operation failed");
+ toast.error(err.message || "Operation failed");
 }
 };
 

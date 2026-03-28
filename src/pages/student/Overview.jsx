@@ -5,7 +5,6 @@ import * as Icons from'../../components/Icons';
 import {useOutletContext, useNavigate, NavLink} from'react-router-dom';
 import {motion, AnimatePresence} from'framer-motion';
 import toast from'react-hot-toast';
-import {isSuccess} from'../../config';
 import BackgroundEffect from'../../components/BackgroundEffect';
 import {GlassCard, InfoNode} from'../../components/student/StudentShared';
 
@@ -14,7 +13,8 @@ const StudentOverview = () => {
  const navigate = useNavigate();
  const [showPaymentModal, setShowPaymentModal] = useState(false);
  const [paymentMethod, setPaymentMethod] = useState('MPESA');
- const sid = user.student_id || user.id;
+ 
+ const sid = user?.student_id || user?.id;
 
  // Use React Query for data synchronization
  const {data: room, refetch: refetchRoom} = useQuery({
@@ -23,15 +23,17 @@ const StudentOverview = () => {
  const res = await studentService.getRoomInfo(sid);
  return res.data;
 },
+ enabled: !!sid,
  refetchInterval: 60000,
 });
 
- const {data: roommates = []} = useQuery({
+ const {data: roommates = [], refetch: refetchRoommates} = useQuery({
  queryKey: ['student-roommates', sid],
  queryFn: async () => {
- const res = await studentService.getRoommates(`${sid}&t=${Date.now()}`);
+ const res = await studentService.getRoommates(sid);
  return Array.isArray(res.data) ? res.data : [];
 },
+ enabled: !!sid,
  refetchInterval: 60000,
 });
 
@@ -41,30 +43,30 @@ const StudentOverview = () => {
  const res = await studentService.getComplaints(sid);
  return Array.isArray(res.data) ? res.data : [];
 },
+ enabled: !!sid,
  refetchInterval: 60000,
 });
 
  const activeComplaint = complaints.find(c => ['PENDING','IN_PROGRESS'].includes(c.status));
 
  const handlePayment = async () => {
+ if (!sid || !room?.room_id) return toast.error("Missing session data");
+ 
  const loadingToast = toast.loading(`Connecting to ${paymentMethod} gateway...`);
  try {
- const res = await studentService.processPayment({
- student_id: sid,
+ await studentService.processPayment({
  room_id: room.room_id,
  payment_method: paymentMethod
-});
+}, user);
+ 
  toast.dismiss(loadingToast);
- if (isSuccess(res)) {
  toast.success("Payment Received! Room Allocated.");
  setShowPaymentModal(false);
  refetchRoom();
-} else {
- toast.error(res.data.error ||"Payment failed");
-}
+ refetchRoommates();
 } catch (err) {
  toast.dismiss(loadingToast);
- toast.error(err.message ||"Gateway connection error");
+ toast.error(err.message ||"Payment failed");
 }
 };
 
@@ -276,7 +278,7 @@ const StudentOverview = () => {
  className="bg-white w-full max-w-lg rounded-[2.5rem] border border-white/10 shadow-2xl overflow-hidden max-h-[95vh] flex flex-col"
  >
  <div className="p-6 sm:p-8 overflow-y-auto scrollbar-hide space-y-8">
- <div className="text-center space-y-3"><div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 mx-auto"><Icons.ShieldCheck size={32} /></div><h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none">Checkout.</h3><p className="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400">Secure Payment Portal</p></div>
+ <div className="text-center space-y-3"><div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500 mx-auto"><Icons.ShieldCheck size={32} /></div><h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none">Checkout.</h3><p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Secure Payment Portal</p></div>
  <div className="space-y-3 bg-slate-50 p-6 rounded-2xl border border-slate-100"><div className="flex justify-between items-center"><span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Allocated Block</span><span className="font-black text-slate-900 uppercase text-sm">Room {room.room_number}</span></div><div className="flex justify-between items-center"><span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Total Due</span><span className="text-xl font-black text-blue-500 tracking-tighter">CASH {room.price}</span></div></div>
  <div className="space-y-2">
  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Select Gateway</p>

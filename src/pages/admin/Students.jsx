@@ -1,10 +1,9 @@
 import React, {useState, useEffect, useMemo} from'react';
 import {motion, AnimatePresence} from'framer-motion';
 import * as Icons from'../../components/Icons';
-import axios from'axios';
 import toast from'react-hot-toast';
 import {useOutletContext} from'react-router-dom';
-import {API_BASE, isSuccess} from'../../config';
+import {adminService} from'../../services/api';
 import {StatCard, LoadingScreen, EmptyState, FilterMenu, ActionButton} from'../../components/admin/AdminShared';
 
 const Students = () => {
@@ -23,8 +22,8 @@ const Students = () => {
  const fetchData = async () => {
  try {
  const [studentsRes, roomsRes] = await Promise.all([
- axios.get(`${API_BASE}/get_data.php?type=students`),
- axios.get(`${API_BASE}/book_room.php`)
+ adminService.getStudents(user),
+ adminService.getRooms()
 ]);
  setStudents(Array.isArray(studentsRes.data) ? studentsRes.data : []);
  setAvailableRooms(Array.isArray(roomsRes.data) ? roomsRes.data : []);
@@ -41,20 +40,19 @@ const Students = () => {
  const handleRoomAction = async (action, student_id, room_id = null, suggested_room_id = null, note ='') => {
  const loadingToast = toast.loading("Updating status...");
  try {
- const payload = {action, student_id, admin_name: user?.name, rejection_note: note};
+ const payload = {action, student_id, rejection_note: note};
  if (room_id) payload.room_id = room_id;
  if (suggested_room_id) payload.suggested_room_id = suggested_room_id;
  
- const res = await axios.post(`${API_BASE}/admin_action.php`, payload);
+ await adminService.adminAction(payload, user);
  toast.dismiss(loadingToast);
  
- if (isSuccess(res)) {
- toast.success(res.data.message ||"Operation successful");
+ toast.success("Operation successful");
  setRejectingStudent(null); setRejectionNote(''); fetchData();
-} else {
- toast.error(res.data.error ||'Operation failed');
+} catch (err) {
+    toast.dismiss(loadingToast); 
+    toast.error(err.message || "Operation failed");
 }
-} catch (err) {toast.dismiss(loadingToast); toast.error("Connection error");}
 };
 
  const stats = useMemo(() => {

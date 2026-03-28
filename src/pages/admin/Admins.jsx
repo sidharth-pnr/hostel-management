@@ -1,9 +1,8 @@
 import React, {useState, useEffect} from'react';
 import {useOutletContext} from'react-router-dom';
-import axios from'axios';
 import toast from'react-hot-toast';
 import * as Icons from'../../components/Icons';
-import {API_BASE, isSuccess} from'../../config';
+import {adminService} from'../../services/api';
 import {LoadingScreen} from'../../components/admin/AdminShared';
 
 const Admins = () => {
@@ -19,14 +18,10 @@ const Admins = () => {
 
  const fetchAdmins = async () => {
  try {
- const res = await axios.post(`${API_BASE}/manage_admins.php`, {
- admin_role: user.role,
- action:'list'
-});
- if (res.data.error) toast.error(res.data.error);
- else setAdmins(res.data);
+ const res = await adminService.getAdmins(user);
+ setAdmins(res.data);
 } catch (err) {
- toast.error("Failed to load admins");
+ toast.error(err.message || "Failed to load admins");
 } finally {
  setLoading(false);
 }
@@ -35,40 +30,24 @@ const Admins = () => {
  const handleAdd = async (e) => {
  e.preventDefault();
  try {
- const res = await axios.post(`${API_BASE}/manage_admins.php`, {
- ...formData,
- admin_role: user.role,
- action:'add'
-});
- if (isSuccess(res)) {
+ await adminService.addAdmin(formData, user);
  toast.success("Admin account created");
  setShowAddForm(false);
  setFormData({name:'', username:'', password:'', role:'STAFF'});
  fetchAdmins();
-} else {
- toast.error(res.data.error ||"Failed to add admin");
-}
 } catch (err) {
- toast.error("Network error");
+ toast.error(err.message || "Failed to add admin");
 }
 };
 
  const handleDelete = async (id) => {
  if (!window.confirm("Delete this admin account permanently?")) return;
  try {
- const res = await axios.post(`${API_BASE}/manage_admins.php`, {
- id,
- admin_role: user.role,
- action:'delete'
-});
- if (isSuccess(res)) {
+ await adminService.deleteAdmin(id, user);
  toast.success("Admin removed");
  fetchAdmins();
-} else {
- toast.error(res.data.error ||"Failed to delete");
-}
 } catch (err) {
- toast.error("Network error");
+ toast.error(err.message || "Failed to delete");
 }
 };
 
@@ -145,4 +124,6 @@ const Admins = () => {
 };
 
 export default Admins;
+
+
 

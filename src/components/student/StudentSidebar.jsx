@@ -54,7 +54,6 @@ export const StudentSidebar = ({user}) => {
  <NavItem to="/student/book"icon={Icons.BedDouble} label="Book Room"/>
  <NavItem to="/student/complaints"icon={Icons.ClipboardList} label="Complaints"/>
  <NavItem to="/student/profile"icon={Icons.UserCircle} label="Profile"/>
- <NavItem to="/student/about"icon={Icons.Info} label="About"/>
  </nav>
 
  {/* Profile & Controls */}

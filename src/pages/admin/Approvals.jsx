@@ -1,18 +1,19 @@
 import React, {useState, useEffect, useMemo} from'react';
-import axios from'axios';
 import toast from'react-hot-toast';
+import {useOutletContext} from'react-router-dom';
 import * as Icons from'../../components/Icons';
-import {API_BASE, isSuccess} from'../../config';
+import {adminService} from'../../services/api';
 import {StatCard, LoadingScreen, EmptyState} from'../../components/admin/AdminShared';
 
-const Approvals = ({user}) => {
+const Approvals = () => {
+ const {user} = useOutletContext() || {};
  const [pending, setPending] = useState([]);
  const [search, setSearch] = useState('');
  const [loading, setLoading] = useState(true);
 
  const fetchData = async () => {
  try {
- const res = await axios.get(`${API_BASE}/get_data.php?type=pending`);
+ const res = await adminService.getPendingStudents(user);
  setPending(Array.isArray(res.data) ? res.data : []);
 } catch (err) {
  toast.error("Failed to sync application queue");
@@ -26,22 +27,17 @@ const Approvals = ({user}) => {
  const handleApprove = async (id, status) => {
  const loadingToast = toast.loading(status ==='ACTIVE'?"Authorizing scholar...":"Processing rejection...");
  try {
- const res = await axios.post(`${API_BASE}/admin_action.php`, {
+ await adminService.adminAction({
  action:'approve', 
  student_id: id, 
- status: status,
- admin_name: user?.name
-});
+ status: status
+}, user);
  toast.dismiss(loadingToast);
- if (isSuccess(res)) {
  toast.success(`Scholar ${status ==='ACTIVE'?'Approved':'Declined'} Successfully`);
  fetchData();
-} else {
- toast.error(res.data.error ||"Operation failed");
-}
 } catch (err) {
  toast.dismiss(loadingToast);
- toast.error("Connection failed");
+ toast.error(err.message || "Operation failed");
 }
 };
 
@@ -140,4 +136,3 @@ const DetailBox = ({icon: Icon, label, value}) => (
 );
 
 export default Approvals;
-

@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useMemo} from'react';
-import axios from'axios';
 import toast from'react-hot-toast';
 import * as Icons from'../../components/Icons';
 import {useOutletContext} from'react-router-dom';
-import {API_BASE, isSuccess} from'../../config';
+import {adminService} from'../../services/api';
 import {StatCard, LoadingScreen, EmptyState} from'../../components/admin/AdminShared';
 
 const RoomManagement = () => {
@@ -21,7 +20,7 @@ const RoomManagement = () => {
  
  const fetchRooms = async () => {
  try {
- const res = await axios.get(`${API_BASE}/manage_rooms.php`);
+ const res = await adminService.getRooms();
  setRooms(Array.isArray(res.data) ? res.data : []);
 } catch (err) {
  toast.error("Inventory sync failed");
@@ -36,49 +35,36 @@ const RoomManagement = () => {
  e.preventDefault();
  const loadingToast = toast.loading("Configuring room...");
  try {
- const res = await axios.post(`${API_BASE}/manage_rooms.php`, {
- ...newRoom,
- admin_name: user?.name,
- admin_role: user?.role
-});
+ await adminService.addRoom(newRoom, user);
  toast.dismiss(loadingToast);
- if (isSuccess(res)) {
  toast.success("Infrastructure Updated!"); 
  fetchRooms(); 
  setNewRoom({block:'', room_number:'', capacity: 3, price:''}); 
-} else {
- toast.error(res.data.error ||"Failed to add room"); 
-}
 } catch (err) {
  toast.dismiss(loadingToast);
- toast.error("Connection error");
+ toast.error(err.message || "Failed to add room");
 }
 };
  
  const deleteRoom = async (id) => {
+ if (user?.role !== 'SUPER') {
+ toast.error("Access Denied: Only Super Admins can decommission rooms");
+ return;
+ }
  if(!window.confirm("Permanently decommission this room configuration?")) return;
  try {
- const res = await axios.post(`${API_BASE}/manage_rooms.php`, {
- action:'delete', 
- room_id: id,
- admin_name: user?.name,
- admin_role: user?.role
-});
- if (isSuccess(res)) {
+ await adminService.deleteRoom(id, user);
  toast.success("Unit Removed");
  fetchRooms();
-} else {
- toast.error(res.data.error ||"Deletion failed");
-}
 } catch (err) {
- toast.error("Deletion failed");
+ toast.error(err.message || "Deletion failed");
 }
 };
 
  const viewOccupants = (room) => {
  setSelectedRoom(room);
  setOccupants([]); 
- axios.get(`${API_BASE}/get_data.php?type=room_occupants&room_id=${room.room_id}`)
+ adminService.getRoomOccupants(room.room_id)
  .then(res => setOccupants(Array.isArray(res.data) ? res.data : []));
 };
 
