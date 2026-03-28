@@ -42,7 +42,6 @@ const Login = ({setUser}) => {
 
  <div className="w-full lg:w-[40%] flex flex-col h-full bg-white">
  <div className="p-6 flex justify-between items-center w-full">
- <Link to="/"className="group flex items-center gap-2 text-slate-400 hover:text-slate-900 transition-all"><Icons.ChevronLeft size={18} /><span className="text-[9px] font-black uppercase tracking-widest">Back to Home</span></Link>
  </div>
 
  <div className="flex-1 flex flex-col justify-center px-8 sm:px-16 py-4">
@@ -78,4 +77,3 @@ const Login = ({setUser}) => {
 };
 
 export default Login;
-
