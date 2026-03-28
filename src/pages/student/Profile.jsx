@@ -12,6 +12,8 @@ const Profile = () => {
  const navigate = useNavigate();
  const [room, setRoom] = useState(null);
  const [isEditing, setIsEditing] = useState(false);
+ const [profileData, setProfileData] = useState(null);
+ const [isLoading, setIsLoading] = useState(true);
  const [editData, setEditData] = useState({
  name: user.name,
  department: user.department,
@@ -22,17 +24,28 @@ const Profile = () => {
  const studentId = user.student_id || user.id;
 
  useEffect(() => {
- studentService.getRoomInfo(studentId).then(res => setRoom(res.data));
+ fetchData();
 }, [studentId]);
 
- const fetchLatestUserData = async () => {
+ const fetchData = async () => {
  try {
-    // Note: get_student.php also needs securing, but let's use service if available
-    // For now keeping it consistent with other refactors
-    const res = await studentService.getRoomInfo(studentId); // Mock sync or specific getStudent service
-    // If we had a getProfile in studentService, we'd use it.
-    // Let's assume studentService.updateProfile returns the updated user or we re-fetch
-} catch (err) {console.error("Sync failure:", err);}
+ const [roomRes, profileRes] = await Promise.all([
+ studentService.getRoomInfo(studentId),
+ studentService.getProfile(studentId)
+]);
+ setRoom(roomRes.data);
+ setProfileData(profileRes.data.student);
+ // Keep context in sync if needed
+ if (profileRes.data.student) {
+    const latest = {...user, ...profileRes.data.student};
+    // Only update if changed to avoid loops or unnecessary renders
+    if (JSON.stringify(latest) !== JSON.stringify(user)) {
+        setUser(latest);
+        localStorage.setItem('user', JSON.stringify(latest));
+    }
+ }
+} catch (err) {console.error("Fetch failure:", err);}
+ finally {setIsLoading(false);}
 };
 
  const handleUpdate = async (e) => {
@@ -44,15 +57,21 @@ const Profile = () => {
  toast.dismiss(loadingToast);
  toast.success("Profile updated."); 
  setIsEditing(false);
- // Update local state
- const updatedUser = {...user, ...editData};
- localStorage.setItem('user', JSON.stringify(updatedUser));
- setUser(updatedUser);
+ fetchData();
 } catch (err) {
     toast.dismiss(loadingToast); 
     toast.error(err.message || "Connection failed.");
 }
 };
+
+ const formatDate = (dateStr) => {
+    if (!dateStr) return "N/A";
+    return new Date(dateStr).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+ };
 
  return (
  <div className="space-y-8 pb-12 animate-in fade-in duration-500 w-full">
@@ -76,7 +95,7 @@ const Profile = () => {
  <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${user.account_status ==='ACTIVE'?'bg-emerald-500/10 text-emerald-500 border-emerald-500/20':'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>Account {user.account_status ==='ACTIVE'?'Active':'Pending'}</span>
  </div>
  <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">{user.name}</h1>
- <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400">Student Resident • Hostel Management • Group 15</p>
+ <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400">Student Resident • Joined {formatDate(profileData?.created_at || user.created_at)}</p>
  </div>
 
  {!isEditing && <button onClick={() => setIsEditing(true)} className="px-6 py-3 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[9px] shadow-lg hover:scale-105 transition-all flex items-center gap-2"><Icons.Pencil size={14} /> Edit Profile</button>}
@@ -101,7 +120,7 @@ const Profile = () => {
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <InputGroup label="Full Name"value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} icon={Icons.User} autoComplete="name"/>
  <InputGroup label="Phone Number"value={editData.phone} onChange={(e) => {const val = e.target.value.replace(/\D/g,''); if (val.length <= 10) setEditData({...editData, phone: val});}} icon={Icons.Phone} autoComplete="tel"/>
- <div className="space-y-2"><label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Department</label><select value={editData.department} onChange={(e) => setEditData({...editData, department: e.target.value})} className="w-full p-4 bg-white border border-slate-200 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs">{['CSE','ECE','EEE','MECH','CIVIL','IT'].map(d => <option key={d} value={d}>{d}</option>)}</select></div>
+ <div className="space-y-2"><label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Department</label><select value={editData.department} onChange={(e) => setEditData({...editData, department: e.target.value})} className="w-full p-4 bg-white border border-slate-200 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs">{['CSE','ECE','EEE','MECH','CIVIL','IT','DS'].map(d => <option key={d} value={d}>{d}</option>)}</select></div>
  <div className="space-y-2"><label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Year of Study</label><select value={editData.year} onChange={(e) => setEditData({...editData, year: e.target.value})} className="w-full p-4 bg-white border border-slate-200 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs">{[1,2,3,4].map(y => <option key={y} value={y}>Year {y}</option>)}</select></div>
  </div>
  <div className="flex justify-end gap-4 pt-6 mt-6 border-t border-slate-100"><button type="button"onClick={() => setIsEditing(false)} className="px-6 py-3 rounded-lg font-black text-[9px] uppercase tracking-widest text-slate-400 hover:text-slate-900">Cancel</button><button type="submit"className="px-8 py-3 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[9px] shadow-lg flex items-center gap-2"><Icons.CheckCircle2 size={14} className="text-blue-500"/> Save Changes</button></div>
@@ -112,12 +131,19 @@ const Profile = () => {
 
  {/* 3. RESIDENTIAL BOX */}
  <div className="min-h-[100px]">
- {room && room.room_number ? (
+ {isLoading ? (
+    <div className="h-[100px] flex items-center justify-center border border-dashed border-slate-200 rounded-[2rem] opacity-40"><p className="text-[9px] font-black uppercase tracking-widest text-slate-400 animate-pulse">Syncing room info...</p></div>
+ ) : room && room.room_number ? (
  <motion.div initial={{opacity: 0, y: 10}} animate={{opacity: 1, y: 0}} onClick={() => navigate('/student/book')} className="cursor-pointer group bg-slate-50 p-6 rounded-[2rem] border border-slate-200 flex items-center justify-between gap-6 hover:border-blue-500/30 transition-all">
  <div className="flex items-center gap-6"><div className="w-16 h-16 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-600 border border-blue-600/20 group-hover:scale-110 transition-transform"><Icons.BedDouble size={32} /></div><div><p className="text-[9px] font-black uppercase tracking-widest text-blue-500">My Room Info</p><h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Room {room.room_number}</h3><p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Block {room.block} • Standard Room</p></div></div>
  <Icons.ArrowUpRight size={24} className="text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all"/>
  </motion.div>
- ) : <div className="h-[100px] flex items-center justify-center border border-dashed border-slate-200 rounded-[2rem] opacity-40"><p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Loading your room info...</p></div>}
+ ) : (
+    <motion.div initial={{opacity: 0}} animate={{opacity: 1}} onClick={() => navigate('/student/book')} className="cursor-pointer group bg-amber-50/50 p-6 rounded-[2rem] border border-dashed border-amber-200 flex items-center justify-between gap-6 hover:bg-amber-50 transition-all">
+    <div className="flex items-center gap-6"><div className="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600 group-hover:rotate-12 transition-transform"><Icons.ShieldAlert size={32} /></div><div><p className="text-[9px] font-black uppercase tracking-widest text-amber-600">Action Required</p><h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">No Active Assignment</h3><p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">You haven't been allocated a room yet.</p></div></div>
+    <Icons.PlusCircle size={24} className="text-amber-400 group-hover:scale-125 transition-all"/>
+    </motion.div>
+ )}
  </div>
  </div>
  );

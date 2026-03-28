@@ -34,6 +34,7 @@ export const authService = {
 };
 
 export const studentService = {
+ getProfile: (id) => api.get(`/get_student.php?id=${id}`),
  getRoomInfo: (id) => api.get(`/student_room.php?id=${id}`),
  getRoommates: (id) => api.get(`/get_roommates.php?student_id=${id}`),
  updateProfile: (data) => api.post('/update_student_profile.php', data),
