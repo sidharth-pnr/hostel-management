@@ -4,7 +4,6 @@ import {motion, AnimatePresence} from'framer-motion';
 import * as Icons from'../../components/Icons';
 import {useOutletContext, useNavigate} from'react-router-dom';
 import {studentService} from'../../services/api';
-import BackgroundEffect from'../../components/BackgroundEffect';
 import {GlassCard, StatNode, FilterTab, EmptyState} from'../../components/student/StudentShared';
 
 const Complaints = () => {
@@ -97,7 +96,6 @@ const Complaints = () => {
 
  return (
  <div className="space-y-12 pb-20 max-w-7xl mx-auto px-4 sm:px-6">
- <BackgroundEffect />
 
  {/* 1. STATUS HUB */}
  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

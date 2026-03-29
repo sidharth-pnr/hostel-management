@@ -5,7 +5,6 @@ import * as Icons from'../../components/Icons';
 import {useOutletContext, useNavigate, NavLink} from'react-router-dom';
 import {motion, AnimatePresence} from'framer-motion';
 import toast from'react-hot-toast';
-import BackgroundEffect from'../../components/BackgroundEffect';
 import {GlassCard, InfoNode} from'../../components/student/StudentShared';
 
 const StudentOverview = () => {
@@ -75,7 +74,6 @@ const StudentOverview = () => {
  return (
  <>
  <div className="space-y-12 animate-in fade-in duration-700 pb-20">
- <BackgroundEffect />
 
  {/* 1. HERO IDENTITY SECTION */}
  <section className="relative min-h-[40vh] flex flex-col items-center justify-center text-center pt-24">

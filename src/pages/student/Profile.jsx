@@ -4,7 +4,6 @@ import toast from'react-hot-toast';
 import {motion, AnimatePresence} from'framer-motion';
 import {useOutletContext, useNavigate} from'react-router-dom';
 import {studentService} from'../../services/api';
-import BackgroundEffect from'../../components/BackgroundEffect';
 import {GlassCard, InfoNode} from'../../components/student/StudentShared';
 
 const Profile = () => {
@@ -75,7 +74,6 @@ const Profile = () => {
 
  return (
  <div className="space-y-8 pb-12 animate-in fade-in duration-500 w-full">
- <BackgroundEffect />
 
  {/* 1. IDENTITY HEADER */}
  <section className="flex flex-col md:flex-row items-center gap-8 py-6 border-b border-slate-100">
@@ -105,10 +103,10 @@ const Profile = () => {
  <AnimatePresence mode="wait">
  {!isEditing ? (
  <motion.div key="view"initial={{opacity: 0}} animate={{opacity: 1}} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
- <InfoNode icon={Icons.GraduationCap} label="Department"value={user.department} color="blue"className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
- <InfoNode icon={Icons.Clock} label="Year of Study"value={`Year ${user.year}`} color="teal"className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
- <InfoNode icon={Icons.Phone} label="Phone Number"value={user.phone ||'Not Set'} color="indigo"className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
- <InfoNode icon={Icons.Hash} label="Student ID"value={user.reg_no} color="slate"className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
+ <InfoNode icon={Icons.GraduationCap} label="Department" value={user.department} color="blue" className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
+ <InfoNode icon={Icons.Clock} label="Year of Study" value={`Year ${user.year}`} color="teal" className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
+ <InfoNode icon={Icons.Phone} label="Phone Number" value={user.phone ||'Not Set'} color="indigo" className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
+ <InfoNode icon={Icons.Hash} label="Student ID" value={user.reg_no} color="slate" className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
  </motion.div>
  ) : (
  <motion.form key="edit"initial={{opacity: 0, scale: 0.99}} animate={{opacity: 1, scale: 1}} exit={{opacity: 0}} onSubmit={handleUpdate} className="space-y-6">
@@ -146,7 +144,7 @@ const Profile = () => {
  )}
  </div>
  </div>
- );
+  );
 };
 
 const InputGroup = ({label, value, onChange, icon: Icon, autoComplete}) => (

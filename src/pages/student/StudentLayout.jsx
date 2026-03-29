@@ -1,6 +1,7 @@
 import {Outlet, useLocation} from'react-router-dom';
 import * as Icons from'../../components/Icons';
 import {StudentSidebar} from'../../components/student/StudentSidebar.jsx';
+import BackgroundEffect from'../../components/BackgroundEffect';
 
 const StudentLayout = ({user, setUser}) => {
  const location = useLocation();
@@ -9,6 +10,7 @@ const StudentLayout = ({user, setUser}) => {
 
  return (
  <div className="min-h-screen bg-white transition-colors duration-500 selection:bg-slate-900 selection:text-white">
+ <BackgroundEffect />
  {/* 1. Floating Top Navbar */}
  <StudentSidebar user={user} />
 

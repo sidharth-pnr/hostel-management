@@ -6,7 +6,7 @@ The system follows a **3-Tier Architecture** to ensure separation of concerns, s
 
 #### A. Presentation Layer (Frontend)
 - **Technology:** React.js (Vite)
-- **Styling:** TailwindCSS (Kerala-style UI, clean and professional)
+- **Styling:** TailwindCSS (Clean and professional)
 - **State Management:** React Hooks (useState, useEffect)
 - **Routing:** React Router DOM (Role-based access control)
 - **Responsibility:** Handles User Interface, input validation, and communication with the API.

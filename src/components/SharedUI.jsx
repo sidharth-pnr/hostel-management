@@ -72,13 +72,13 @@ export const Select = ({label, options = [], className ="", ...props}) => (
  */
 export const AuthVisualSide = ({image, quote, author, subtitle}) => (
  <div className="hidden lg:flex lg:w-[60%] relative overflow-hidden bg-slate-900 h-full">
- <img 
- src={image} 
+ <img
+ src={image}
  alt="Auth Visual"
- className="absolute inset-0 w-full h-full object-cover opacity-60 animate-ken-burns scale-110"
+ className="absolute inset-0 w-full h-full object-cover opacity-60"
  />
  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"/>
- 
+
  <div className="absolute bottom-16 left-16 right-16 space-y-4 animate-slide-up">
  <div className="w-10 h-1 bg-white rounded-full opacity-50"/>
  <div className="relative">
@@ -97,7 +97,6 @@ export const AuthVisualSide = ({image, quote, author, subtitle}) => (
  </div>
  </div>
 );
-
 /**
  * Standard Primary Button
  */

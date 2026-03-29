@@ -4,7 +4,6 @@ import {motion, AnimatePresence} from'framer-motion';
 import * as Icons from'../../components/Icons';
 import {useOutletContext, useNavigate} from'react-router-dom';
 import {studentService, adminService} from'../../services/api';
-import BackgroundEffect from'../../components/BackgroundEffect';
 import {GlassCard, StatNode, EmptyState} from'../../components/student/StudentShared';
 
 const BookRoom = () => {
@@ -99,7 +98,6 @@ const BookRoom = () => {
 
  return (
  <div className="space-y-12 animate-in fade-in duration-700">
- <BackgroundEffect />
  {studentStatus?.room_rejection_note && (
  <motion.div initial={{opacity: 0, scale: 0.95}} animate={{opacity: 1, scale: 1}} className="max-w-5xl mx-auto bg-red-500/10 border border-red-500/20 rounded-[3rem] p-10 relative overflow-hidden shadow-2xl">
  <div className="absolute top-0 right-0 p-8 opacity-10"><Icons.ShieldAlert size={150} className="text-red-500"/></div>
@@ -258,4 +256,3 @@ const BookRoom = () => {
 };
 
 export default BookRoom;
-
