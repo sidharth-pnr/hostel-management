@@ -1,0 +1,318 @@
+Act as an expert React & Tailwind CSS developer. I need you to update the frontend dashboard.
+​Please design it using a "Professional Glassmorphism & Bento Box" UI paradigm. It must look highly professional, easy to connect to a real database (for a college project), and use an Apple/iOS-style frosted glass aesthetic.
+​Strict Design Rules to Follow:
+​1. Layout Architecture:
+​Use a standard ERP layout: A fixed Left Sidebar, a Top Header, and a scrolling Main Content area.
+​Dashboard view must use a Bento Box Grid (grid grid-cols-1 md:grid-cols-3 or 4). Chunk data into logical squares and rectangles using col-span and row-span to make the UI scannable.
+​Include standard database-ready tables for any lists/records (with columns like ID, Date, Status, etc.).
+​2. The Background (Crucial for Glass Effect):
+​The main background should be a soft, light color (e.g., bg-[#f0f4f8]).
+​In the background layer (fixed inset-0 z-0 pointer-events-none), add 2 or 3 large, highly blurred colorful orbs (e.g., bg-blue-200/50 rounded-full blur-[100px]) so their colors subtly refract through the glass cards above.
+​3. The Glass Cards (Bento Boxes):
+​Every card, sidebar, and container MUST use this exact Tailwind glassmorphism formula:
+bg-white/60 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl.
+​Add hover effects to interactive cards: hover:bg-white/80 hover:-translate-y-1 transition-all duration-300.
+​4. Typography & Colors:
+​Text should be highly contrasting: text-slate-800 for main headings, text-slate-500 for subtext.
+​Use font-bold for important numbers/headers and text-xs uppercase tracking-widest font-bold for mini-labels and table headers.
+​Primary accent color should be a professional Academic Blue (blue-600) and Teal/Green.
+​Use solid, colored pill badges for statuses (e.g., Resolved = bg-green-100 text-green-700, Pending = bg-orange-100 text-orange-700).
+​5. Technical Requirements:
+ Make the sidebar responsive (collapsible hamburger menu on mobile).
+
+sample code for design - "import React, { useState } from 'react';
+import { 
+  LayoutDashboard, 
+  MapPin, 
+  MessageSquareWarning, 
+  UserCircle, 
+  Bell, 
+  LogOut, 
+  Plus,
+  CheckCircle,
+  Clock,
+  Menu,
+  X,
+  GraduationCap,
+  ChevronRight,
+  FileText,
+  Building
+} from 'lucide-react';
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Database mock data
+  const complaintsData = [
+    { id: 'CMP-089', type: 'Electrical', desc: 'Ceiling fan regulator', date: '12 May 2024', status: 'Pending' },
+    { id: 'CMP-075', type: 'Plumbing', desc: 'Washbasin tap leak', date: '05 May 2024', status: 'Resolved' },
+    { id: 'CMP-042', type: 'Carpentry', desc: 'Study table drawer', date: '20 Apr 2024', status: 'Resolved' },
+  ];
+
+  // Reusable Glass Bento Box
+  const GlassBox = ({ children, className = "", onClick }) => (
+    <div 
+      onClick={onClick}
+      className={`bg-white/60 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-300 ${onClick ? 'cursor-pointer hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1' : ''} ${className}`}
+    >
+      {children}
+    </div>
+  );
+
+  const SidebarItem = ({ id, icon: Icon, label }) => (
+    <button
+      onClick={() => { setActiveTab(id); setIsSidebarOpen(false); }}
+      className={`w-full flex items-center space-x-3 px-5 py-3.5 rounded-2xl transition-all font-medium ${
+        activeTab === id 
+          ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' 
+          : 'text-slate-600 hover:bg-white/50 hover:text-blue-700'
+      }`}
+    >
+      <Icon size={20} />
+      <span>{label}</span>
+    </button>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#f0f4f8] font-sans text-slate-800 relative overflow-hidden flex">
+      
+      {/* Soft Background Gradients for Glassmorphism Refraction */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-200/50 rounded-full blur-[100px]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-teal-200/40 rounded-full blur-[120px]"></div>
+      </div>
+
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+      )}
+
+      {/* Glass Sidebar */}
+      <aside className={`
+        fixed lg:static inset-y-0 left-0 z-50 w-72 p-4 transform transition-transform duration-300 ease-in-out
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        <div className="h-full bg-white/70 backdrop-blur-2xl border border-white shadow-xl lg:shadow-sm rounded-[2.5rem] flex flex-col p-4 relative z-10">
+          
+          <div className="flex items-center space-x-3 px-4 py-4 mb-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-500 rounded-xl flex items-center justify-center text-white shadow-sm">
+              <GraduationCap size={24} />
+            </div>
+            <div>
+              <h1 className="font-bold text-slate-800 tracking-wide text-sm">KTU HOSTELS</h1>
+              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold">Mini Project ERP</p>
+            </div>
+          </div>
+
+          <nav className="flex-1 space-y-2">
+            <SidebarItem id="dashboard" icon={LayoutDashboard} label="Dashboard" />
+            <SidebarItem id="allocation" icon={MapPin} label="Allocation" />
+            <SidebarItem id="complaints" icon={MessageSquareWarning} label="Grievances" />
+            <SidebarItem id="profile" icon={UserCircle} label="Profile" />
+          </nav>
+
+          <div className="mt-auto bg-white/50 border border-white/60 rounded-2xl p-4 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm border border-blue-200">
+                AK
+              </div>
+              <div className="overflow-hidden">
+                <p className="text-sm font-bold text-slate-800 truncate">Arjun K.</p>
+                <p className="text-xs text-slate-500 truncate">TVE21CS045</p>
+              </div>
+            </div>
+            <button className="text-slate-400 hover:text-red-500 transition-colors">
+              <LogOut size={18} />
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative z-10 p-4 lg:p-6 lg:pl-2">
+        
+        {/* Glass Header */}
+        <header className="flex justify-between items-center mb-6 bg-white/60 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm sticky top-0 z-30">
+          <div className="flex items-center">
+            <button className="lg:hidden mr-4 text-slate-600 p-2 bg-white/50 rounded-xl" onClick={() => setIsSidebarOpen(true)}>
+              <Menu size={20} />
+            </button>
+            <h2 className="text-xl font-bold text-slate-800 capitalize tracking-tight">
+              {activeTab}
+            </h2>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:block text-right mr-2 bg-white/50 px-4 py-1.5 rounded-full border border-white">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Semester 6</span>
+            </div>
+            <button className="relative p-2.5 bg-white/80 rounded-full text-slate-600 hover:text-blue-600 shadow-sm border border-white transition-all">
+              <Bell size={18} />
+              <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+            </button>
+          </div>
+        </header>
+
+        {/* Dynamic Content */}
+        {activeTab === 'dashboard' && (
+          <div className="grid grid-cols-1 md:grid-cols-3 md:grid-rows-3 gap-5 auto-rows-min max-w-6xl mx-auto w-full pb-10">
+            
+            {/* Bento 1: Welcome Banner (Large) */}
+            <GlassBox className="md:col-span-2 md:row-span-1 p-8 flex flex-col justify-center relative bg-gradient-to-br from-blue-600/5 to-teal-500/5">
+              <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-blue-600/10 to-transparent"></div>
+              <h3 className="text-3xl font-bold text-slate-800 mb-2">Welcome back, Arjun</h3>
+              <p className="text-slate-500 font-medium">Your hostel status is active for the Spring 2024 academic session.</p>
+              
+              <div className="mt-6 flex gap-4">
+                <span className="inline-flex items-center bg-green-100/80 text-green-700 px-3 py-1.5 rounded-lg text-sm font-bold border border-green-200">
+                  <CheckCircle size={16} className="mr-1.5" /> Boarded
+                </span>
+                <span className="inline-flex items-center bg-white/80 text-slate-600 px-3 py-1.5 rounded-lg text-sm font-bold border border-white shadow-sm">
+                  Mess Dues: ₹0
+                </span>
+              </div>
+            </GlassBox>
+
+            {/* Bento 2: Quick Action (Square) */}
+            <GlassBox className="md:col-span-1 md:row-span-1 p-6 flex flex-col items-center justify-center text-center group" onClick={() => setActiveTab('complaints')}>
+              <div className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-600/20 group-hover:scale-110 transition-transform">
+                <Plus size={24} />
+              </div>
+              <h4 className="text-lg font-bold text-slate-800">File a Complaint</h4>
+              <p className="text-xs text-slate-500 font-medium mt-1">Maintenance & Repairs</p>
+            </GlassBox>
+
+            {/* Bento 3: Room Info (Square) */}
+            <GlassBox className="md:col-span-1 md:row-span-2 p-6 flex flex-col justify-between">
+               <div className="flex items-center justify-between mb-6">
+                <h4 className="font-bold text-slate-800 flex items-center">
+                  <MapPin size={18} className="mr-2 text-blue-600" /> Allocation
+                </h4>
+              </div>
+              
+              <div className="flex-1 flex flex-col justify-center items-center text-center space-y-6">
+                <div className="w-20 h-20 bg-blue-50 border border-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-2">
+                  <Building size={32} />
+                </div>
+                <div>
+                  <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Block</p>
+                  <p className="text-xl font-bold text-slate-800">Periyar Men's</p>
+                </div>
+                <div className="w-full h-px bg-slate-200/60"></div>
+                <div>
+                  <p className="text-xs text-slate-400 uppercase tracking-widest font-bold mb-1">Room</p>
+                  <p className="text-3xl font-black text-blue-600">302</p>
+                </div>
+              </div>
+            </GlassBox>
+
+            {/* Bento 4: Recent Complaints List (Wide) */}
+            <GlassBox className="md:col-span-2 md:row-span-2 p-6 flex flex-col">
+              <div className="flex items-center justify-between mb-6">
+                <h4 className="font-bold text-slate-800 flex items-center">
+                  <MessageSquareWarning size={18} className="mr-2 text-blue-600" /> Recent Requests
+                </h4>
+                <button className="text-sm font-bold text-blue-600 hover:text-blue-800 flex items-center" onClick={() => setActiveTab('complaints')}>
+                  View All <ChevronRight size={16} />
+                </button>
+              </div>
+
+              <div className="flex-1 space-y-3">
+                {complaintsData.map((complaint) => (
+                  <div key={complaint.id} className="bg-white/50 border border-white/60 p-4 rounded-2xl flex items-center justify-between hover:bg-white/80 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold ${complaint.status === 'Resolved' ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
+                        {complaint.status === 'Resolved' ? <CheckCircle size={18} /> : <Clock size={18} />}
+                      </div>
+                      <div>
+                        <h5 className="font-bold text-slate-800 text-sm">{complaint.desc}</h5>
+                        <p className="text-xs font-medium text-slate-500 mt-0.5">{complaint.id} • {complaint.date}</p>
+                      </div>
+                    </div>
+                    <span className={`text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full border ${complaint.status === 'Resolved' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-orange-50 border-orange-200 text-orange-700'}`}>
+                      {complaint.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </GlassBox>
+
+          </div>
+        )}
+
+        {/* Complaints Tab - Using Glass Table */}
+        {activeTab === 'complaints' && (
+          <div className="max-w-6xl mx-auto w-full pb-10">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <div>
+                <h3 className="text-2xl font-bold text-slate-800">Grievance Tracker</h3>
+                <p className="text-sm font-medium text-slate-500">Database representation of standard SRS requirements.</p>
+              </div>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center transition-colors shadow-lg shadow-blue-600/20">
+                <Plus size={18} className="mr-2" /> New Ticket
+              </button>
+            </div>
+
+            <GlassBox className="overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-white/40 border-b border-white/60 backdrop-blur-md">
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">ID</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Category</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Issue</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Date</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/40">
+                    {complaintsData.map((complaint) => (
+                      <tr key={complaint.id} className="hover:bg-white/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="font-mono text-xs font-bold text-slate-600 bg-white/60 px-2 py-1 rounded-md border border-white">{complaint.id}</span>
+                        </td>
+                        <td className="px-6 py-4 text-sm font-bold text-slate-800">{complaint.type}</td>
+                        <td className="px-6 py-4 text-sm font-medium text-slate-600">{complaint.desc}</td>
+                        <td className="px-6 py-4 text-sm font-medium text-slate-500">{complaint.date}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {complaint.status === 'Resolved' ? (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-green-100/80 text-green-700 border border-green-200">
+                              <CheckCircle size={14} className="mr-1.5" /> Resolved
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-orange-100/80 text-orange-700 border border-orange-200">
+                              <Clock size={14} className="mr-1.5" /> Pending
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </GlassBox>
+          </div>
+        )}
+
+        {/* Empty States for other tabs */}
+        {(activeTab === 'allocation' || activeTab === 'profile') && (
+          <div className="max-w-6xl mx-auto w-full flex flex-col items-center justify-center pt-20">
+            <GlassBox className="p-12 text-center max-w-md w-full flex flex-col items-center border-dashed border-2 border-slate-300">
+              <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 text-blue-600 shadow-sm">
+                <FileText size={32} />
+              </div>
+              <h3 className="text-lg font-bold text-slate-800 mb-2">Module Architecture</h3>
+              <p className="text-slate-500 text-sm font-medium">
+                As per the SDD (Software Design Document), this {activeTab} API endpoint will be mapped in Sprint 2.
+              </p>
+            </GlassBox>
+          </div>
+        )}
+
+      </main>
+    </div>
+  );
+};
+
+export default App;"
