@@ -79,9 +79,6 @@ const Approvals = () => {
  onChange={(e) => setSearch(e.target.value)}
  />
  </div>
- <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-400">
- <Icons.ShieldCheck size={14} /> Verification Mode Active
- </div>
  </div>
 
  <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">

@@ -21,22 +21,13 @@ const NavItem = ({to, icon: Icon, label}) => (
 );
 
 export const AdminSidebar = ({user}) => {
- const [isVisible, setIsVisible] = useState(false);
-
- useEffect(() => {
- const timer = setTimeout(() => setIsVisible(true), 10);
- return () => clearTimeout(timer);
-}, []);
-
  const handleLogout = () => {
  localStorage.removeItem('user');
  window.location.href ='/';
 };
 
  return (
- <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-7xl h-16 bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-full flex items-center justify-between px-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500 ${
- isVisible ?'translate-y-0 opacity-100':'-translate-y-24 opacity-0'
-}`}>
+ <div className="fixed top-6 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-7xl h-16 bg-white/80 backdrop-blur-xl border border-slate-200/60 rounded-full flex items-center justify-between px-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-500">
  {/* Brand */}
  <div className="flex items-center gap-3">
  <div className="w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-white shadow-lg flex-shrink-0">

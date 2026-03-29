@@ -26,26 +26,29 @@ const Complaints = () => {
  useEffect(() => {fetchData();}, []);
 
  const handleAction = async (id, action, note = null) => {
- const actionLabel = action ==='in_progress'?'Starting fix': (action ==='delete'?'Deleting':'Updating');
- const loadingToast = toast.loading(`${actionLabel}...`);
+ const statusMap = {
+   in_progress: 'IN_PROGRESS',
+   resolve: 'RESOLVED',
+   delete: 'delete'
+ };
+
+ const loadingToast = toast.loading("Updating records...");
  try {
- if (action ==='delete') {
-    // Note: delete endpoint might need admin_role too if we implement it, 
-    // for now adminService handles it if defined. Let's assume axios for direct delete if not in service
-    // Actually let's use the service if available. I'll add deleteComplaint to adminService in next turn or use adminAction
-    await adminService.updateComplaint({complaint_id: id, action: 'delete'}, user);
- } else {
-    let status = action ==='in_progress'?'IN_PROGRESS': action;
-    if (action === 'resolve') status = 'RESOLVED';
-    await adminService.updateComplaint({complaint_id: id, status, note}, user);
+   const payload = {
+     complaint_id: id,
+     action: action === 'delete' ? 'delete' : 'update_status',
+     status: statusMap[action],
+     note
+   };
+
+   await adminService.updateComplaint(payload, user);
+   toast.dismiss(loadingToast);
+   toast.success(`Action completed!`); 
+   fetchData();
+ } catch (err) {
+   toast.dismiss(loadingToast);
+   toast.error(err.message || "Operation failed");
  }
- toast.dismiss(loadingToast);
- toast.success(`Action completed!`); 
- fetchData();
-} catch (err) {
- toast.dismiss(loadingToast);
- toast.error(err.message || "Operation failed");
-}
 };
 
  const stats = useMemo(() => {
