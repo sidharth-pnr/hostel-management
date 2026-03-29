@@ -3,7 +3,7 @@ Act as an expert React & Tailwind CSS developer. I need you to update the fronte
 ​Strict Design Rules to Follow:
 ​1. Layout Architecture:
 ​Use a standard ERP layout: A fixed Left Sidebar, a Top Header, and a scrolling Main Content area.
-​Dashboard view must use a Bento Box Grid (grid grid-cols-1 md:grid-cols-3 or 4). Chunk data into logical squares and rectangles using col-span and row-span to make the UI scannable.
+​Dashboard view must use a Bento Box Grid (grid grid-cols-1 md:grid-cols-3 or 4). Chunk data into logical squares, circles and rectangles using col-span and row-span to make the UI scannable.
 ​Include standard database-ready tables for any lists/records (with columns like ID, Date, Status, etc.).
 ​2. The Background (Crucial for Glass Effect):
 ​The main background should be a soft, light color (e.g., bg-[#f0f4f8]).
