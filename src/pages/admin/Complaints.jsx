@@ -216,7 +216,7 @@ const ComplaintCard = ({ complaint: c, handleAction, userRole }) => {
 
         <div className="space-y-4">
           {c.status === 'PENDING' && (
-            <button onClick={() => handleAction(c.complaint_id, 'in_progress')} className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-slate-950 transition-all shadow-lg shadow-slate-900/20 active:scale-95 group">
+            <button onClick={() => handleAction(c.complaint_id, 'in_progress')} className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95 group">
               Initiate Repair <Icons.ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
           )}
@@ -227,11 +227,11 @@ const ComplaintCard = ({ complaint: c, handleAction, userRole }) => {
             </form>
           )}
           {(c.status === 'RESOLVED' || c.status === 'CLOSED') && (
-            <div className="p-6 bg-slate-800 text-white rounded-3xl flex flex-col gap-4 shadow-lg">
+            <div className="p-6 bg-indigo-50 text-indigo-900 rounded-3xl flex flex-col gap-4 border border-indigo-100 shadow-sm">
               <div className="flex items-start gap-4">
-                <Icons.History className="flex-shrink-0 mt-1 opacity-40" size={20} />
+                <Icons.History className="flex-shrink-0 mt-1 text-indigo-400" size={20} />
                 <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1 opacity-50">Resolution Note</p>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1 text-indigo-500">Resolution Note</p>
                   <p className="text-sm font-bold leading-relaxed">{c.resolution_note || 'Issue resolved.'}</p>
                 </div>
               </div>

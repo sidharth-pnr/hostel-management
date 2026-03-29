@@ -89,7 +89,7 @@ const Login = ({ setUser }) => {
                   autoComplete="username"
                 />
                 <Input 
-                  label="Security Password" 
+                  label="Password" 
                   type="password" 
                   placeholder="••••••••" 
                   value={password} 
@@ -103,7 +103,7 @@ const Login = ({ setUser }) => {
                 loadingText="Validating..."
                 icon={Icons.ArrowRight}
               >
-                Sign In to Portal
+                Sign In
               </PrimaryButton>
             </form>
             

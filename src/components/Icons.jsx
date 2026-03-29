@@ -9,6 +9,7 @@ export {
  ArrowUpRight,
  BarChart3,
  BedDouble,
+ Bell,
  Box,
  Building,
  Building2,

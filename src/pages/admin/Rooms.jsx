@@ -7,12 +7,22 @@ import { GlassBox, Input, Select } from '../../components/SharedUI';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const RoomManagement = () => {
-  const { user } = useOutletContext() || {};
+  const { user, setIsHeaderVisible } = useOutletContext() || {};
   const [rooms, setRooms] = useState([]);
   const [newRoom, setNewRoom] = useState({ block: '', room_number: '', capacity: 3, price: '' });
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [occupants, setOccupants] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Hide header when modal is open
+  useEffect(() => {
+    if (selectedRoom) {
+      setIsHeaderVisible?.(false);
+    } else {
+      setIsHeaderVisible?.(true);
+    }
+    return () => setIsHeaderVisible?.(true);
+  }, [selectedRoom, setIsHeaderVisible]);
 
   // Search, Filter & Sort State
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,7 +67,7 @@ const RoomManagement = () => {
     if (!window.confirm("Permanently decommission this room configuration?")) return;
     try {
       await adminService.deleteRoom(id, user);
-      toast.success("Unit Removed");
+      toast.success("Room Removed");
       fetchRooms();
     } catch (err) {
       toast.error(err.message || "Deletion failed");
@@ -170,7 +180,7 @@ const RoomManagement = () => {
                   </div>
                 </div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-white/50 px-4 py-1.5 rounded-full border border-white">
-                  {blockRooms.length} Units • {blockRooms.reduce((a, r) => a + parseInt(r.capacity), 0)} Beds
+                  {blockRooms.length} Rooms • {blockRooms.reduce((a, r) => a + parseInt(r.capacity), 0)} Beds
                 </span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
@@ -196,7 +206,7 @@ const RoomManagement = () => {
             <GlassBox className="p-8 group">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Unit Console</h3>
+                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Room Console</h3>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Configure New Accommodation</p>
                 </div>
                 <div className="p-3 bg-slate-100 text-blue-600 rounded-2xl group-hover:rotate-12 transition-transform">
@@ -256,7 +266,7 @@ const RoomManagement = () => {
                 ) : (
                   <div className="py-20 text-center opacity-30">
                     <Icons.UserMinus size={48} className="mx-auto mb-4" />
-                    <p className="text-xs font-bold uppercase tracking-widest">Residential unit is currently vacant</p>
+                    <p className="text-xs font-bold uppercase tracking-widest">Residential room is currently vacant</p>
                   </div>
                 )}
               </div>

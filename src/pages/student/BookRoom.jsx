@@ -7,7 +7,7 @@ import { studentService, adminService } from '../../services/api';
 import { GlassBox, StatusBadge, Input, Select, PrimaryButton } from '../../components/SharedUI';
 
 const BookRoom = () => {
-  const { user } = useOutletContext();
+  const { user, setIsHeaderVisible } = useOutletContext();
   const navigate = useNavigate();
   const [availableRooms, setAvailableRooms] = useState([]);
   const [studentStatus, setStudentStatus] = useState(null);
@@ -18,6 +18,16 @@ const BookRoom = () => {
   const [requestReason, setRequestReason] = useState('');
 
   const studentId = user?.student_id || user?.id;
+
+  // Hide header when booking modal is open
+  useEffect(() => {
+    if (selectedRoomForApply) {
+      setIsHeaderVisible(false);
+    } else {
+      setIsHeaderVisible(true);
+    }
+    return () => setIsHeaderVisible(true);
+  }, [selectedRoomForApply, setIsHeaderVisible]);
 
   const fetchData = async () => {
     if (!studentId) return;
@@ -188,7 +198,7 @@ const BookRoom = () => {
                   : 'bg-white/50 text-slate-500 border-white/80 hover:bg-white'
               }`}
             >
-              {block === 'All' ? 'All Wings' : `Block ${block}`}
+              {block === 'All' ? 'All Rooms' : `Block ${block}`}
             </button>
           ))}
         </div>

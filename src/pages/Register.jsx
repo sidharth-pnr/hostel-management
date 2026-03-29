@@ -64,7 +64,7 @@ const Register = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <Input 
-                  label="Full Legal Name" 
+                  label="Full Name" 
                   placeholder="Enter your name" 
                   value={formData.name} 
                   onChange={e => setFormData({ ...formData, name: e.target.value })} 
@@ -113,7 +113,7 @@ const Register = () => {
                   />
                 </div>
                 <Input 
-                  label="Secure Password" 
+                  label="Password" 
                   type="password" 
                   placeholder="••••••••" 
                   value={formData.password} 
@@ -127,7 +127,7 @@ const Register = () => {
                 loadingText="Synchronizing..."
                 icon={Icons.CheckCircle}
               >
-                Submit Registry Request
+                Submit Registeration
               </PrimaryButton>
             </form>
             

@@ -42,18 +42,20 @@ export const GlassBox = ({ children, className = "", onClick, ...props }) => (
 export const StatusBadge = ({ status, className = "" }) => {
   const getStatusStyles = (s) => {
     const normalized = s?.toLowerCase();
-    if (normalized === 'resolved' || normalized === 'active' || normalized === 'approved') 
-      return 'bg-green-100/80 text-green-700 border-green-200';
-    if (normalized === 'pending' || normalized === 'review') 
-      return 'bg-orange-100/80 text-orange-700 border-orange-200';
-    if (normalized === 'rejected' || normalized === 'cancelled') 
-      return 'bg-red-100/80 text-red-700 border-red-200';
-    return 'bg-slate-100/80 text-slate-700 border-slate-200';
+    if (normalized === 'resolved' || normalized === 'active' || normalized === 'approved' || normalized === 'allocated' || normalized === 'fixed') 
+      return 'bg-green-100 text-green-700 border-green-200';
+    if (normalized === 'pending' || normalized === 'review' || normalized === 'requested' || normalized === 'suggested') 
+      return 'bg-orange-100 text-orange-700 border-orange-200';
+    if (normalized === 'rejected' || normalized === 'cancelled' || normalized === 'closed') 
+      return 'bg-red-100 text-red-700 border-red-200';
+    if (normalized === 'in_progress' || normalized === 'active')
+      return 'bg-blue-100 text-blue-700 border-blue-200';
+    return 'bg-slate-100 text-slate-700 border-slate-200';
   };
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] uppercase tracking-wider font-bold border ${getStatusStyles(status)} ${className}`}>
-      {status}
+    <span className={`inline-block px-2 py-0.5 rounded-md text-[9px] uppercase tracking-wider font-black border ${getStatusStyles(status)} ${className} w-fit whitespace-nowrap`}>
+      {status?.replace('_', ' ')}
     </span>
   );
 };
@@ -71,7 +73,7 @@ export const Input = ({label, icon: Icon, error, className ="", ...props}) => (
  <div className="relative group">
  {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"size={16} />}
  <input 
- className={`w-full p-3.5 bg-white/50 border border-white/80 text-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/20 focus:bg-white/80 transition-all font-bold text-sm ${Icon ?'pl-12':''} ${error ?'border-red-500':''}`}
+ className={`w-full p-3.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/20 focus:bg-white focus:border-blue-100 transition-all font-bold text-sm ${Icon ?'pl-12':''} ${error ?'border-red-500':''}`}
  {...props}
  />
  </div>
@@ -91,7 +93,7 @@ export const Select = ({label, options = [], className ="", ...props}) => (
  )}
  <div className="relative">
  <select 
- className="w-full p-3.5 bg-white/50 border border-white/80 text-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/20 focus:bg-white/80 transition-all font-bold text-sm appearance-none cursor-pointer"
+ className="w-full p-3.5 bg-slate-50 border border-slate-200 text-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/20 focus:bg-white focus:border-blue-100 transition-all font-bold text-sm appearance-none cursor-pointer"
  {...props}
  >
  {options.map(opt => (

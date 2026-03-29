@@ -187,11 +187,6 @@ const ApplicationCard = ({ student: s, onApprove, onReject }) => {
           <Icons.XCircle size={18} /> Decline
         </button>
       </div>
-
-      <div className="mt-6 pt-4 border-t border-white/40 flex items-center gap-2">
-        <div className="w-1.5 h-1.5 rounded-full bg-slate-900 animate-pulse" />
-        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Verification Protocol Required</span>
-      </div>
     </GlassBox>
   );
 };

@@ -7,7 +7,7 @@ import { adminService } from '../../services/api';
 import { GlassBox, StatusBadge, Input, Select } from '../../components/SharedUI';
 
 const Students = () => {
-  const { user } = useOutletContext() || {};
+  const { user, setIsHeaderVisible } = useOutletContext() || {};
   const [students, setStudents] = useState([]);
   const [availableRooms, setAvailableRooms] = useState([]);
   const [search, setSearch] = useState('');
@@ -18,6 +18,16 @@ const Students = () => {
 
   const [rejectingStudent, setRejectingStudent] = useState(null);
   const [rejectionNote, setRejectionNote] = useState('');
+
+  // Hide header when modal is open
+  useEffect(() => {
+    if (rejectingStudent) {
+      setIsHeaderVisible?.(false);
+    } else {
+      setIsHeaderVisible?.(true);
+    }
+    return () => setIsHeaderVisible?.(true);
+  }, [rejectingStudent, setIsHeaderVisible]);
 
   const fetchData = async () => {
     try {

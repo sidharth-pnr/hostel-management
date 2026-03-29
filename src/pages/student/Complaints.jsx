@@ -7,12 +7,13 @@ import { studentService } from '../../services/api';
 import { GlassBox, StatusBadge, Input, Select, PrimaryButton } from '../../components/SharedUI';
 
 const Complaints = () => {
-  const { user } = useOutletContext();
+  const { user, setIsHeaderVisible } = useOutletContext();
   const navigate = useNavigate();
   const [complaints, setComplaints] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Other');
   const [filter, setFilter] = useState('ALL'); // ALL, ACTIVE, RESOLVED, CLOSED
   const [showNewTicket, setShowNewTicket] = useState(false);
+  const [trackingComplaint, setTrackingComplaint] = useState(null);
 
   const categories = [
     { id: 'Electrical', icon: Icons.Zap, label: 'Electrical', color: 'blue' },
@@ -22,6 +23,16 @@ const Complaints = () => {
     { id: 'Cleaning', icon: Icons.Ghost, label: 'Cleaning', color: 'blue' },
     { id: 'Other', icon: Icons.MoreHorizontal, label: 'Other', color: 'slate' },
   ];
+
+  // Hide header when tracking modal is open
+  useEffect(() => {
+    if (trackingComplaint) {
+      setIsHeaderVisible?.(false);
+    } else {
+      setIsHeaderVisible?.(true);
+    }
+    return () => setIsHeaderVisible?.(true);
+  }, [trackingComplaint, setIsHeaderVisible]);
 
   const fetchData = async () => {
     try {
@@ -85,6 +96,17 @@ const Complaints = () => {
       day: '2-digit',
       month: 'short',
       year: 'numeric'
+    });
+  };
+
+  const formatFullTime = (dateStr) => {
+    if (!dateStr) return null;
+    return new Date(dateStr).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
 
@@ -210,7 +232,7 @@ const Complaints = () => {
                   : 'bg-white/50 text-slate-500 border-white/80 hover:bg-white'
               }`}
             >
-              {f === 'RESOLVED' ? 'Fixed' : f}
+              {f === 'RESOLVED' ? 'Resolved' : f}
             </button>
           ))}
         </div>
@@ -223,7 +245,6 @@ const Complaints = () => {
                   <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">ID</th>
                   <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Category</th>
                   <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Issue</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Date</th>
                   <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status</th>
                   <th className="px-6 py-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">Actions</th>
                 </tr>
@@ -247,14 +268,21 @@ const Complaints = () => {
                         <p className="text-xs text-slate-500 truncate mt-0.5">{c.description}</p>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-xs font-bold text-slate-500 whitespace-nowrap">
-                      {formatDateTime(c.created_at)}
-                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <StatusBadge status={c.status} />
+                      <div className="flex flex-col gap-1">
+                        <StatusBadge status={c.status} />
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter ml-1">Reported {formatDateTime(c.created_at)}</span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-3">
+                        <button 
+                          onClick={() => setTrackingComplaint(c)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                          title="Track Progress"
+                        >
+                          <Icons.History size={18} />
+                        </button>
                         {c.status === 'RESOLVED' && (
                           <div className="flex items-center gap-2 mr-2">
                             <button 
@@ -279,7 +307,7 @@ const Complaints = () => {
                   </tr>
                 )) : (
                   <tr>
-                    <td colSpan="6" className="px-6 py-20 text-center">
+                    <td colSpan="5" className="px-6 py-20 text-center">
                       <div className="flex flex-col items-center justify-center opacity-40">
                         <Icons.ClipboardList size={48} className="mb-4" />
                         <p className="text-sm font-bold uppercase tracking-widest">No tickets found</p>
@@ -292,6 +320,79 @@ const Complaints = () => {
           </div>
         </GlassBox>
       </div>
+
+      {/* Tracking History Modal */}
+      <AnimatePresence>
+        {trackingComplaint && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden"
+            >
+              <div className="p-8 border-b border-slate-100 flex justify-between items-start bg-slate-50/50">
+                <div>
+                  <h3 className="text-2xl font-black text-slate-800 tracking-tight leading-none mb-2">Complaint Tracking</h3>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ticket #TK-{trackingComplaint.complaint_id}</p>
+                </div>
+                <button onClick={() => setTrackingComplaint(null)} className="p-3 bg-white text-slate-400 hover:text-red-500 rounded-2xl transition-all shadow-sm">
+                  <Icons.X size={20} />
+                </button>
+              </div>
+
+              <div className="p-8">
+                <div className="relative space-y-8 before:absolute before:left-[15px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
+                  
+                  {/* Step 1: Reported */}
+                  <div className="relative flex items-start gap-6">
+                    <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center z-10 shrink-0 shadow-lg shadow-slate-900/20">
+                      <Icons.Clock size={14} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Ticket Created</p>
+                      <p className="text-sm font-bold text-slate-800">{formatFullTime(trackingComplaint.created_at)}</p>
+                      <p className="text-xs font-medium text-slate-500 mt-1">Issue reported to management</p>
+                    </div>
+                  </div>
+
+                  {/* Step 2: In Progress */}
+                  <div className={`relative flex items-start gap-6 ${!trackingComplaint.in_progress_at ? 'opacity-30 grayscale' : ''}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center z-10 shrink-0 ${trackingComplaint.in_progress_at ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'bg-slate-200 text-slate-400'}`}>
+                      <Icons.Activity size={14} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Investigation Started</p>
+                      <p className="text-sm font-bold text-slate-800">{formatFullTime(trackingComplaint.in_progress_at) || 'Pending Allocation'}</p>
+                      {trackingComplaint.in_progress_at && <p className="text-xs font-medium text-slate-500 mt-1">Warden has initiated repair protocol</p>}
+                    </div>
+                  </div>
+
+                  {/* Step 3: Resolved */}
+                  <div className={`relative flex items-start gap-6 ${!trackingComplaint.resolved_at ? 'opacity-30 grayscale' : ''}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center z-10 shrink-0 ${trackingComplaint.resolved_at ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/20' : 'bg-slate-200 text-slate-400'}`}>
+                      <Icons.CheckCircle2 size={14} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Issue Resolved</p>
+                      <p className="text-sm font-bold text-slate-800">{formatFullTime(trackingComplaint.resolved_at) || 'Awaiting Completion'}</p>
+                      {trackingComplaint.resolved_at && (
+                        <div className="mt-3 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                          <p className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Resolution Note</p>
+                          <p className="text-xs font-medium text-emerald-800 italic">"{trackingComplaint.resolution_note || 'Issue resolved.'}"</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div className="p-6 bg-slate-50 border-t border-slate-100 text-center">
+                <button onClick={() => setTrackingComplaint(null)} className="text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:text-slate-800 transition-colors">Dismiss Tracker</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       <footer className="mt-12 text-center opacity-30">
         <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-500">Complaints Management Protocol • Campus Housing</p>

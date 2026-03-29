@@ -144,7 +144,6 @@ const Profile = () => {
               <GlassBox className="p-8">
                 <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Contact Information</h4>
                 <ProfileDetail icon={Icons.Phone} label="Phone Number" value={user.phone || 'Not provided'} />
-                <ProfileDetail icon={Icons.Mail} label="Email Address" value={user.email || user.reg_no + "@campus.edu"} />
               </GlassBox>
 
               {room && room.room_number ? (

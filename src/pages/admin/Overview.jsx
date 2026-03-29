@@ -89,7 +89,7 @@ const Overview = () => {
         />
         <MetricCard 
           icon={Icons.AlertCircle} 
-          label="Active Grievances" 
+          label="Active Complaints" 
           value={counts?.high_priority} 
           trend="Priority tickets"
           color="red"
@@ -104,7 +104,7 @@ const Overview = () => {
         <GlassBox className="lg:col-span-3 p-8">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h3 className="text-xl font-bold text-slate-800">Infrastructure Heatmap</h3>
+              <h3 className="text-xl font-bold text-slate-800">Infrastructure Map</h3>
               <p className="text-xs font-medium text-slate-500 mt-1 uppercase tracking-wider">Real-time block density</p>
             </div>
             <Icons.Building size={20} className="text-slate-300" />

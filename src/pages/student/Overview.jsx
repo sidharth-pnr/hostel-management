@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { studentService } from '../../services/api';
 import * as Icons from '../../components/Icons';
@@ -8,12 +8,32 @@ import toast from 'react-hot-toast';
 import { GlassBox, StatusBadge } from '../../components/SharedUI';
 
 const StudentOverview = () => {
-  const { user } = useOutletContext();
+  const { user, setIsHeaderVisible } = useOutletContext();
   const navigate = useNavigate();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('MPESA');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('UPI');
   
   const sid = user?.student_id || user?.id;
+
+  // Hide header when modals are open
+  useEffect(() => {
+    if (showPaymentModal || showSuccessModal) {
+      setIsHeaderVisible(false);
+    } else {
+      setIsHeaderVisible(true);
+    }
+    
+    // Cleanup on unmount
+    return () => setIsHeaderVisible(true);
+  }, [showPaymentModal, showSuccessModal, setIsHeaderVisible]);
+
+  const paymentOptions = [
+    { id: 'UPI', label: 'UPI / PhonePe', icon: Icons.Zap },
+    { id: 'CARD', label: 'Debit / Credit Card', icon: Icons.CreditCard },
+    { id: 'NETBANKING', label: 'Net Banking', icon: Icons.Building2 },
+    { id: 'MPESA', label: 'Other', icon: Icons.Smartphone },
+  ];
 
   // Data fetching
   const { data: room, refetch: refetchRoom } = useQuery({
@@ -56,8 +76,8 @@ const StudentOverview = () => {
       }, user);
       
       toast.dismiss(loadingToast);
-      toast.success("Payment Received! Room Allocated.");
       setShowPaymentModal(false);
+      setShowSuccessModal(true);
       refetchRoom();
     } catch (err) {
       toast.dismiss(loadingToast);
@@ -70,9 +90,9 @@ const StudentOverview = () => {
       
       {/* PAYMENT PENDING NOTICE */}
       {room?.payment_status === 'PENDING' && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-slate-900 text-white rounded-[2.5rem] p-8 relative overflow-hidden shadow-2xl shadow-slate-900/20"
+          className="mb-8 bg-emerald-600 text-white rounded-[2.5rem] p-8 relative overflow-hidden shadow-2xl shadow-emerald-900/20"
         >
           <div className="absolute top-0 right-0 p-8 opacity-10"><Icons.CreditCard size={150} /></div>
           <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-8">
@@ -81,20 +101,19 @@ const StudentOverview = () => {
             </div>
             <div className="flex-1">
               <h3 className="text-2xl font-bold tracking-tight">Payment Required</h3>
-              <p className="text-blue-100 font-medium mt-1">
-                Your request for Room {room.room_number} is approved. Pay CASH {room.price} to finalize.
+              <p className="text-emerald-50 font-medium mt-1">
+                Your request for Room {room.room_number || room.approved_room_number} is approved. Pay CASH {room.price || room.approved_room_price} to finalize.
               </p>
             </div>
-            <button 
-              onClick={() => setShowPaymentModal(true)} 
-              className="px-8 py-4 bg-white text-blue-600 rounded-2xl text-sm font-bold shadow-xl hover:scale-105 transition-all active:scale-95 flex items-center gap-2"
+            <button
+              onClick={() => setShowPaymentModal(true)}
+              className="px-8 py-4 bg-white text-emerald-700 rounded-2xl text-sm font-bold shadow-xl hover:scale-105 transition-all active:scale-95 flex items-center gap-2"
             >
               <Icons.CreditCard size={18} /> Pay Now
             </button>
           </div>
         </motion.div>
       )}
-
       {/* Bento Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-3 gap-5 auto-rows-min w-full">
         
@@ -240,38 +259,99 @@ const StudentOverview = () => {
       {/* Payment Modal */}
       <AnimatePresence>
         {showPaymentModal && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md">
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden p-8"
+              initial={{ scale: 0.9, opacity: 0, y: 20 }} 
+              animate={{ scale: 1, opacity: 1, y: 0 }} 
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white w-full max-w-lg rounded-[3rem] shadow-2xl overflow-hidden p-8 border border-white"
             >
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-slate-100 text-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100">
                   <Icons.CreditCard size={32} />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-800">Complete Payment</h3>
-                <p className="text-slate-500 font-medium">Securely finalize your room allocation</p>
+                <h3 className="text-2xl font-black text-slate-800 tracking-tight">Payment Checkout</h3>
+                <p className="text-slate-500 font-medium">Select your preferred payment method</p>
               </div>
 
-              <div className="bg-slate-50 rounded-2xl p-6 mb-8 border border-slate-100">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Allocated Room</span>
-                  <span className="font-bold text-slate-800">Room {room.room_number}</span>
+              <div className="bg-slate-50 rounded-3xl p-6 mb-8 border border-slate-100 flex justify-between items-center">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Total Amount</span>
+                  <span className="text-3xl font-black text-slate-900 tracking-tighter">CASH {room.price}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Amount Due</span>
-                  <span className="text-2xl font-bold text-blue-600 tracking-tight">CASH {room.price}</span>
+                <div className="text-right">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Room No.</span>
+                  <span className="text-lg font-bold text-blue-600">{room.room_number || room.approved_room_number}</span>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mb-8">
+                {paymentOptions.map((opt) => (
+                  <button
+                    key={opt.id}
+                    onClick={() => setPaymentMethod(opt.id)}
+                    className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 text-center group ${
+                      paymentMethod === opt.id 
+                        ? 'border-blue-600 bg-blue-50/50 text-blue-600' 
+                        : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+                    }`}
+                  >
+                    <opt.icon size={20} className={paymentMethod === opt.id ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'} />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">{opt.label}</span>
+                  </button>
+                ))}
               </div>
 
               <div className="space-y-3">
-                <button onClick={handlePayment} className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-slate-900/20 hover:bg-slate-950 transition-all active:scale-95">
-                  Confirm & Pay
+                <button 
+                  onClick={handlePayment} 
+                  className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-xl shadow-slate-900/20 hover:bg-slate-950 transition-all active:scale-95 flex items-center justify-center gap-2"
+                >
+                  Confirm & Pay <Icons.ArrowRight size={16} />
                 </button>
-                <button onClick={() => setShowPaymentModal(false)} className="w-full py-2 text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest">
-                  Cancel Transaction
+                <button 
+                  onClick={() => setShowPaymentModal(false)} 
+                  className="w-full py-2 text-[10px] font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-colors"
+                >
+                  Cancel and go back
                 </button>
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showSuccessModal && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-emerald-950/40 backdrop-blur-xl">
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.8, opacity: 0 }}
+              className="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl overflow-hidden p-10 text-center border border-white"
+            >
+              <div className="relative mb-8">
+                <motion.div 
+                  initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
+                  className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto"
+                >
+                  <Icons.CheckCircle2 size={48} />
+                </motion.div>
+                <div className="absolute inset-0 bg-emerald-400/20 rounded-full animate-ping scale-75 opacity-20"></div>
+              </div>
+
+              <h3 className="text-2xl font-black text-slate-800 tracking-tight mb-2">Payment Confirmed!</h3>
+              <p className="text-slate-500 font-medium mb-8 leading-relaxed">
+                Your transaction via <span className="text-slate-900 font-bold">{paymentMethod}</span> was successful. Room <span className="text-emerald-600 font-bold">{room.room_number}</span> is now officially allocated to you.
+              </p>
+
+              <button 
+                onClick={() => setShowSuccessModal(false)} 
+                className="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all active:scale-95"
+              >
+                Return to Dashboard
+              </button>
             </motion.div>
           </div>
         )}

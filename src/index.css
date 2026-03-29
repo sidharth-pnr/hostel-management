@@ -51,6 +51,19 @@ body {
   @apply bg-white/60 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm;
  }
 
+ .custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+ }
+ .custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+ }
+ .custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full;
+ }
+ .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-300;
+ }
+
  .text-glow {
  text-shadow: 0 0 20px rgba(255,255,255,0.2);
 }
