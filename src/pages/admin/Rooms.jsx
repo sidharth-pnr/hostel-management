@@ -199,7 +199,7 @@ const RoomManagement = () => {
                   <h3 className="text-xl font-black text-slate-800 tracking-tight">Unit Console</h3>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Configure New Accommodation</p>
                 </div>
-                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl group-hover:rotate-12 transition-transform">
+                <div className="p-3 bg-slate-100 text-blue-600 rounded-2xl group-hover:rotate-12 transition-transform">
                   <Icons.Plus size={24} />
                 </div>
               </div>
@@ -208,7 +208,7 @@ const RoomManagement = () => {
                 <Input label="Room Number" placeholder="e.g. 101" required value={newRoom.room_number} onChange={e => setNewRoom({ ...newRoom, room_number: e.target.value })} />
                 <Input label="Beds (Capacity)" type="number" required value={newRoom.capacity} onChange={e => setNewRoom({ ...newRoom, capacity: e.target.value })} />
                 <Input label="Semester Price (CASH)" type="number" placeholder="e.g. 5000" required value={newRoom.price} onChange={e => setNewRoom({ ...newRoom, price: e.target.value })} />
-                <button className="w-full bg-blue-600 text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-blue-700 shadow-lg shadow-blue-600/20 transition-all active:scale-95">
+                <button className="w-full bg-slate-900 text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-slate-950 shadow-lg shadow-slate-900/20 transition-all active:scale-95">
                   <Icons.ShieldCheck size={18} /> Initialize Room
                 </button>
               </form>
@@ -226,7 +226,7 @@ const RoomManagement = () => {
                 <div>
                   <h3 className="text-3xl font-black text-slate-800 tracking-tight leading-none mb-2">Room {selectedRoom.room_number}</h3>
                   <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 bg-blue-600 text-white rounded-md text-[9px] font-bold uppercase tracking-widest">Block {selectedRoom.block}</span>
+                    <span className="px-2 py-0.5 bg-slate-900 text-white rounded-md text-[9px] font-bold uppercase tracking-widest">Block {selectedRoom.block}</span>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Inventory Manifest</span>
                   </div>
                 </div>
@@ -275,7 +275,7 @@ const MetricCard = ({ icon: Icon, label, value, trend, color }) => (
   <GlassBox className="p-6">
     <div className="flex items-center justify-between mb-4">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-        color === 'blue' ? 'bg-blue-50 text-blue-600' :
+        color === 'blue' ? 'bg-slate-100 text-blue-600' :
         color === 'teal' ? 'bg-teal-50 text-teal-600' :
         color === 'orange' ? 'bg-orange-50 text-orange-600' :
         'bg-indigo-50 text-indigo-600'
@@ -315,7 +315,7 @@ const RoomCard = ({ room, onView, onDelete }) => {
           </div>
         </div>
         <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-          <motion.div initial={{ width: 0 }} animate={{ width: `${percent}%` }} className={`h-full transition-all duration-1000 ${isFull ? 'bg-red-500' : 'bg-blue-600'}`} />
+          <motion.div initial={{ width: 0 }} animate={{ width: `${percent}%` }} className={`h-full transition-all duration-1000 ${isFull ? 'bg-red-500' : 'bg-slate-900'}`} />
         </div>
       </div>
       {parseInt(room.current_occupancy) > 0 && (

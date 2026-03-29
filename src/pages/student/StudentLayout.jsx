@@ -12,7 +12,7 @@ const StudentLayout = ({ user, setUser }) => {
     const path = location.pathname;
     if (path === '/student' || path === '/student/') return 'Dashboard';
     if (path.includes('book')) return 'Book Room';
-    if (path.includes('complaints')) return 'Grievances';
+    if (path.includes('complaints')) return 'Complaints';
     if (path.includes('profile')) return 'Profile';
     return 'Portal';
   };

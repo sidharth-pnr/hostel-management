@@ -124,7 +124,7 @@ const Approvals = () => {
 const StatNode = ({ icon: Icon, label, value, color, alert }) => (
   <GlassBox className="p-6 flex items-center gap-5">
     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-      color === 'blue' ? 'bg-blue-50 text-blue-600' :
+      color === 'blue' ? 'bg-slate-100 text-blue-600' :
       color === 'teal' ? 'bg-teal-50 text-teal-600' :
       'bg-orange-50 text-orange-600'
     }`}>
@@ -134,7 +134,7 @@ const StatNode = ({ icon: Icon, label, value, color, alert }) => (
       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
       <div className="flex items-center gap-2">
         <h4 className="text-2xl font-black text-slate-800 tracking-tight">{value}</h4>
-        {alert && <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping" />}
+        {alert && <div className="w-1.5 h-1.5 rounded-full bg-slate-900 animate-ping" />}
       </div>
     </div>
   </GlassBox>
@@ -152,7 +152,7 @@ const ApplicationCard = ({ student: s, onApprove, onReject }) => {
   return (
     <GlassBox className="p-8 flex flex-col h-full group">
       <div className="flex items-start gap-6 mb-8">
-        <div className="w-20 h-20 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center font-black text-3xl shadow-inner group-hover:scale-105 transition-transform">
+        <div className="w-20 h-20 rounded-3xl bg-slate-100 text-blue-600 flex items-center justify-center font-black text-3xl shadow-inner group-hover:scale-105 transition-transform">
           {s.name?.[0]}
         </div>
         <div className="flex-1 min-w-0">
@@ -176,7 +176,7 @@ const ApplicationCard = ({ student: s, onApprove, onReject }) => {
       <div className="mt-auto flex gap-4">
         <button 
           onClick={onApprove} 
-          className="flex-[2] bg-blue-600 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95"
+          className="flex-[2] bg-slate-900 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-slate-950 transition-all shadow-lg shadow-slate-900/20 active:scale-95"
         >
           <Icons.CheckCircle size={18} /> Confirm Admission
         </button>
@@ -189,7 +189,7 @@ const ApplicationCard = ({ student: s, onApprove, onReject }) => {
       </div>
 
       <div className="mt-6 pt-4 border-t border-white/40 flex items-center gap-2">
-        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+        <div className="w-1.5 h-1.5 rounded-full bg-slate-900 animate-pulse" />
         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Verification Protocol Required</span>
       </div>
     </GlassBox>

@@ -9,7 +9,7 @@ const SidebarItem = ({ to, icon: Icon, label, end }) => (
     className={({ isActive }) =>
       `w-full flex items-center space-x-3 px-5 py-3.5 rounded-2xl transition-all font-medium ${
         isActive
-          ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
+          ? 'bg-slate-900 text-white shadow-md shadow-slate-900/20'
           : 'text-slate-600 hover:bg-white/50 hover:text-blue-700'
       }`
     }
@@ -43,7 +43,7 @@ export const StudentSidebar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
         <div className="h-full glass-sidebar flex flex-col p-4 relative z-10">
           
           <div className="flex items-center space-x-3 px-4 py-4 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-500 rounded-xl flex items-center justify-center text-white shadow-sm">
+            <div className="w-10 h-10 bg-gradient-to-br from-slate-900 to-teal-500 rounded-xl flex items-center justify-center text-white shadow-sm">
               <Icons.GraduationCap size={24} />
             </div>
             <div>
@@ -55,13 +55,13 @@ export const StudentSidebar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
           <nav className="flex-1 space-y-2">
             <SidebarItem to="/student" icon={Icons.LayoutDashboard} label="Dashboard" end={true} />
             <SidebarItem to="/student/book" icon={Icons.BedDouble} label="Book Room" />
-            <SidebarItem to="/student/complaints" icon={Icons.ClipboardList} label="Grievances" />
+            <SidebarItem to="/student/complaints" icon={Icons.ClipboardList} label="Complaints" />
             <SidebarItem to="/student/profile" icon={Icons.UserCircle} label="Profile" />
           </nav>
 
           <div className="mt-auto bg-white/50 border border-white/60 rounded-2xl p-4 flex items-center justify-between">
             <div className="flex items-center space-x-3 overflow-hidden">
-              <div className="w-9 h-9 flex-shrink-0 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm border border-blue-200">
+              <div className="w-9 h-9 flex-shrink-0 rounded-full bg-slate-200 text-blue-700 flex items-center justify-center font-bold text-sm border border-blue-200">
                 {user?.name?.charAt(0) || 'S'}
               </div>
               <div className="overflow-hidden">

@@ -88,14 +88,14 @@ const BookRoom = () => {
   if (!isLoading && studentStatus?.status === 'REQUESTED') return (
     <div className="flex items-center justify-center py-20 animate-in fade-in duration-700">
       <GlassBox className="max-w-md w-full p-12 text-center flex flex-col items-center">
-        <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mb-6 animate-pulse">
+        <div className="w-20 h-20 bg-slate-100 text-blue-600 rounded-3xl flex items-center justify-center mb-6 animate-pulse">
           <Icons.Clock size={40} />
         </div>
         <h3 className="text-2xl font-bold text-slate-800 mb-2">Request in Review</h3>
         <p className="text-slate-500 font-medium mb-8">
           Your request for Room {studentStatus.room_number} is currently being processed by the Warden.
         </p>
-        <div className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-100">
+        <div className="inline-flex items-center px-4 py-2 bg-slate-100 text-blue-600 rounded-full text-xs font-bold uppercase tracking-widest border border-blue-100">
           Status: Pending Review
         </div>
       </GlassBox>
@@ -131,9 +131,9 @@ const BookRoom = () => {
 
         {studentStatus?.status === 'SUGGESTED' && (
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-8">
-            <GlassBox className="p-8 border-blue-100 bg-blue-50/30">
+            <GlassBox className="p-8 border-blue-100 bg-slate-100/30">
               <div className="flex flex-col md:flex-row items-center gap-6">
-                <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
+                <div className="w-16 h-16 bg-slate-200 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
                   <Icons.Sparkles size={32} />
                 </div>
                 <div className="flex-1 text-center md:text-left">
@@ -154,7 +154,7 @@ const BookRoom = () => {
                         .then(() => { toast.dismiss(lt); toast.success("Move confirmed!"); fetchData(); })
                         .catch(err => { toast.dismiss(lt); toast.error(err.message); });
                     }}
-                    className="px-8 py-3 bg-blue-600 text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-blue-600/20"
+                    className="px-8 py-3 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg shadow-slate-900/20"
                   >
                     Accept & Move
                   </button>
@@ -209,7 +209,7 @@ const BookRoom = () => {
                   <GlassBox className="flex flex-col h-full group">
                     <div className="p-8 flex-1">
                       <div className="flex justify-between items-start mb-8">
-                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 bg-slate-100 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                           <Icons.BedDouble size={24} />
                         </div>
                         <div className="text-right">
@@ -232,7 +232,7 @@ const BookRoom = () => {
                           <motion.div 
                             initial={{ width: 0 }} 
                             animate={{ width: `${(r.current_occupancy / r.capacity) * 100}%` }} 
-                            className={`h-full rounded-full ${r.current_occupancy >= r.capacity ? 'bg-slate-400' : 'bg-blue-600'}`} 
+                            className={`h-full rounded-full ${r.current_occupancy >= r.capacity ? 'bg-slate-400' : 'bg-slate-900'}`} 
                           />
                         </div>
                       </div>
@@ -244,7 +244,7 @@ const BookRoom = () => {
                       className={`w-full py-6 text-xs font-bold uppercase tracking-widest border-t border-white/40 transition-all ${
                         r.current_occupancy >= r.capacity
                           ? 'bg-slate-50 text-slate-300 cursor-not-allowed'
-                          : 'bg-white/40 text-blue-600 hover:bg-blue-600 hover:text-white group-hover:border-blue-600'
+                          : 'bg-white/40 text-blue-600 hover:bg-slate-900 hover:text-white group-hover:border-slate-900'
                       }`}
                     >
                       {r.current_occupancy >= r.capacity ? "Room Full" : (studentStatus?.status === 'ALLOCATED' ? "Request Change" : "Book Now")}
@@ -271,7 +271,7 @@ const BookRoom = () => {
               className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden p-8"
             >
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-slate-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Icons.Home size={32} />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-800">

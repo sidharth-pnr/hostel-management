@@ -94,13 +94,13 @@ const Complaints = () => {
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
-          <h3 className="text-2xl font-bold text-slate-800">Grievance Tracker</h3>
+          <h3 className="text-2xl font-bold text-slate-800">Complaints Tracker</h3>
           <p className="text-sm font-medium text-slate-500">Submit and track maintenance requests</p>
         </div>
         {!showNewTicket && (
           <button 
             onClick={() => setShowNewTicket(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl text-sm font-bold flex items-center transition-all shadow-lg shadow-blue-600/20 active:scale-95"
+            className="bg-slate-900 hover:bg-slate-950 text-white px-6 py-3 rounded-2xl text-sm font-bold flex items-center transition-all shadow-lg shadow-slate-900/20 active:scale-95"
           >
             <Icons.Plus size={18} className="mr-2" /> New Ticket
           </button>
@@ -136,7 +136,7 @@ const Complaints = () => {
                           onClick={() => setSelectedCategory(cat.id)}
                           className={`p-4 rounded-2xl border transition-all flex flex-col items-center gap-2 ${
                             selectedCategory === cat.id
-                              ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-600/20 scale-105'
+                              ? 'bg-slate-900 border-slate-900 text-white shadow-lg shadow-slate-900/20 scale-105'
                               : 'bg-white/50 border-white hover:border-blue-200 text-slate-400'
                           }`}
                         >
@@ -254,9 +254,9 @@ const Complaints = () => {
                       <StatusBadge status={c.status} />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-3">
                         {c.status === 'RESOLVED' && (
-                          <>
+                          <div className="flex items-center gap-2 mr-2">
                             <button 
                               onClick={() => updateStatus(c.complaint_id, 'PENDING')}
                               className="p-2 text-slate-400 hover:text-blue-600 transition-colors"
@@ -271,9 +271,9 @@ const Complaints = () => {
                             >
                               <Icons.CheckCircle size={16} />
                             </button>
-                          </>
+                          </div>
                         )}
-                        <PriorityDot level={c.priority} />
+                        <PriorityBadge level={c.priority} />
                       </div>
                     </td>
                   </tr>
@@ -294,24 +294,26 @@ const Complaints = () => {
       </div>
 
       <footer className="mt-12 text-center opacity-30">
-        <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-500">Grievance Management Protocol • Campus Housing</p>
+        <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-500">Complaints Management Protocol • Campus Housing</p>
       </footer>
     </div>
   );
 };
 
-const PriorityDot = ({ level }) => {
+const PriorityBadge = ({ level }) => {
   const getStyles = (l) => {
     switch(l) {
-      case 'Urgent': return 'bg-red-500 shadow-red-200';
-      case 'High': return 'bg-orange-500 shadow-orange-200';
-      case 'Medium': return 'bg-blue-500 shadow-blue-200';
-      default: return 'bg-slate-300 shadow-slate-100';
+      case 'Urgent': return 'bg-red-50 text-red-600 border-red-100';
+      case 'High': return 'bg-orange-50 text-orange-600 border-orange-100';
+      case 'Medium': return 'bg-slate-100 text-slate-600 border-slate-200';
+      default: return 'bg-slate-50 text-slate-400 border-slate-100';
     }
   };
 
   return (
-    <div className={`w-2.5 h-2.5 rounded-full shadow-sm ${getStyles(level)}`} title={`Priority: ${level}`} />
+    <span className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border ${getStyles(level)}`}>
+      {level}
+    </span>
   );
 };
 

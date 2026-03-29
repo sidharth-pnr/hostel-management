@@ -52,7 +52,7 @@ const Register = () => {
         <div className="flex-1 flex flex-col justify-center px-8 sm:px-12 py-4">
           <div className="w-full max-w-lg mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="space-y-3 text-center sm:text-left">
-              <div className="flex items-center gap-3 px-3 py-1.5 bg-blue-50 w-fit rounded-full border border-blue-100 mx-auto sm:mx-0">
+              <div className="flex items-center gap-3 px-3 py-1.5 bg-slate-100 w-fit rounded-full border border-slate-200 mx-auto sm:mx-0">
                 <Icons.Sparkles size={12} className="text-blue-600"/>
                 <span className="text-[9px] font-bold uppercase tracking-widest text-blue-600">Student Register</span>
               </div>

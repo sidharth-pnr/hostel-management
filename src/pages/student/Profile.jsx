@@ -87,7 +87,7 @@ const Profile = () => {
         <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
           <div className="relative">
             <div className="w-32 h-32 rounded-3xl bg-white/50 border border-white p-1 shadow-xl">
-              <div className="w-full h-full rounded-[1.25rem] bg-blue-50 flex items-center justify-center text-blue-300">
+              <div className="w-full h-full rounded-[1.25rem] bg-slate-100 flex items-center justify-center text-slate-400">
                 <Icons.UserCircle size={80} strokeWidth={1} />
               </div>
             </div>
@@ -105,7 +105,7 @@ const Profile = () => {
             </div>
             <h2 className="text-4xl font-black text-slate-800 tracking-tight mb-1">{user.name}</h2>
             <p className="text-sm font-medium text-slate-500">
-              Registration No: <span className="text-blue-600 font-bold">{user.reg_no}</span>
+              Registration No: <span className="text-slate-900 font-bold">{user.reg_no}</span>
             </p>
           </div>
 
@@ -149,16 +149,18 @@ const Profile = () => {
 
               {room && room.room_number ? (
                 <GlassBox 
-                  className="p-8 bg-blue-600 text-white cursor-pointer hover:bg-blue-700 transition-colors"
+                  className="p-8 border-l-4 border-slate-900 cursor-pointer bg-white/80 text-slate-900 hover:bg-slate-900 hover:text-white transition-all duration-500 group"
                   onClick={() => navigate('/student/book')}
                 >
                   <div className="flex justify-between items-center">
                     <div className="space-y-1">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-blue-100">Active Residence</p>
-                      <h3 className="text-2xl font-bold tracking-tight">Room {room.room_number}</h3>
-                      <p className="text-sm font-medium text-blue-100">Block {room.block} • Standard Wing</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest opacity-60 group-hover:text-slate-400 transition-colors">Active Residence</p>
+                      <h3 className="text-3xl font-black tracking-tight">Room {room.room_number}</h3>
+                      <p className="text-sm font-bold opacity-60 group-hover:text-slate-400 transition-colors">Block {room.block} • Standard Wing</p>
                     </div>
-                    <Icons.ArrowUpRight size={32} className="opacity-50" />
+                    <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-900 flex items-center justify-center group-hover:bg-white/10 group-hover:text-white transition-all duration-500">
+                      <Icons.ArrowUpRight size={24} />
+                    </div>
                   </div>
                 </GlassBox>
               ) : (
@@ -166,8 +168,8 @@ const Profile = () => {
                   className="p-8 border-dashed border-2 border-slate-200 bg-transparent flex flex-col items-center justify-center text-center group cursor-pointer"
                   onClick={() => navigate('/student/book')}
                 >
-                  <Icons.PlusCircle size={32} className="text-slate-300 mb-2 group-hover:text-blue-500 transition-colors" />
-                  <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No Active Room</p>
+                  <Icons.PlusCircle size={32} className="text-slate-300 mb-2 group-hover:text-slate-900 transition-colors" />
+                  <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">No Active Room</p>
                 </GlassBox>
               )}
             </div>
@@ -193,7 +195,6 @@ const Profile = () => {
                     label="Full Name" 
                     value={editData.name} 
                     onChange={(e) => setEditData({ ...editData, name: e.target.value })} 
-                    icon={Icons.User}
                   />
                   <Input 
                     label="Phone Number" 
@@ -202,7 +203,6 @@ const Profile = () => {
                       const val = e.target.value.replace(/\D/g, '');
                       if (val.length <= 10) setEditData({ ...editData, phone: val });
                     }} 
-                    icon={Icons.Phone}
                   />
                   <Select 
                     label="Department" 
@@ -250,7 +250,7 @@ const Profile = () => {
 
 const ProfileDetail = ({ icon: Icon, label, value }) => (
   <div className="flex items-center gap-4 group">
-    <div className="w-10 h-10 bg-white/50 border border-white rounded-xl flex items-center justify-center text-slate-400 group-hover:text-blue-600 transition-colors">
+    <div className="w-10 h-10 bg-white/50 border border-white rounded-xl flex items-center justify-center text-slate-400 group-hover:text-slate-900 transition-colors">
       <Icon size={18} />
     </div>
     <div>

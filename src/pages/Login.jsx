@@ -51,7 +51,7 @@ const Login = ({ setUser }) => {
         <div className="flex-1 flex flex-col justify-center px-8 sm:px-16 py-4">
           <div className="w-full max-w-sm mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="space-y-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center text-white shadow-lg transform hover:rotate-12 transition-transform">
+              <div className="w-12 h-12 bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl flex items-center justify-center text-white shadow-lg transform hover:rotate-12 transition-transform">
                 <Icons.Building2 size={24} />
               </div>
               <div>

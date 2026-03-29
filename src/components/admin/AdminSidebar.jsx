@@ -9,7 +9,7 @@ const SidebarItem = ({ to, icon: Icon, label, end }) => (
     className={({ isActive }) =>
       `w-full flex items-center space-x-3 px-5 py-3.5 rounded-2xl transition-all font-medium ${
         isActive
-          ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
+          ? 'bg-slate-900 text-white shadow-md shadow-slate-900/20'
           : 'text-slate-600 hover:bg-white/50 hover:text-blue-700'
       }`
     }

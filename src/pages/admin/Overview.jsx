@@ -122,7 +122,7 @@ const Overview = () => {
                   <motion.div 
                     initial={{ width: 0 }} 
                     animate={{ width: `${block.percent}%` }}
-                    className={`h-full ${block.percent > 90 ? 'bg-red-500' : block.percent > 70 ? 'bg-orange-500' : 'bg-blue-600'}`} 
+                    className={`h-full ${block.percent > 90 ? 'bg-red-500' : block.percent > 70 ? 'bg-orange-500' : 'bg-slate-900'}`} 
                   />
                 </div>
               </div>
@@ -179,7 +179,7 @@ const Overview = () => {
             {recent_complaints?.slice(0, 4).map((comp, i) => (
               <div key={i} className="flex items-center justify-between p-4 bg-white/40 border border-white/60 rounded-2xl hover:bg-white/60 transition-colors">
                 <div className="flex items-center gap-4">
-                  <div className={`w-2 h-2 rounded-full ${comp.priority === 'Urgent' ? 'bg-red-500 animate-pulse' : 'bg-blue-500'}`} />
+                  <div className={`w-2 h-2 rounded-full ${comp.priority === 'Urgent' ? 'bg-red-500 animate-pulse' : 'bg-slate-900'}`} />
                   <div>
                     <p className="text-xs font-bold text-slate-800 truncate max-w-[120px]">{comp.title}</p>
                     <p className="text-[10px] text-slate-500 uppercase">{comp.student_name}</p>
@@ -217,7 +217,7 @@ const MetricCard = ({ icon: Icon, label, value, trend, color, alert }) => (
   <GlassBox className={`p-6 relative overflow-hidden ${alert ? 'border-orange-200 bg-orange-50/20' : ''}`}>
     <div className="flex items-center justify-between mb-4">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-        color === 'blue' ? 'bg-blue-50 text-blue-600' :
+        color === 'blue' ? 'bg-slate-100 text-blue-600' :
         color === 'teal' ? 'bg-teal-50 text-teal-600' :
         color === 'orange' ? 'bg-orange-50 text-orange-600' :
         'bg-red-50 text-red-600'

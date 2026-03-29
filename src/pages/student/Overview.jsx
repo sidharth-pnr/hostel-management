@@ -72,7 +72,7 @@ const StudentOverview = () => {
       {room?.payment_status === 'PENDING' && (
         <motion.div 
           initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-blue-600 text-white rounded-[2.5rem] p-8 relative overflow-hidden shadow-2xl shadow-blue-600/20"
+          className="mb-8 bg-slate-900 text-white rounded-[2.5rem] p-8 relative overflow-hidden shadow-2xl shadow-slate-900/20"
         >
           <div className="absolute top-0 right-0 p-8 opacity-10"><Icons.CreditCard size={150} /></div>
           <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-8">
@@ -99,8 +99,8 @@ const StudentOverview = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-3 gap-5 auto-rows-min w-full">
         
         {/* Bento 1: Welcome Banner (Large) */}
-        <GlassBox className="md:col-span-3 md:row-span-1 p-8 flex flex-col justify-center relative bg-gradient-to-br from-blue-600/5 to-teal-500/5">
-          <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-blue-600/10 to-transparent pointer-events-none"></div>
+        <GlassBox className="md:col-span-3 md:row-span-1 p-8 flex flex-col justify-center relative bg-gradient-to-br from-slate-900/5 to-teal-500/5">
+          <div className="absolute right-0 top-0 w-32 h-full bg-gradient-to-l from-slate-900/10 to-transparent pointer-events-none"></div>
           <h3 className="text-3xl font-bold text-slate-800 mb-2">Welcome back, {user?.name?.split(' ')[0]}</h3>
           <p className="text-slate-500 font-medium">Your account status is currently <span className="text-blue-600 font-bold">{user?.account_status}</span> for the 2024 session.</p>
           
@@ -120,7 +120,7 @@ const StudentOverview = () => {
           className="md:col-span-1 md:row-span-1 p-6 flex flex-col items-center justify-center text-center group" 
           onClick={() => navigate('/student/complaints')}
         >
-          <div className="w-14 h-14 bg-blue-600 text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-600/20 group-hover:scale-110 transition-transform">
+          <div className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-slate-900/20 group-hover:scale-110 transition-transform">
             <Icons.Plus size={24} />
           </div>
           <h4 className="text-lg font-bold text-slate-800">New Ticket</h4>
@@ -138,7 +138,7 @@ const StudentOverview = () => {
           <div className="flex-1 flex flex-col justify-center items-center text-center space-y-6">
             {room && room.status === 'ALLOCATED' ? (
               <>
-                <div className="w-20 h-20 bg-blue-50 border border-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-2">
+                <div className="w-20 h-20 bg-slate-100 border border-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-2">
                   <Icons.Building size={32} />
                 </div>
                 <div>
@@ -246,7 +246,7 @@ const StudentOverview = () => {
               className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden p-8"
             >
               <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-slate-100 text-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Icons.CreditCard size={32} />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-800">Complete Payment</h3>
@@ -265,7 +265,7 @@ const StudentOverview = () => {
               </div>
 
               <div className="space-y-3">
-                <button onClick={handlePayment} className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all active:scale-95">
+                <button onClick={handlePayment} className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-xs shadow-lg shadow-slate-900/20 hover:bg-slate-950 transition-all active:scale-95">
                   Confirm & Pay
                 </button>
                 <button onClick={() => setShowPaymentModal(false)} className="w-full py-2 text-xs font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest">

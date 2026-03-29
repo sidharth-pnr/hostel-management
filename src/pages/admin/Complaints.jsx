@@ -144,7 +144,7 @@ const MetricCard = ({ icon: Icon, label, value, trend, color, alert }) => (
   <GlassBox className={`p-6 relative overflow-hidden ${alert ? 'border-red-100 bg-red-50/20' : ''}`}>
     <div className="flex items-center justify-between mb-4">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-        color === 'blue' ? 'bg-blue-50 text-blue-600' :
+        color === 'blue' ? 'bg-slate-100 text-blue-600' :
         color === 'teal' ? 'bg-teal-50 text-teal-600' :
         color === 'red' ? 'bg-red-50 text-red-600' :
         'bg-indigo-50 text-indigo-600'
@@ -190,7 +190,7 @@ const ComplaintCard = ({ complaint: c, handleAction, userRole }) => {
             <h4 className="text-2xl font-black text-slate-800 tracking-tight leading-tight mb-2 truncate">{c.title || 'No Title'}</h4>
             <div className="flex items-center gap-3">
               <span className="text-[10px] font-bold text-slate-800 uppercase tracking-tighter flex items-center gap-2">
-                <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-[8px] font-black">{c.student_name?.[0]}</div>
+                <div className="w-5 h-5 rounded-full bg-slate-200 text-blue-600 flex items-center justify-center text-[8px] font-black">{c.student_name?.[0]}</div>
                 {c.student_name}
               </span>
               <span className="w-1 h-1 bg-slate-200 rounded-full" />
@@ -216,13 +216,13 @@ const ComplaintCard = ({ complaint: c, handleAction, userRole }) => {
 
         <div className="space-y-4">
           {c.status === 'PENDING' && (
-            <button onClick={() => handleAction(c.complaint_id, 'in_progress')} className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20 active:scale-95 group">
+            <button onClick={() => handleAction(c.complaint_id, 'in_progress')} className="w-full bg-slate-900 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-slate-950 transition-all shadow-lg shadow-slate-900/20 active:scale-95 group">
               Initiate Repair <Icons.ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
           )}
           {(c.status === 'PENDING' || c.status === 'IN_PROGRESS') && (
             <form onSubmit={(e) => { e.preventDefault(); handleAction(c.complaint_id, 'resolve', e.target.note.value); }} className="space-y-4">
-              <textarea name="note" required placeholder="Resolution log (e.g., Replaced fan capacitor)..." className="w-full p-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:ring-2 focus:ring-blue-600/20 transition-all resize-none h-24 shadow-inner" />
+              <textarea name="note" required placeholder="Resolution log (e.g., Replaced fan capacitor)..." className="w-full p-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-800 outline-none focus:ring-2 focus:ring-slate-900/20 transition-all resize-none h-24 shadow-inner" />
               <button className="w-full bg-slate-800 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-slate-900 transition-all active:scale-95 shadow-lg">Finalize Ticket</button>
             </form>
           )}
@@ -245,7 +245,7 @@ const ComplaintCard = ({ complaint: c, handleAction, userRole }) => {
 
 const TimelineNode = ({ icon: Icon, label, time, active, highlight, success }) => (
   <div className={`relative flex items-center gap-3 ${highlight ? 'text-blue-600' : success ? 'text-slate-800' : active ? 'text-slate-600' : 'text-slate-400'}`}>
-    <div className={`absolute -left-[23px] w-3 h-3 rounded-full border-2 border-white z-10 ${success ? 'bg-slate-800' : highlight ? 'bg-blue-600' : 'bg-slate-200'}`} />
+    <div className={`absolute -left-[23px] w-3 h-3 rounded-full border-2 border-white z-10 ${success ? 'bg-slate-800' : highlight ? 'bg-slate-900' : 'bg-slate-200'}`} />
     <Icon size={14} className="flex-shrink-0" />
     <div className="flex flex-wrap items-baseline gap-2 min-w-0">
       <span className="text-[10px] font-bold uppercase tracking-widest truncate">{label}</span>

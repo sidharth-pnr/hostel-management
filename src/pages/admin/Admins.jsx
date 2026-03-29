@@ -85,7 +85,7 @@ const Admins = () => {
           className={`px-6 py-3 rounded-2xl text-sm font-bold flex items-center transition-all shadow-lg active:scale-95 ${
             showAddForm 
               ? 'bg-slate-800 text-white shadow-slate-900/20' 
-              : 'bg-blue-600 text-white shadow-blue-600/20 hover:bg-blue-700'
+              : 'bg-slate-900 text-white shadow-slate-900/20 hover:bg-slate-950'
           }`}
         >
           {showAddForm ? <Icons.X size={18} className="mr-2" /> : <Icons.UserPlus size={18} className="mr-2" />}
@@ -103,7 +103,7 @@ const Admins = () => {
           >
             <GlassBox className="p-8 max-w-3xl mx-auto">
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                <div className="w-12 h-12 bg-slate-100 text-slate-900 rounded-2xl flex items-center justify-center">
                   <Icons.ShieldCheck size={24} />
                 </div>
                 <div>
@@ -173,7 +173,7 @@ const Admins = () => {
               <GlassBox className="p-8 flex flex-col h-full group">
                 <div className="flex items-start justify-between mb-6">
                   <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${
-                    adm.role === 'SUPER' ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600'
+                    adm.role === 'SUPER' ? 'bg-amber-50 text-amber-600' : 'bg-slate-100 text-slate-900'
                   }`}>
                     <Icons.Shield size={28} />
                   </div>
@@ -199,7 +199,7 @@ const Admins = () => {
                   <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border ${
                     adm.role === 'SUPER' 
                       ? 'bg-amber-100/80 text-amber-700 border-amber-200' 
-                      : 'bg-blue-100/80 text-blue-700 border-blue-200'
+                      : 'bg-slate-200/80 text-slate-900 border-slate-200'
                   }`}>
                     {adm.role} Administrator
                   </span>

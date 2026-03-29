@@ -237,14 +237,14 @@ const MetricCard = ({ icon: Icon, label, value, trend, color, alert }) => (
   <GlassBox className={`p-6 relative overflow-hidden ${alert ? 'border-orange-200 bg-orange-50/20' : ''}`}>
     <div className="flex items-center justify-between mb-4">
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-        color === 'blue' ? 'bg-blue-50 text-blue-600' :
+        color === 'blue' ? 'bg-slate-100 text-blue-600' :
         color === 'teal' ? 'bg-teal-50 text-teal-600' :
         color === 'orange' ? 'bg-orange-50 text-orange-600' :
         'bg-indigo-50 text-indigo-600'
       }`}>
         <Icon size={20} />
       </div>
-      {alert && <div className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />}
+      {alert && <div className="w-2 h-2 rounded-full bg-slate-900 animate-ping" />}
     </div>
     <div className="space-y-1">
       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
@@ -284,9 +284,9 @@ const ResidentCard = ({ student, availableRooms, handleRoomAction, onRejectReque
 
       <div className="flex-1 space-y-4">
         {['REQUESTED', 'APPROVED', 'SUGGESTED'].includes(room_request_status) && (
-          <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl">
+          <div className="p-4 bg-slate-100/50 border border-slate-200 rounded-2xl">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
+              <span className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">
                 {room_request_status === 'SUGGESTED' ? 'Offer Pending' : `Requesting ${requested_room_no || 'Room'}`}
               </span>
               {room_request_status === 'APPROVED' && <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">Approved (Unpaid)</span>}
@@ -302,7 +302,7 @@ const ResidentCard = ({ student, availableRooms, handleRoomAction, onRejectReque
         {['REQUESTED', 'SUGGESTED'].includes(room_request_status) && (
           <button 
             onClick={() => handleRoomAction('allocate_room', student_id, requested_room_id)} 
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-slate-900/20 hover:bg-slate-950 transition-all active:scale-95"
           >
             <Icons.Check size={14} /> Approve
           </button>
@@ -311,7 +311,7 @@ const ResidentCard = ({ student, availableRooms, handleRoomAction, onRejectReque
         {!current_room_no && !['REQUESTED', 'SUGGESTED', 'APPROVED'].includes(room_request_status) && (
           <button 
             onClick={() => setShowSuggest(!showSuggest)} 
-            className="flex items-center gap-2 px-4 py-2 bg-white/50 border border-white/80 text-blue-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-50 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-white/50 border border-white/80 text-slate-900 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-100 transition-all"
           >
             <Icons.Lightbulb size={14} /> Suggest Room
           </button>
@@ -366,7 +366,7 @@ const ResidentCard = ({ student, availableRooms, handleRoomAction, onRejectReque
           <button 
             disabled={!selectedRoom} 
             onClick={() => { handleRoomAction('suggest_room', student_id, null, selectedRoom); setShowSuggest(false); }} 
-            className="bg-blue-600 text-white px-4 py-1 rounded-xl text-[10px] font-black uppercase disabled:opacity-30 transition-all"
+            className="bg-slate-900 text-white px-4 py-1 rounded-xl text-[10px] font-black uppercase disabled:opacity-30 transition-all"
           >
             Send
           </button>
