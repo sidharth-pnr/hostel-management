@@ -35,9 +35,21 @@ body {
  scrollbar-width: none;
 }
  
- .glass-effect {
- @apply backdrop-blur-md bg-white/70 border border-white/20;
-}
+ .glass-card {
+  @apply bg-white/60 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl overflow-hidden transition-all duration-300;
+ }
+
+ .glass-card-interactive {
+  @apply glass-card cursor-pointer hover:bg-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1;
+ }
+
+ .glass-sidebar {
+  @apply bg-white/70 backdrop-blur-2xl border border-white shadow-xl rounded-[2.5rem];
+ }
+
+ .glass-header {
+  @apply bg-white/60 backdrop-blur-xl border border-white/80 p-4 rounded-3xl shadow-sm;
+ }
 
  .text-glow {
  text-shadow: 0 0 20px rgba(255,255,255,0.2);

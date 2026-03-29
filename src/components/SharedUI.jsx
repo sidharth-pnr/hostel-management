@@ -24,19 +24,54 @@ export const animations = {
 };
 
 /**
- * Standard Form Input
+ * Reusable Glass Bento Box
+ */
+export const GlassBox = ({ children, className = "", onClick, ...props }) => (
+  <div 
+    onClick={onClick}
+    className={`glass-card ${onClick ? 'glass-card-interactive' : ''} ${className}`}
+    {...props}
+  >
+    {children}
+  </div>
+);
+
+/**
+ * Status Badge Component
+ */
+export const StatusBadge = ({ status, className = "" }) => {
+  const getStatusStyles = (s) => {
+    const normalized = s?.toLowerCase();
+    if (normalized === 'resolved' || normalized === 'active' || normalized === 'approved') 
+      return 'bg-green-100/80 text-green-700 border-green-200';
+    if (normalized === 'pending' || normalized === 'review') 
+      return 'bg-orange-100/80 text-orange-700 border-orange-200';
+    if (normalized === 'rejected' || normalized === 'cancelled') 
+      return 'bg-red-100/80 text-red-700 border-red-200';
+    return 'bg-slate-100/80 text-slate-700 border-slate-200';
+  };
+
+  return (
+    <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] uppercase tracking-wider font-bold border ${getStatusStyles(status)} ${className}`}>
+      {status}
+    </span>
+  );
+};
+
+/**
+ * Standard Form Input (Glass version)
  */
 export const Input = ({label, icon: Icon, error, className ="", ...props}) => (
  <div className={`space-y-1.5 ${className}`}>
  {label && (
- <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">
+ <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
  {label}
  </label>
  )}
  <div className="relative group">
- {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"size={16} />}
+ {Icon && <Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors"size={16} />}
  <input 
- className={`w-full p-3.5 bg-slate-50 border border-slate-100 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-slate-900 transition-all font-bold text-sm ${Icon ?'pl-12':''} ${error ?'border-red-500':''}`}
+ className={`w-full p-3.5 bg-white/50 border border-white/80 text-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/20 focus:bg-white/80 transition-all font-bold text-sm ${Icon ?'pl-12':''} ${error ?'border-red-500':''}`}
  {...props}
  />
  </div>
@@ -45,17 +80,18 @@ export const Input = ({label, icon: Icon, error, className ="", ...props}) => (
 );
 
 /**
- * Standard Form Select
+ * Standard Form Select (Glass version)
  */
 export const Select = ({label, options = [], className ="", ...props}) => (
  <div className={`space-y-1.5 ${className}`}>
  {label && (
- <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">
+ <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">
  {label}
  </label>
  )}
+ <div className="relative">
  <select 
- className="w-full p-3.5 bg-slate-50 border border-slate-100 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-slate-900 transition-all font-bold text-sm appearance-none cursor-pointer"
+ className="w-full p-3.5 bg-white/50 border border-white/80 text-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-blue-600/20 focus:bg-white/80 transition-all font-bold text-sm appearance-none cursor-pointer"
  {...props}
  >
  {options.map(opt => (
@@ -64,6 +100,10 @@ export const Select = ({label, options = [], className ="", ...props}) => (
  </option>
  ))}
  </select>
+ <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+  <Icons.ChevronRight size={16} className="rotate-90" />
+ </div>
+ </div>
  </div>
 );
 
@@ -98,12 +138,12 @@ export const AuthVisualSide = ({image, quote, author, subtitle}) => (
  </div>
 );
 /**
- * Standard Primary Button
+ * Standard Primary Button (Glass version)
  */
 export const PrimaryButton = ({children, isLoading, loadingText, icon: Icon = Icons.ArrowRight, className ="", ...props}) => (
  <button 
  disabled={isLoading}
- className={`w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-900/10 disabled:opacity-50 ${className}`}
+ className={`w-full bg-blue-600 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:bg-blue-700 hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 ${className}`}
  {...props}
  >
  {isLoading ? (loadingText ||"Processing...") : children}

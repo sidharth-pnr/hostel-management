@@ -2,20 +2,23 @@ import React from 'react';
 
 const BackgroundEffect = () => {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none bg-slate-50 transition-colors duration-1000">
+    <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none bg-[#f0f4f8] transition-colors duration-1000">
       
-      {/* 1. STATIC DEPTH GRID */}
+      {/* Soft Background Gradients for Glassmorphism Refraction */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-200/50 rounded-full blur-[100px]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-teal-200/40 rounded-full blur-[120px]"></div>
+        <div className="absolute top-[30%] right-[10%] w-[30%] h-[30%] bg-purple-100/30 rounded-full blur-[80px]"></div>
+      </div>
+
+      {/* Optional: Static depth grid from original design if needed, but keeping it minimal for the new aesthetic */}
       <div 
-        className="absolute inset-0 opacity-[0.05] mix-blend-overlay"
+        className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
         style={{
           backgroundImage: `linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)`,
-          backgroundSize: '80px 80px'
+          backgroundSize: '100px 100px'
         }}
       />
-
-      {/* 2. VIGNETTE OVERLAY */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-200/30"/>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.05)_100%)]"/>
     </div>
   );
 };

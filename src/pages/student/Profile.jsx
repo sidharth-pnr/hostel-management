@@ -1,157 +1,263 @@
-import React, {useState, useEffect} from'react';
-import * as Icons from'../../components/Icons';
-import toast from'react-hot-toast';
-import {motion, AnimatePresence} from'framer-motion';
-import {useOutletContext, useNavigate} from'react-router-dom';
-import {studentService} from'../../services/api';
-import {GlassCard, InfoNode} from'../../components/student/StudentShared';
+import React, { useState, useEffect } from 'react';
+import * as Icons from '../../components/Icons';
+import toast from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useOutletContext, useNavigate } from 'react-router-dom';
+import { studentService } from '../../services/api';
+import { GlassBox, StatusBadge, Input, Select, PrimaryButton } from '../../components/SharedUI';
 
 const Profile = () => {
- const {user, setUser} = useOutletContext();
- const navigate = useNavigate();
- const [room, setRoom] = useState(null);
- const [isEditing, setIsEditing] = useState(false);
- const [profileData, setProfileData] = useState(null);
- const [isLoading, setIsLoading] = useState(true);
- const [editData, setEditData] = useState({
- name: user.name,
- department: user.department,
- year: user.year,
- phone: user.phone,
-});
+  const { user, setUser } = useOutletContext();
+  const navigate = useNavigate();
+  const [room, setRoom] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [profileData, setProfileData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [editData, setEditData] = useState({
+    name: user.name,
+    department: user.department,
+    year: user.year,
+    phone: user.phone,
+  });
 
- const studentId = user.student_id || user.id;
+  const studentId = user.student_id || user.id;
 
- useEffect(() => {
- fetchData();
-}, [studentId]);
+  useEffect(() => {
+    fetchData();
+  }, [studentId]);
 
- const fetchData = async () => {
- try {
- const [roomRes, profileRes] = await Promise.all([
- studentService.getRoomInfo(studentId),
- studentService.getProfile(studentId)
-]);
- setRoom(roomRes.data);
- setProfileData(profileRes.data.student);
- // Keep context in sync if needed
- if (profileRes.data.student) {
-    const latest = {...user, ...profileRes.data.student};
-    // Only update if changed to avoid loops or unnecessary renders
-    if (JSON.stringify(latest) !== JSON.stringify(user)) {
-        setUser(latest);
-        localStorage.setItem('user', JSON.stringify(latest));
+  const fetchData = async () => {
+    try {
+      const [roomRes, profileRes] = await Promise.all([
+        studentService.getRoomInfo(studentId),
+        studentService.getProfile(studentId)
+      ]);
+      setRoom(roomRes.data);
+      setProfileData(profileRes.data.student);
+      
+      if (profileRes.data.student) {
+        const latest = { ...user, ...profileRes.data.student };
+        if (JSON.stringify(latest) !== JSON.stringify(user)) {
+          setUser(latest);
+          localStorage.setItem('user', JSON.stringify(latest));
+        }
+      }
+    } catch (err) {
+      console.error("Fetch failure:", err);
+    } finally {
+      setIsLoading(false);
     }
- }
-} catch (err) {console.error("Fetch failure:", err);}
- finally {setIsLoading(false);}
-};
+  };
 
- const handleUpdate = async (e) => {
- e.preventDefault();
- if (editData.phone && editData.phone.length !== 10) return toast.error("Phone number must be 10 digits");
- const loadingToast = toast.loading("Saving your changes...");
- try {
- await studentService.updateProfile({student_id: studentId, ...editData});
- toast.dismiss(loadingToast);
- toast.success("Profile updated."); 
- setIsEditing(false);
- fetchData();
-} catch (err) {
-    toast.dismiss(loadingToast); 
-    toast.error(err.message || "Connection failed.");
-}
-};
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (editData.phone && editData.phone.length !== 10) return toast.error("Phone number must be 10 digits");
+    
+    const loadingToast = toast.loading("Saving changes...");
+    try {
+      await studentService.updateProfile({ student_id: studentId, ...editData });
+      toast.dismiss(loadingToast);
+      toast.success("Profile updated successfully.");
+      setIsEditing(false);
+      fetchData();
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error(err.message || "Update failed.");
+    }
+  };
 
- const formatDate = (dateStr) => {
+  const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
     return new Date(dateStr).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
     });
- };
+  };
 
- return (
- <div className="space-y-8 pb-12 animate-in fade-in duration-500 w-full">
+  return (
+    <div className="animate-in fade-in duration-700">
+      
+      {/* Profile Header Card */}
+      <GlassBox className="p-8 mb-8 relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-5">
+          <Icons.UserCircle size={150} />
+        </div>
+        
+        <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
+          <div className="relative">
+            <div className="w-32 h-32 rounded-3xl bg-white/50 border border-white p-1 shadow-xl">
+              <div className="w-full h-full rounded-[1.25rem] bg-blue-50 flex items-center justify-center text-blue-300">
+                <Icons.UserCircle size={80} strokeWidth={1} />
+              </div>
+            </div>
+            <div className="absolute -bottom-2 -right-2 bg-green-500 p-2 rounded-xl border-4 border-white shadow-lg">
+              <Icons.ShieldCheck size={16} className="text-white" />
+            </div>
+          </div>
 
- {/* 1. IDENTITY HEADER */}
- <section className="flex flex-col md:flex-row items-center gap-8 py-6 border-b border-slate-100">
- <div className="relative">
- <div className="w-32 h-32 rounded-3xl bg-slate-100 p-1 border border-slate-200 shadow-xl overflow-hidden group">
- <div className="w-full h-full rounded-[1.25rem] bg-white flex items-center justify-center relative overflow-hidden">
- <Icons.UserCircle size={80} strokeWidth={1} className="text-slate-300"/>
- <motion.div animate={{top: ['-100%','100%']}} transition={{duration: 3, repeat: Infinity, ease:"linear"}} className="absolute left-0 right-0 h-0.5 bg-blue-500/20 blur-sm z-20"/>
- </div>
- </div>
- <div className="absolute -bottom-1 -right-1 bg-emerald-500 p-1.5 rounded-lg border-2 border-white shadow-lg"><Icons.ShieldCheck size={14} className="text-white"/></div>
- </div>
+          <div className="flex-1 text-center md:text-left">
+            <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-3">
+              <StatusBadge status={user.account_status} />
+              <span className="px-3 py-1 bg-white/50 border border-white/80 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                Student Portal
+              </span>
+            </div>
+            <h2 className="text-4xl font-black text-slate-800 tracking-tight mb-1">{user.name}</h2>
+            <p className="text-sm font-medium text-slate-500">
+              Registration No: <span className="text-blue-600 font-bold">{user.reg_no}</span>
+            </p>
+          </div>
 
- <div className="flex-1 text-center md:text-left space-y-3">
- <div className="flex flex-wrap justify-center md:justify-start gap-2">
- <span className="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-200">My Personal Info</span>
- <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${user.account_status ==='ACTIVE'?'bg-emerald-500/10 text-emerald-500 border-emerald-500/20':'bg-amber-500/10 text-amber-500 border-amber-500/20'}`}>Account {user.account_status ==='ACTIVE'?'Active':'Pending'}</span>
- </div>
- <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter uppercase leading-none">{user.name}</h1>
- <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-slate-400">Student Resident • Joined {formatDate(profileData?.created_at || user.created_at)}</p>
- </div>
+          {!isEditing && (
+            <button 
+              onClick={() => setIsEditing(true)}
+              className="px-6 py-3 bg-slate-800 text-white rounded-2xl text-xs font-bold uppercase tracking-widest shadow-lg hover:bg-slate-900 transition-all active:scale-95 flex items-center gap-2"
+            >
+              <Icons.Pencil size={14} /> Edit Profile
+            </button>
+          )}
+        </div>
+      </GlassBox>
 
- {!isEditing && <button onClick={() => setIsEditing(true)} className="px-6 py-3 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[9px] shadow-lg hover:scale-105 transition-all flex items-center gap-2"><Icons.Pencil size={14} /> Edit Profile</button>}
- </section>
+      <AnimatePresence mode="wait">
+        {!isEditing ? (
+          <motion.div 
+            key="view" 
+            initial={{ opacity: 0, y: 10 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            exit={{ opacity: 0, y: -10 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          >
+            {/* Academic Info */}
+            <GlassBox className="p-8">
+              <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Academic Details</h4>
+              <div className="space-y-6">
+                <ProfileDetail icon={Icons.GraduationCap} label="Department" value={user.department} />
+                <ProfileDetail icon={Icons.Layers} label="Year of Study" value={`Year ${user.year}`} />
+                <ProfileDetail icon={Icons.Calendar} label="Member Since" value={formatDate(user.created_at)} />
+              </div>
+            </GlassBox>
 
- {/* 2. DATA NODES */}
- <AnimatePresence mode="wait">
- {!isEditing ? (
- <motion.div key="view"initial={{opacity: 0}} animate={{opacity: 1}} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
- <InfoNode icon={Icons.GraduationCap} label="Department" value={user.department} color="blue" className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
- <InfoNode icon={Icons.Clock} label="Year of Study" value={`Year ${user.year}`} color="teal" className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
- <InfoNode icon={Icons.Phone} label="Phone Number" value={user.phone ||'Not Set'} color="indigo" className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
- <InfoNode icon={Icons.Hash} label="Student ID" value={user.reg_no} color="slate" className="p-5 bg-white/40 backdrop-blur-2xl rounded-2xl border border-slate-200"/>
- </motion.div>
- ) : (
- <motion.form key="edit"initial={{opacity: 0, scale: 0.99}} animate={{opacity: 1, scale: 1}} exit={{opacity: 0}} onSubmit={handleUpdate} className="space-y-6">
- <GlassCard>
- <div className="flex justify-between items-center border-b border-slate-100 pb-4 mb-6">
- <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Update Info.</h3>
- <button type="button"onClick={() => setIsEditing(false)} className="text-slate-400 hover:text-slate-900 transition-all"><Icons.X size={20} /></button>
- </div>
- <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
- <InputGroup label="Full Name"value={editData.name} onChange={(e) => setEditData({...editData, name: e.target.value})} icon={Icons.User} autoComplete="name"/>
- <InputGroup label="Phone Number"value={editData.phone} onChange={(e) => {const val = e.target.value.replace(/\D/g,''); if (val.length <= 10) setEditData({...editData, phone: val});}} icon={Icons.Phone} autoComplete="tel"/>
- <div className="space-y-2"><label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Department</label><select value={editData.department} onChange={(e) => setEditData({...editData, department: e.target.value})} className="w-full p-4 bg-white border border-slate-200 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs">{['CSE','ECE','EEE','MECH','CIVIL','IT','DS'].map(d => <option key={d} value={d}>{d}</option>)}</select></div>
- <div className="space-y-2"><label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">Year of Study</label><select value={editData.year} onChange={(e) => setEditData({...editData, year: e.target.value})} className="w-full p-4 bg-white border border-slate-200 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs">{[1,2,3,4].map(y => <option key={y} value={y}>Year {y}</option>)}</select></div>
- </div>
- <div className="flex justify-end gap-4 pt-6 mt-6 border-t border-slate-100"><button type="button"onClick={() => setIsEditing(false)} className="px-6 py-3 rounded-lg font-black text-[9px] uppercase tracking-widest text-slate-400 hover:text-slate-900">Cancel</button><button type="submit"className="px-8 py-3 bg-slate-900 text-white rounded-xl font-black uppercase tracking-widest text-[9px] shadow-lg flex items-center gap-2"><Icons.CheckCircle2 size={14} className="text-blue-500"/> Save Changes</button></div>
- </GlassCard>
- </motion.form>
- )}
- </AnimatePresence>
+            {/* Contact & Room Info */}
+            <div className="space-y-6">
+              <GlassBox className="p-8">
+                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Contact Information</h4>
+                <ProfileDetail icon={Icons.Phone} label="Phone Number" value={user.phone || 'Not provided'} />
+                <ProfileDetail icon={Icons.Mail} label="Email Address" value={user.email || user.reg_no + "@campus.edu"} />
+              </GlassBox>
 
- {/* 3. RESIDENTIAL BOX */}
- <div className="min-h-[100px]">
- {isLoading ? (
-    <div className="h-[100px] flex items-center justify-center border border-dashed border-slate-200 rounded-[2rem] opacity-40"><p className="text-[9px] font-black uppercase tracking-widest text-slate-400 animate-pulse">Syncing room info...</p></div>
- ) : room && room.room_number ? (
- <motion.div initial={{opacity: 0, y: 10}} animate={{opacity: 1, y: 0}} onClick={() => navigate('/student/book')} className="cursor-pointer group bg-slate-50 p-6 rounded-[2rem] border border-slate-200 flex items-center justify-between gap-6 hover:border-blue-500/30 transition-all">
- <div className="flex items-center gap-6"><div className="w-16 h-16 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-600 border border-blue-600/20 group-hover:scale-110 transition-transform"><Icons.BedDouble size={32} /></div><div><p className="text-[9px] font-black uppercase tracking-widest text-blue-500">My Room Info</p><h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Room {room.room_number}</h3><p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Block {room.block} • Standard Room</p></div></div>
- <Icons.ArrowUpRight size={24} className="text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all"/>
- </motion.div>
- ) : (
-    <motion.div initial={{opacity: 0}} animate={{opacity: 1}} onClick={() => navigate('/student/book')} className="cursor-pointer group bg-amber-50/50 p-6 rounded-[2rem] border border-dashed border-amber-200 flex items-center justify-between gap-6 hover:bg-amber-50 transition-all">
-    <div className="flex items-center gap-6"><div className="w-16 h-16 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600 group-hover:rotate-12 transition-transform"><Icons.ShieldAlert size={32} /></div><div><p className="text-[9px] font-black uppercase tracking-widest text-amber-600">Action Required</p><h3 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">No Active Assignment</h3><p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">You haven't been allocated a room yet.</p></div></div>
-    <Icons.PlusCircle size={24} className="text-amber-400 group-hover:scale-125 transition-all"/>
-    </motion.div>
- )}
- </div>
- </div>
+              {room && room.room_number ? (
+                <GlassBox 
+                  className="p-8 bg-blue-600 text-white cursor-pointer hover:bg-blue-700 transition-colors"
+                  onClick={() => navigate('/student/book')}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-blue-100">Active Residence</p>
+                      <h3 className="text-2xl font-bold tracking-tight">Room {room.room_number}</h3>
+                      <p className="text-sm font-medium text-blue-100">Block {room.block} • Standard Wing</p>
+                    </div>
+                    <Icons.ArrowUpRight size={32} className="opacity-50" />
+                  </div>
+                </GlassBox>
+              ) : (
+                <GlassBox 
+                  className="p-8 border-dashed border-2 border-slate-200 bg-transparent flex flex-col items-center justify-center text-center group cursor-pointer"
+                  onClick={() => navigate('/student/book')}
+                >
+                  <Icons.PlusCircle size={32} className="text-slate-300 mb-2 group-hover:text-blue-500 transition-colors" />
+                  <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No Active Room</p>
+                </GlassBox>
+              )}
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="edit" 
+            initial={{ opacity: 0, scale: 0.98 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            exit={{ opacity: 0, scale: 0.98 }}
+          >
+            <GlassBox className="p-8">
+              <div className="flex justify-between items-center mb-8">
+                <h4 className="text-lg font-bold text-slate-800">Edit Profile Information</h4>
+                <button onClick={() => setIsEditing(false)} className="text-slate-400 hover:text-slate-600">
+                  <Icons.X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdate} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Input 
+                    label="Full Name" 
+                    value={editData.name} 
+                    onChange={(e) => setEditData({ ...editData, name: e.target.value })} 
+                    icon={Icons.User}
+                  />
+                  <Input 
+                    label="Phone Number" 
+                    value={editData.phone} 
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '');
+                      if (val.length <= 10) setEditData({ ...editData, phone: val });
+                    }} 
+                    icon={Icons.Phone}
+                  />
+                  <Select 
+                    label="Department" 
+                    value={editData.department} 
+                    onChange={(e) => setEditData({ ...editData, department: e.target.value })}
+                    options={['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT', 'DS']}
+                  />
+                  <Select 
+                    label="Year of Study" 
+                    value={editData.year} 
+                    onChange={(e) => setEditData({ ...editData, year: e.target.value })}
+                    options={[
+                      { value: 1, label: 'Year 1' },
+                      { value: 2, label: 'Year 2' },
+                      { value: 3, label: 'Year 3' },
+                      { value: 4, label: 'Year 4' }
+                    ]}
+                  />
+                </div>
+
+                <div className="flex justify-end gap-4 pt-4 border-t border-white/40">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsEditing(false)}
+                    className="px-6 py-3 text-sm font-bold text-slate-400 hover:text-slate-600 uppercase tracking-widest"
+                  >
+                    Cancel
+                  </button>
+                  <PrimaryButton className="w-auto px-10" icon={Icons.CheckCircle}>
+                    Save Changes
+                  </PrimaryButton>
+                </div>
+              </form>
+            </GlassBox>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <footer className="mt-12 text-center opacity-30">
+        <p className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-500">Student Identity Verification • Official Record</p>
+      </footer>
+    </div>
   );
 };
 
-const InputGroup = ({label, value, onChange, icon: Icon, autoComplete}) => (
- <div className="space-y-2">
- <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">{label}</label>
- <div className="relative group"><Icon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"size={16} /><input type="text"value={value} onChange={onChange} required autoComplete={autoComplete} className="w-full p-4 pl-12 bg-white border border-slate-200 text-slate-900 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-bold text-xs"/></div>
- </div>
+const ProfileDetail = ({ icon: Icon, label, value }) => (
+  <div className="flex items-center gap-4 group">
+    <div className="w-10 h-10 bg-white/50 border border-white rounded-xl flex items-center justify-center text-slate-400 group-hover:text-blue-600 transition-colors">
+      <Icon size={18} />
+    </div>
+    <div>
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+      <p className="text-sm font-bold text-slate-700">{value}</p>
+    </div>
+  </div>
 );
 
 export default Profile;

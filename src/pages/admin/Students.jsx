@@ -1,194 +1,379 @@
-import React, {useState, useEffect, useMemo} from'react';
-import {motion, AnimatePresence} from'framer-motion';
-import * as Icons from'../../components/Icons';
-import toast from'react-hot-toast';
-import {useOutletContext} from'react-router-dom';
-import {adminService} from'../../services/api';
-import {StatCard, LoadingScreen, EmptyState, FilterMenu, ActionButton} from'../../components/admin/AdminShared';
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import * as Icons from '../../components/Icons';
+import toast from 'react-hot-toast';
+import { useOutletContext } from 'react-router-dom';
+import { adminService } from '../../services/api';
+import { GlassBox, StatusBadge, Input, Select } from '../../components/SharedUI';
 
 const Students = () => {
- const {user} = useOutletContext() || {};
- const [students, setStudents] = useState([]);
- const [availableRooms, setAvailableRooms] = useState([]);
- const [search, setSearch] = useState('');
- const [sortBy, setSortBy] = useState('name');
- const [filterStatus, setFilterStatus] = useState('ALL');
- const [filterDept, setFilterDept] = useState('ALL');
- const [loading, setLoading] = useState(true);
+  const { user } = useOutletContext() || {};
+  const [students, setStudents] = useState([]);
+  const [availableRooms, setAvailableRooms] = useState([]);
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState('name');
+  const [filterStatus, setFilterStatus] = useState('ALL');
+  const [filterDept, setFilterDept] = useState('ALL');
+  const [loading, setLoading] = useState(true);
 
- const [rejectingStudent, setRejectingStudent] = useState(null);
- const [rejectionNote, setRejectionNote] = useState('');
+  const [rejectingStudent, setRejectingStudent] = useState(null);
+  const [rejectionNote, setRejectionNote] = useState('');
 
- const fetchData = async () => {
- try {
- const [studentsRes, roomsRes] = await Promise.all([
- adminService.getStudents(user),
- adminService.getRooms()
-]);
- setStudents(Array.isArray(studentsRes.data) ? studentsRes.data : []);
- setAvailableRooms(Array.isArray(roomsRes.data) ? roomsRes.data : []);
-} catch (err) {
- toast.error("Failed to sync resident data");
- setStudents([]);
-} finally {
- setLoading(false);
-}
+  const fetchData = async () => {
+    try {
+      const [studentsRes, roomsRes] = await Promise.all([
+        adminService.getStudents(user),
+        adminService.getRooms()
+      ]);
+      setStudents(Array.isArray(studentsRes.data) ? studentsRes.data : []);
+      setAvailableRooms(Array.isArray(roomsRes.data) ? roomsRes.data : []);
+    } catch (err) {
+      toast.error("Failed to sync resident data");
+      setStudents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleRoomAction = async (action, student_id, room_id = null, suggested_room_id = null, note = '') => {
+    const loadingToast = toast.loading("Updating status...");
+    try {
+      const payload = { action, student_id, rejection_note: note };
+      if (room_id) payload.room_id = room_id;
+      if (suggested_room_id) payload.suggested_room_id = suggested_room_id;
+
+      await adminService.adminAction(payload, user);
+      toast.dismiss(loadingToast);
+
+      toast.success("Operation successful");
+      setRejectingStudent(null);
+      setRejectionNote('');
+      fetchData();
+    } catch (err) {
+      toast.dismiss(loadingToast);
+      toast.error(err.message || "Operation failed");
+    }
+  };
+
+  const stats = useMemo(() => {
+    const activeStudents = students.filter(s => s.account_status === 'ACTIVE');
+    const total = activeStudents.length;
+    const allocated = activeStudents.filter(s => s.current_room_no).length;
+    const pending = activeStudents.filter(s => ['REQUESTED', 'SUGGESTED', 'APPROVED'].includes(s.room_request_status)).length;
+    const depts = [...new Set(activeStudents.map(s => s.department))].filter(Boolean).sort();
+    return { 
+      total, 
+      allocated, 
+      pending, 
+      depts, 
+      occupancyPercent: total > 0 ? Math.round((allocated / total) * 100) : 0 
+    };
+  }, [students]);
+
+  const processedStudents = useMemo(() => {
+    const query = search.toLowerCase();
+    return students
+      .filter(s => s.account_status === 'ACTIVE')
+      .filter(s => {
+        const matchesSearch = (s.name || "").toLowerCase().includes(query) || (s.reg_no || "").toLowerCase().includes(query);
+        const matchesStatus = filterStatus === 'ALL' ||
+          (filterStatus === 'ALLOCATED' && s.current_room_no) ||
+          (filterStatus === 'PENDING' && ['REQUESTED', 'SUGGESTED', 'APPROVED'].includes(s.room_request_status)) ||
+          (filterStatus === 'NONE' && !s.current_room_no && !s.room_request_status);
+        const matchesDept = filterDept === 'ALL' || s.department === filterDept;
+        return matchesSearch && matchesStatus && matchesDept;
+      })
+      .sort((a, b) => (a[sortBy] || "").localeCompare(b[sortBy] || ""));
+  }, [students, search, sortBy, filterStatus, filterDept]);
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center py-20 opacity-20">
+      <Icons.Loader2 size={48} className="animate-spin text-blue-600 mb-4" />
+      <p className="text-xs font-bold uppercase tracking-[0.3em]">Scanning Scholar Directory...</p>
+    </div>
+  );
+
+  return (
+    <div className="animate-in fade-in duration-700 space-y-8">
+      {/* Metric Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <MetricCard icon={Icons.Users} label="Resident Population" value={stats.total} color="blue" />
+        <MetricCard icon={Icons.UserCheck} label="Room Assignment" value={`${stats.occupancyPercent}%`} trend={`${stats.allocated} Active`} color="teal" />
+        <MetricCard icon={Icons.Building2} label="Pending Requests" value={stats.pending} trend="Action required" color="orange" alert={stats.pending > 0} />
+        <MetricCard icon={Icons.GraduationCap} label="Active Faculties" value={stats.depts.length} color="indigo" />
+      </div>
+
+      {/* Filter Bar */}
+      <GlassBox className="p-4 flex flex-col xl:flex-row gap-4 items-center">
+        <div className="flex-1 w-full">
+          <Input 
+            placeholder="Search by name or registration ID..." 
+            value={search} 
+            onChange={(e) => setSearch(e.target.value)}
+            icon={Icons.Search}
+            className="!space-y-0"
+          />
+        </div>
+        <div className="flex flex-wrap gap-3 w-full xl:w-auto">
+          <Select 
+            value={sortBy} 
+            onChange={(e) => setSortBy(e.target.value)}
+            options={[
+              { value: 'name', label: 'Sort: A-Z Name' },
+              { value: 'reg_no', label: 'Sort: University ID' },
+              { value: 'department', label: 'Sort: Faculty' }
+            ]}
+            className="min-w-[160px]"
+          />
+          <Select 
+            value={filterStatus} 
+            onChange={(e) => setFilterStatus(e.target.value)}
+            options={[
+              { value: 'ALL', label: 'All Statuses' },
+              { value: 'ALLOCATED', label: 'Assigned Rooms' },
+              { value: 'PENDING', label: 'Pending Requests' },
+              { value: 'NONE', label: 'No Allocation' }
+            ]}
+            className="min-w-[160px]"
+          />
+          <Select 
+            value={filterDept} 
+            onChange={(e) => setFilterDept(e.target.value)}
+            options={[
+              { value: 'ALL', label: 'All Faculties' },
+              ...stats.depts.map(d => ({ value: d, label: d }))
+            ]}
+            className="min-w-[160px]"
+          />
+        </div>
+      </GlassBox>
+
+      {/* Residents Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <AnimatePresence mode="popLayout">
+          {processedStudents.length > 0 ? processedStudents.map(s => (
+            <motion.div 
+              key={s.student_id}
+              layout
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+            >
+              <ResidentCard 
+                student={s} 
+                availableRooms={availableRooms} 
+                handleRoomAction={handleRoomAction} 
+                onRejectRequest={() => setRejectingStudent(s)} 
+                userRole={user?.role} 
+              />
+            </motion.div>
+          )) : (
+            <div className="col-span-full py-20 text-center flex flex-col items-center opacity-40">
+              <Icons.Search size={48} className="mb-4" />
+              <p className="text-sm font-bold uppercase tracking-widest">No scholars found matching your criteria</p>
+            </div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Rejection Modal */}
+      <AnimatePresence>
+        {rejectingStudent && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.9, opacity: 0 }} 
+              className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden p-8"
+            >
+              <div className="flex justify-between items-start mb-8">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-red-500">Decline Application</p>
+                  <h3 className="text-2xl font-black text-slate-800 tracking-tight">Reject Request</h3>
+                </div>
+                <button onClick={() => setRejectingStudent(null)} className="p-2 text-slate-400 hover:text-slate-600 transition-all">
+                  <Icons.X size={24} />
+                </button>
+              </div>
+
+              <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 mb-8">
+                <p className="text-xs font-bold text-slate-500">Target Scholar: <span className="text-slate-800 uppercase tracking-tight ml-1">{rejectingStudent.name}</span></p>
+              </div>
+
+              <div className="space-y-2 mb-8">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Reason for Rejection</label>
+                <textarea 
+                  value={rejectionNote} 
+                  onChange={(e) => setRejectionNote(e.target.value)} 
+                  placeholder="Provide details for the student..." 
+                  className="w-full min-h-[150px] p-5 bg-white border border-slate-200 text-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-blue-600/20 transition-all font-bold text-sm resize-none"
+                />
+              </div>
+
+              <div className="flex gap-4">
+                <button onClick={() => setRejectingStudent(null)} className="flex-1 py-4 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => handleRoomAction('reject_request', rejectingStudent.student_id, null, null, rejectionNote)} 
+                  className="flex-[2] bg-red-600 text-white py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-red-600/20 hover:bg-red-700 transition-all active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <Icons.XCircle size={16} /> Confirm Rejection
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 };
 
- useEffect(() => {fetchData();}, []);
+const MetricCard = ({ icon: Icon, label, value, trend, color, alert }) => (
+  <GlassBox className={`p-6 relative overflow-hidden ${alert ? 'border-orange-200 bg-orange-50/20' : ''}`}>
+    <div className="flex items-center justify-between mb-4">
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+        color === 'blue' ? 'bg-blue-50 text-blue-600' :
+        color === 'teal' ? 'bg-teal-50 text-teal-600' :
+        color === 'orange' ? 'bg-orange-50 text-orange-600' :
+        'bg-indigo-50 text-indigo-600'
+      }`}>
+        <Icon size={20} />
+      </div>
+      {alert && <div className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />}
+    </div>
+    <div className="space-y-1">
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{label}</p>
+      <h4 className="text-2xl font-black text-slate-800">{value}</h4>
+      {trend && <p className="text-[10px] font-medium text-slate-500">{trend}</p>}
+    </div>
+  </GlassBox>
+);
 
- const handleRoomAction = async (action, student_id, room_id = null, suggested_room_id = null, note ='') => {
- const loadingToast = toast.loading("Updating status...");
- try {
- const payload = {action, student_id, rejection_note: note};
- if (room_id) payload.room_id = room_id;
- if (suggested_room_id) payload.suggested_room_id = suggested_room_id;
- 
- await adminService.adminAction(payload, user);
- toast.dismiss(loadingToast);
- 
- toast.success("Operation successful");
- setRejectingStudent(null); setRejectionNote(''); fetchData();
-} catch (err) {
-    toast.dismiss(loadingToast); 
-    toast.error(err.message || "Operation failed");
-}
-};
+const ResidentCard = ({ student, availableRooms, handleRoomAction, onRejectRequest, userRole }) => {
+  const [showSuggest, setShowSuggest] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState('');
+  const { room_request_status, current_room_no, requested_room_no, student_id, requested_room_id, room_request_reason } = student;
 
- const stats = useMemo(() => {
- const activeStudents = students.filter(s => s.account_status ==='ACTIVE');
- const total = activeStudents.length;
- const allocated = activeStudents.filter(s => s.current_room_no).length;
- const pending = activeStudents.filter(s => ['REQUESTED','SUGGESTED','APPROVED'].includes(s.room_request_status)).length;
- const depts = [...new Set(activeStudents.map(s => s.department))].filter(Boolean).sort();
- return {total, allocated, pending, depts, occupancyPercent: total > 0 ? Math.round((allocated / total) * 100) : 0};
-}, [students]);
+  return (
+    <GlassBox className="p-8 flex flex-col h-full group">
+      <div className="flex items-start gap-6 mb-8">
+        <div className="w-16 h-16 rounded-2xl bg-slate-100 border-2 border-slate-200 flex items-center justify-center font-black text-2xl text-slate-800 transition-transform group-hover:scale-110">
+          {(student.name || "?").charAt(0)}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="text-xl font-black text-slate-800 tracking-tight mb-1 truncate">{student.name || "Unknown Scholar"}</h4>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{student.reg_no}</span>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{student.department} • Year {student.year}</span>
+          </div>
+        </div>
+        <div className="text-right flex flex-col items-end gap-2">
+          {current_room_no ? (
+            <StatusBadge status="ALLOCATED" className="!bg-teal-50 !text-teal-700 !border-teal-100" />
+          ) : (
+            <StatusBadge status={room_request_status || 'Unassigned'} />
+          )}
+          {current_room_no && <span className="text-[10px] font-black text-slate-800 uppercase tracking-widest">Room {current_room_no}</span>}
+        </div>
+      </div>
 
- const processedStudents = useMemo(() => {
- const query = search.toLowerCase();
- return students
- .filter(s => s.account_status ==='ACTIVE')
- .filter(s => {
- const matchesSearch = (s.name ||"").toLowerCase().includes(query) || (s.reg_no ||"").toLowerCase().includes(query);
- const matchesStatus = filterStatus ==='ALL'|| 
- (filterStatus ==='ALLOCATED'&& s.current_room_no) || 
- (filterStatus ==='PENDING'&& ['REQUESTED','SUGGESTED','APPROVED'].includes(s.room_request_status)) || 
- (filterStatus ==='NONE'&& !s.current_room_no && !s.room_request_status);
- const matchesDept = filterDept ==='ALL'|| s.department === filterDept;
- return matchesSearch && matchesStatus && matchesDept;
-})
- .sort((a, b) => (a[sortBy] ||"").localeCompare(b[sortBy] ||""));
-}, [students, search, sortBy, filterStatus, filterDept]);
+      <div className="flex-1 space-y-4">
+        {['REQUESTED', 'APPROVED', 'SUGGESTED'].includes(room_request_status) && (
+          <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
+                {room_request_status === 'SUGGESTED' ? 'Offer Pending' : `Requesting ${requested_room_no || 'Room'}`}
+              </span>
+              {room_request_status === 'APPROVED' && <span className="text-[10px] font-bold text-green-600 uppercase tracking-widest">Approved (Unpaid)</span>}
+            </div>
+            {room_request_reason && (
+              <p className="text-xs font-medium text-slate-600 italic">"{room_request_reason}"</p>
+            )}
+          </div>
+        )}
+      </div>
 
- if (loading) return <LoadingScreen message="Scanning Scholar Directory..."/>;
+      <div className="mt-8 flex flex-wrap gap-3 justify-end">
+        {['REQUESTED', 'SUGGESTED'].includes(room_request_status) && (
+          <button 
+            onClick={() => handleRoomAction('allocate_room', student_id, requested_room_id)} 
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all active:scale-95"
+          >
+            <Icons.Check size={14} /> Approve
+          </button>
+        )}
+        
+        {!current_room_no && !['REQUESTED', 'SUGGESTED', 'APPROVED'].includes(room_request_status) && (
+          <button 
+            onClick={() => setShowSuggest(!showSuggest)} 
+            className="flex items-center gap-2 px-4 py-2 bg-white/50 border border-white/80 text-blue-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-blue-50 transition-all"
+          >
+            <Icons.Lightbulb size={14} /> Suggest Room
+          </button>
+        )}
 
- return (
- <>
- <div className="space-y-8 animate-slide-up relative">
- <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
- <StatCard icon={Icons.Users} label="Resident Population"value={stats.total} color="blue"/>
- <StatCard icon={Icons.UserCheck} label="Room Assignment"value={`${stats.occupancyPercent}%`} subValue={`${stats.allocated} Active`} color="teal"progress={stats.occupancyPercent} />
- <StatCard icon={Icons.Building2} label="Pending Requests"value={stats.pending} subValue="Needs Action"color="orange"/>
- <StatCard icon={Icons.GraduationCap} label="Faculties"value={stats.depts.length} subValue="Departments"color="red"/>
- </div>
+        {current_room_no && (
+          <button 
+            onClick={() => { if (window.confirm("Confirm De-allocation?")) handleRoomAction('deallocate', student_id) }} 
+            className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-100 transition-all"
+          >
+            <Icons.X size={14} /> De-allocate
+          </button>
+        )}
 
- <div className="flex flex-col xl:flex-row gap-6 items-stretch xl:items-center">
- <div className="relative flex-1 group">
- <Icons.Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-slate-900 transition-colors"size={20}/><input placeholder="Search by name or registration ID..."className="w-full pl-12 pr-6 py-4 bg-white backdrop-blur-sm rounded-2xl border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900 transition-all text-slate-900"value={search} onChange={(e) => setSearch(e.target.value)} />
- </div>
- <div className="flex flex-wrap gap-3">
- <FilterMenu icon={Icons.SortAsc} value={sortBy} onChange={setSortBy}><option value="name">Sort: A-Z Name</option><option value="reg_no">Sort: University ID</option><option value="department">Sort: Faculty</option></FilterMenu>
- <FilterMenu icon={Icons.Filter} value={filterStatus} onChange={setFilterStatus}><option value="ALL">Status: All Residents</option><option value="ALLOCATED">Status: Assigned Rooms</option><option value="PENDING">Status: Pending Requests</option><option value="NONE">Status: No Allocation</option></FilterMenu>
- <FilterMenu icon={Icons.GraduationCap} value={filterDept} onChange={setFilterDept}><option value="ALL">Faculty: All Depts</option>{stats.depts.map(d => <option key={d} value={d}>{d}</option>)}</FilterMenu>
- </div>
- </div>
+        {room_request_status && room_request_status !== 'ALLOCATED' && (
+          <button 
+            onClick={onRejectRequest} 
+            className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-red-100 transition-all"
+          >
+            <Icons.X size={14} /> Cancel
+          </button>
+        )}
 
- <div className="space-y-4">
- <div className="hidden lg:grid grid-cols-12 px-8 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2"><div className="col-span-5">Scholar Identity</div><div className="col-span-3 text-center">Accommodation Status</div><div className="col-span-4 text-right">Operational Actions</div></div>
- <div className="space-y-4">{processedStudents.length > 0 ? processedStudents.map(s => <ResidentCard key={s.student_id} student={s} availableRooms={availableRooms} handleRoomAction={handleRoomAction} onRejectRequest={() => setRejectingStudent(s)} userRole={user?.role} />) : <EmptyState message="No scholars found matching your criteria"/>}</div>
- </div>
- </div>
+        {userRole === 'SUPER' && (
+          <button 
+            onClick={() => { if (window.confirm("Permanently delete record?")) handleRoomAction('delete_student', student_id) }} 
+            className="p-2 bg-slate-100 text-slate-400 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all"
+          >
+            <Icons.Trash2 size={14} />
+          </button>
+        )}
+      </div>
 
- <AnimatePresence>
- {rejectingStudent && (
- <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-slate-950/60 backdrop-blur-md">
- <motion.div initial={{scale: 0.9, opacity: 0}} animate={{scale: 1, opacity: 1}} exit={{scale: 0.9, opacity: 0}} className="bg-white w-full max-w-lg rounded-[2.5rem] border border-white/10 shadow-2xl overflow-hidden">
- <div className="p-8 space-y-8">
- <div className="flex justify-between items-start"><div className="space-y-1"><p className="text-[10px] font-black uppercase tracking-widest text-red-500">Decline Application</p><h3 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Reject Request.</h3></div><button onClick={() => setRejectingStudent(null)} className="p-2 text-slate-400 hover:text-slate-900 transition-all"><Icons.X size={24} /></button></div>
- <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100"><p className="text-xs font-bold text-slate-500">Target Scholar: <span className="text-slate-900 uppercase tracking-tight ml-1">{rejectingStudent.name}</span></p></div>
- <div className="space-y-3"><label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Warden's Description</label><textarea value={rejectionNote} onChange={(e) => setRejectionNote(e.target.value)} placeholder="Reason for rejection..."className="w-full min-h-[150px] p-5 bg-slate-50 border border-slate-100 text-slate-900 rounded-2xl outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-medium text-sm shadow-inner"/></div>
- <div className="flex gap-4 pt-2"><button onClick={() => setRejectingStudent(null)} className="flex-1 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">Cancel</button><button onClick={() => handleRoomAction('reject_request', rejectingStudent.student_id, null, null, rejectionNote)} className="flex-[2] bg-red-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-red-600/20 hover:bg-red-700 transition-all active:scale-95 flex items-center justify-center gap-2"><Icons.XCircle size={16} /> Confirm Rejection</button></div>
- </div>
- </motion.div>
- </div>
- )}
- </AnimatePresence>
- </>
- );
-};
-
-const ResidentCard = ({student, availableRooms, handleRoomAction, onRejectRequest, userRole}) => {
- const [showSuggest, setShowSuggest] = useState(false);
- const [selectedRoom, setSelectedRoom] = useState('');
- const {room_request_status, current_room_no, requested_room_no, student_id, requested_room_id, room_request_reason} = student;
-
- const getStatusUI = () => {
- if (['REQUESTED','APPROVED'].includes(room_request_status)) {
- return (
- <div className="flex flex-col items-center">
- <span className={`flex items-center gap-1.5 px-3 py-1 ${room_request_status ==='APPROVED'?'bg-emerald-100 text-emerald-600':'bg-orange-100 text-orange-600'} rounded-full text-[9px] font-black uppercase tracking-wider mb-2`}>
- <Icons.Clock size={10} /> {room_request_status ==='APPROVED'?'Approved (Unpaid)': `Requesting ${requested_room_no ||'Room'}`}
- </span>
- {room_request_reason && <div className="flex items-center gap-1 text-[8px] font-bold text-slate-400 uppercase tracking-tighter"><Icons.MessageSquare size={10} className="text-orange-500"/> Statement Attached</div>}
- </div>
- );
-}
- if (room_request_status ==='SUGGESTED') return <div className="flex flex-col items-center"><span className="flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-wider mb-2"><Icons.ArrowRight size={10} /> Offer Pending</span></div>;
- if (current_room_no) return <div className="flex flex-col items-center"><span className="flex items-center gap-1.5 px-3 py-1 bg-teal-100 text-teal-600 rounded-full text-[9px] font-black uppercase tracking-wider mb-2"><Icons.MapPin size={10} /> Room {current_room_no}</span></div>;
- return <div className="flex flex-col items-center"><span className="px-3 py-1 bg-slate-100 text-slate-400 rounded-full text-[9px] font-black uppercase tracking-wider mb-2">No Assignment</span></div>;
-};
-
- return (
- <div className="flex flex-col gap-4">
- <div className="bg-white backdrop-blur-sm p-6 lg:p-8 rounded-[2.5rem] border border-slate-200/60 shadow-sm hover:shadow-xl transition-all group grid grid-cols-1 lg:grid-cols-12 items-center gap-6">
- <div className="lg:col-span-5 flex items-center gap-6">
- <div className="w-16 h-16 rounded-[1.5rem] bg-slate-100 border-2 border-slate-200 flex items-center justify-center font-black text-2xl text-slate-900 transition-transform group-hover:scale-110">{(student.name ||"?").charAt(0)}</div>
- <div className="min-w-0">
- <h4 className="text-xl font-black text-slate-900 leading-tight mb-1 truncate">{student.name ||"Unknown Scholar"}</h4>
- <div className="flex flex-wrap items-center gap-2"><span className="px-2 py-0.5 bg-slate-900 text-white rounded-md text-[9px] font-black tracking-widest uppercase">{student.reg_no ||"No ID"}</span><span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{student.department} • Year {student.year}</span></div>
- </div>
- </div>
- <div className="lg:col-span-3">{getStatusUI()}</div>
- <div className="lg:col-span-4">
- <div className="flex flex-col gap-3 items-end">
- <div className="flex gap-2">
- {['REQUESTED','SUGGESTED'].includes(room_request_status) && <ActionButton onClick={() => handleRoomAction('allocate_room', student_id, requested_room_id)} icon={Icons.Check} label="Approve"primary />}
- {!current_room_no && !['REQUESTED','SUGGESTED','APPROVED'].includes(room_request_status) && <ActionButton onClick={() => setShowSuggest(!showSuggest)} icon={Icons.Lightbulb} label="Suggest"/>}
- {current_room_no && <ActionButton onClick={() => {if(window.confirm("Confirm De-allocation?")) handleRoomAction('deallocate', student_id)}} icon={Icons.X} label="De-allocate"danger />}
- {room_request_status && room_request_status !=='ALLOCATED'&& <ActionButton onClick={onRejectRequest} icon={Icons.X} label="Cancel"danger />}
- {userRole ==='SUPER'&& <ActionButton onClick={() => {if(window.confirm("Permanently delete record?")) handleRoomAction('delete_student', student_id)}} icon={Icons.Trash2} danger />}
- </div>
- {showSuggest && (
- <div className="flex gap-2 p-2 bg-white rounded-2xl border border-slate-200 shadow-xl">
- <select className="text-[10px] font-bold p-2 bg-slate-50 border-none text-slate-900 rounded-xl outline-none"onChange={(e) => setSelectedRoom(e.target.value)} value={selectedRoom}>
- <option value="">Choose Room...</option>
- {availableRooms.map(r => <option key={r.room_id} value={r.room_id}>{r.room_number} ({r.current_occupancy}/{r.capacity})</option>)}
- </select>
- <button disabled={!selectedRoom} onClick={() => {handleRoomAction('suggest_room', student_id, null, selectedRoom); setShowSuggest(false);}} className="bg-slate-900 text-white px-4 py-1 rounded-xl text-[10px] font-black uppercase disabled:opacity-30">Send</button>
- </div>
- )}
- </div>
- </div>
- </div>
- {['REQUESTED','APPROVED'].includes(room_request_status) && room_request_reason && (
- <motion.div initial={{opacity: 0, y: -10}} animate={{opacity: 1, y: 0}} className="mx-8 -mt-2 p-6 bg-blue-500/5 rounded-b-[2rem] border-x border-b border-blue-500/20 flex items-start gap-4">
- <div className="p-3 bg-blue-500/10 rounded-xl text-blue-500"><Icons.FileText size={18} /></div>
- <div><p className="text-[9px] font-black uppercase tracking-widest text-blue-500/60 mb-1">Scholar's Statement of Purpose</p><p className="text-sm font-bold text-slate-600 italic">"{room_request_reason}"</p></div>
- </motion.div>
- )}
- </div>
- );
+      {showSuggest && (
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="mt-4 flex gap-2 p-2 bg-white/80 backdrop-blur-md rounded-2xl border border-white/80 shadow-xl"
+        >
+          <select 
+            className="flex-1 text-[10px] font-bold p-2 bg-slate-50 border-none text-slate-800 rounded-xl outline-none cursor-pointer"
+            onChange={(e) => setSelectedRoom(e.target.value)} 
+            value={selectedRoom}
+          >
+            <option value="">Choose Room...</option>
+            {availableRooms.map(r => (
+              <option key={r.room_id} value={r.room_id}>
+                {r.room_number} ({r.current_occupancy}/{r.capacity})
+              </option>
+            ))}
+          </select>
+          <button 
+            disabled={!selectedRoom} 
+            onClick={() => { handleRoomAction('suggest_room', student_id, null, selectedRoom); setShowSuggest(false); }} 
+            className="bg-blue-600 text-white px-4 py-1 rounded-xl text-[10px] font-black uppercase disabled:opacity-30 transition-all"
+          >
+            Send
+          </button>
+        </motion.div>
+      )}
+    </GlassBox>
+  );
 };
 
 export default Students;
-
