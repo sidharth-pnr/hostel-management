@@ -17,28 +17,8 @@ bg-white/60 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0
 ​Use font-bold for important numbers/headers and text-xs uppercase tracking-widest font-bold for mini-labels and table headers.
 ​Primary accent color should be a professional Academic Blue (blue-600) and Teal/Green.
 ​Use solid, colored pill badges for statuses (e.g., Resolved = bg-green-100 text-green-700, Pending = bg-orange-100 text-orange-700).
-​5. Technical Requirements:
- Make the sidebar responsive (collapsible hamburger menu on mobile).
 
 sample code for design - "import React, { useState } from 'react';
-import { 
-  LayoutDashboard, 
-  MapPin, 
-  MessageSquareWarning, 
-  UserCircle, 
-  Bell, 
-  LogOut, 
-  Plus,
-  CheckCircle,
-  Clock,
-  Menu,
-  X,
-  GraduationCap,
-  ChevronRight,
-  FileText,
-  Building
-} from 'lucide-react';
-
 const App = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -148,7 +128,6 @@ const App = () => {
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Semester 6</span>
             </div>
             <button className="relative p-2.5 bg-white/80 rounded-full text-slate-600 hover:text-blue-600 shadow-sm border border-white transition-all">
-              <Bell size={18} />
               <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
           </div>
